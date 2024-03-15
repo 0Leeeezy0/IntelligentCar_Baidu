@@ -18,9 +18,8 @@ link_directories(/usr/local/lib/onnx)
 link_libraries(/usr/local/lib/onnx/libonnxruntime.so)
 
 #PPNC
-#include_directories(./src/ModelPart/ppnc/include)
-#link_directories(./src/ModelPart/ppnc/lib)
-#link_libraries(libppnc_runtime.so)
+# link_directories(./lib/model)
+# link_libraries(./lib/model/libppnc_runtime.so)
 
 #开发端
 
@@ -30,15 +29,17 @@ include_directories(${GLIB_INCLUDE_DIRS})
 
 #引入头文件
 include_directories(./include)
+include_directories(./include/model)
 
 #编译时所需源文件
 add_executable(${PROJECT_NAME}  ./src/main.cpp
                                 ./src/path_across.cpp
                                 ./src/path_circle.cpp
                                 ./src/path_side_search.cpp
+                                ./src/path_AI.cpp
                                 ./lib/libimage_process.cpp
                                 ./lib/libdata_process.cpp
-                                ./lib/libmodel.cpp
+                                ./lib/libmodel_onnx.cpp
                                 ./lib/libuart_wz.cpp
                                 ./lib/libuart_eb.cpp)
 

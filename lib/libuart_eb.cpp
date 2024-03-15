@@ -13,7 +13,7 @@ void Uart::UartSend(UartSendProtocol *UartSendProtocol_p,bool UartEN)
 	SYNC SYNC;
 	if(UartEN == true)
 	{
-		if (EB.open("/dev/ttyUSB0" , (UartSendProtocol_p -> Baudrate) , 0 , 8 , 1 , 2))
+		if (EB.open("/dev/ttyUSB0" , (UartSendProtocol_p -> Baudrate) , 0 , 8 , 1 , 1))
 		{
 			SYNC.UartSend_Change_To_Bit_SYNC(UartSendProtocol_p);
 			//发送帧头
@@ -24,12 +24,6 @@ void Uart::UartSend(UartSendProtocol *UartSendProtocol_p,bool UartEN)
 			EB.send(&(UartSendProtocol_p -> Data_2),1);
 			EB.send(&(UartSendProtocol_p -> Data_3),1);
 			EB.send(&(UartSendProtocol_p -> Data_4),1);
-			EB.send(&(UartSendProtocol_p -> Data_5),1);
-			EB.send(&(UartSendProtocol_p -> Data_6),1);
-			EB.send(&(UartSendProtocol_p -> Data_7),1);
-			EB.send(&(UartSendProtocol_p -> Data_8),1);
-			EB.send(&(UartSendProtocol_p -> Data_9),1);
-			EB.send(&(UartSendProtocol_p -> Data_10),1);
 			//发送校验位
 			EB.send(&(UartSendProtocol_p -> CRC16),1);	
 		}

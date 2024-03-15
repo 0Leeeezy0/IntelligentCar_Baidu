@@ -9,7 +9,6 @@
 #include "libdata_store.h"
 #include "libimage_process.h"
 #include "libmodel.h"
-#include "predictor_api.h"
 #include "libuart_eb.h"
 #include "libuart_wz.h"
 

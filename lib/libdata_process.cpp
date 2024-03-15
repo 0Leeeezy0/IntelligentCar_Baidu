@@ -92,111 +92,120 @@ LoopKind Judge::TrackKind_Judge_Difference(Data_Path *Data_Path_p)
     1.普通赛道循环类型
     2.圆环赛道循环类型
     3.十字赛道循环类型
+    4.AI赛道类型
 */
-LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Path_p)
+LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Function_EN* Function_EN_p)
 {
-    int i;
-    int j;
-    // static int Record;
-    Data_Path_p -> InterruptNum[0] = 0;
-    Data_Path_p -> InterruptNum[1] = 0;
-    int Vector[2][4] = {0}; // 左右中断点与上下两点构成的向量坐标
-    int Vector_ScalarProduct[2] = {0};  // 左右中断点向量点乘
-    float Vector_Module[4] = {0};   // 左右中断点向量的模
-    float AngleVector[2] = {0}; // 左右中断点向量夹角(角度制)
     LoopKind Loop_Kind;
-    // 寻断点范围
-    // 左边线断点
-    for(i = 15;i <= (Data_Path_p -> NumSearch[0])-15;)
+    if(Function_EN_p -> Model_EN == false)
     {
-        // 左边线第一个向量
-        Vector[0][0] = (Data_Path_p -> SideCoordinate_Eight[i-15][0])-(Data_Path_p -> SideCoordinate_Eight[i][0]);
-        Vector[0][1] = (Data_Path_p -> SideCoordinate_Eight[i-15][1])-(Data_Path_p -> SideCoordinate_Eight[i][1]);
-        // 左边线第二个向量
-        Vector[1][0] = (Data_Path_p -> SideCoordinate_Eight[i+15][0])-(Data_Path_p -> SideCoordinate_Eight[i][0]);
-        Vector[1][1] = (Data_Path_p -> SideCoordinate_Eight[i+15][1])-(Data_Path_p -> SideCoordinate_Eight[i][1]);
-
-        // 计算中断点向量点乘
-        Vector_ScalarProduct[0] = Vector[0][0]*Vector[1][0]+Vector[0][1]*Vector[1][1];
-
-        // 计算中断点向量的模
-        Vector_Module[0] = sqrt(pow(Vector[0][0],2)+pow(Vector[0][1],2));
-        Vector_Module[1] = sqrt(pow(Vector[1][0],2)+pow(Vector[1][1],2));
-       
-        if( Vector_Module[0]*Vector_Module[1] != 0)
+        int i;
+        int j;
+        // static int Record;
+        Data_Path_p -> InterruptNum[0] = 0;
+        Data_Path_p -> InterruptNum[1] = 0;
+        int Vector[2][4] = {0}; // 左右中断点与上下两点构成的向量坐标
+        int Vector_ScalarProduct[2] = {0};  // 左右中断点向量点乘
+        float Vector_Module[4] = {0};   // 左右中断点向量的模
+        float AngleVector[2] = {0}; // 左右中断点向量夹角(角度制)
+        // 寻断点范围
+        // 左边线断点
+        for(i = 15;i <= (Data_Path_p -> NumSearch[0])-15;)
         {
-            AngleVector[0] = acos(Vector_ScalarProduct[0]/(Vector_Module[0]*Vector_Module[1]))*(180/PI);    // 左边线断点向量夹角
-            // cout << AngleVector[0] << "  " << AngleVector[1] << endl;
+            // 左边线第一个向量
+            Vector[0][0] = (Data_Path_p -> SideCoordinate_Eight[i-15][0])-(Data_Path_p -> SideCoordinate_Eight[i][0]);
+            Vector[0][1] = (Data_Path_p -> SideCoordinate_Eight[i-15][1])-(Data_Path_p -> SideCoordinate_Eight[i][1]);
+            // 左边线第二个向量
+            Vector[1][0] = (Data_Path_p -> SideCoordinate_Eight[i+15][0])-(Data_Path_p -> SideCoordinate_Eight[i][0]);
+            Vector[1][1] = (Data_Path_p -> SideCoordinate_Eight[i+15][1])-(Data_Path_p -> SideCoordinate_Eight[i][1]);
+
+            // 计算中断点向量点乘
+            Vector_ScalarProduct[0] = Vector[0][0]*Vector[1][0]+Vector[0][1]*Vector[1][1];
+
+            // 计算中断点向量的模
+            Vector_Module[0] = sqrt(pow(Vector[0][0],2)+pow(Vector[0][1],2));
+            Vector_Module[1] = sqrt(pow(Vector[1][0],2)+pow(Vector[1][1],2));
+        
+            if( Vector_Module[0]*Vector_Module[1] != 0)
+            {
+                AngleVector[0] = acos(Vector_ScalarProduct[0]/(Vector_Module[0]*Vector_Module[1]))*(180/PI);    // 左边线断点向量夹角
+                // cout << AngleVector[0] << "  " << AngleVector[1] << endl;
+            }
+
+            // 计算中断点并存储坐标，前提：断点坐标不再边框上
+            if(abs(AngleVector[0]) > 70 && abs(AngleVector[0]) < 125 && (Data_Path_p -> SideCoordinate_Eight[i][0]) > 30)
+            {
+                //  cout << abs(AngleVector[0]) << endl;
+                (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[0])][0]) = (Data_Path_p -> SideCoordinate_Eight[i][0]);
+                (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[0])][1]) = (Data_Path_p -> SideCoordinate_Eight[i][1]);
+                Data_Path_p -> InterruptNum[0]++;
+                i = i+10;
+            }
+            i++;
+        }
+        // 右边线断点
+        for(j = 15;j <= (Data_Path_p -> NumSearch[1])-15;)
+        {
+            // 右边线第一个向量
+            Vector[0][2] = (Data_Path_p -> SideCoordinate_Eight[j-15][2])-(Data_Path_p -> SideCoordinate_Eight[j][2]);
+            Vector[0][3] = (Data_Path_p -> SideCoordinate_Eight[j-15][3])-(Data_Path_p -> SideCoordinate_Eight[j][3]);
+            // 右边线第二个向量
+            Vector[1][2] = (Data_Path_p -> SideCoordinate_Eight[j+15][2])-(Data_Path_p -> SideCoordinate_Eight[j][2]);
+            Vector[1][3] = (Data_Path_p -> SideCoordinate_Eight[j+15][3])-(Data_Path_p -> SideCoordinate_Eight[j][3]);
+
+            // 计算中断点向量点乘
+            Vector_ScalarProduct[1] = Vector[0][2]*Vector[1][2]+Vector[0][3]*Vector[1][3];
+
+            // 计算中断点向量的模
+            Vector_Module[2] = sqrt(pow(Vector[0][2],2)+pow(Vector[0][3],2));
+            Vector_Module[3] = sqrt(pow(Vector[1][2],2)+pow(Vector[1][3],2));
+        
+            if( Vector_Module[2]*Vector_Module[3] != 0)
+            {
+                AngleVector[1] = acos(Vector_ScalarProduct[1]/(Vector_Module[2]*Vector_Module[3]))*(180/PI);    // 右边线断点向量夹角
+                // cout << AngleVector[0] << "  " << AngleVector[1] << endl;
+            }
+
+            // 计算中断点并存储坐标，前提：断点坐标不在边框上
+            if(abs(AngleVector[1]) > 70 && abs(AngleVector[1]) < 125 && 319-(Data_Path_p -> SideCoordinate_Eight[j][2]) > 30)
+            {
+                // cout << abs(AngleVector[1]) << endl;
+                (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[1])][2]) = (Data_Path_p -> SideCoordinate_Eight[j][2]);
+                (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[1])][3]) = (Data_Path_p -> SideCoordinate_Eight[j][3]);
+                Data_Path_p -> InterruptNum[1]++;
+                j = j+10;
+            }
+            j++;
         }
 
-        // 计算中断点并存储坐标，前提：断点坐标不再边框上
-        if(abs(AngleVector[0]) > 70 && abs(AngleVector[0]) < 125 && (Data_Path_p -> SideCoordinate_Eight[i][0]) > 30)
+        // 若左右边线都有中断点则为十字
+        if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] >= 1))
         {
-            //  cout << abs(AngleVector[0]) << endl;
-            (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[0])][0]) = (Data_Path_p -> SideCoordinate_Eight[i][0]);
-            (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[0])][1]) = (Data_Path_p -> SideCoordinate_Eight[i][1]);
-            Data_Path_p -> InterruptNum[0]++;
-            i = i+10;
+            // Record = Img_Store_p -> ImgNum;
+            Loop_Kind = ACROSS_TRACK_LOOP;
+            Data_Path_p -> Track_Kind = ACROSS_TRACK;
         }
-        i++;
-    }
-    // 右边线断点
-    for(j = 15;j <= (Data_Path_p -> NumSearch[1])-15;)
-    {
-        // 右边线第一个向量
-        Vector[0][2] = (Data_Path_p -> SideCoordinate_Eight[j-15][2])-(Data_Path_p -> SideCoordinate_Eight[j][2]);
-        Vector[0][3] = (Data_Path_p -> SideCoordinate_Eight[j-15][3])-(Data_Path_p -> SideCoordinate_Eight[j][3]);
-        // 右边线第二个向量
-        Vector[1][2] = (Data_Path_p -> SideCoordinate_Eight[j+15][2])-(Data_Path_p -> SideCoordinate_Eight[j][2]);
-        Vector[1][3] = (Data_Path_p -> SideCoordinate_Eight[j+15][3])-(Data_Path_p -> SideCoordinate_Eight[j][3]);
-
-        // 计算中断点向量点乘
-        Vector_ScalarProduct[1] = Vector[0][2]*Vector[1][2]+Vector[0][3]*Vector[1][3];
-
-        // 计算中断点向量的模
-        Vector_Module[2] = sqrt(pow(Vector[0][2],2)+pow(Vector[0][3],2));
-        Vector_Module[3] = sqrt(pow(Vector[1][2],2)+pow(Vector[1][3],2));
-       
-        if( Vector_Module[2]*Vector_Module[3] != 0)
+        // 若左右边线只有一边有中断点  //且当前图像序号和十字中存储的图像序号有间隔才为左右圆环：防止误判
+        else if((Data_Path_p -> InterruptNum[0] == 0) && (Data_Path_p -> InterruptNum[1] >= 1))
         {
-            AngleVector[1] = acos(Vector_ScalarProduct[1]/(Vector_Module[2]*Vector_Module[3]))*(180/PI);    // 右边线断点向量夹角
-            // cout << AngleVector[0] << "  " << AngleVector[1] << endl;
+            Loop_Kind = R_CIRCLE_TRACK_LOOP;
+            Data_Path_p -> Track_Kind = R_CIRCLE_TRACK;
         }
-
-        // 计算中断点并存储坐标，前提：断点坐标不在边框上
-        if(abs(AngleVector[1]) > 70 && abs(AngleVector[1]) < 125 && 319-(Data_Path_p -> SideCoordinate_Eight[j][2]) > 30)
+        else if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] == 0))
         {
-            // cout << abs(AngleVector[1]) << endl;
-            (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[1])][2]) = (Data_Path_p -> SideCoordinate_Eight[j][2]);
-            (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[1])][3]) = (Data_Path_p -> SideCoordinate_Eight[j][3]);
-            Data_Path_p -> InterruptNum[1]++;
-            j = j+10;
+            Loop_Kind = L_CIRCLE_TRACK_LOOP;
+            Data_Path_p -> Track_Kind = L_CIRCLE_TRACK;
         }
-        j++;
+        else
+        {
+            Loop_Kind = COMMON_TRACK_LOOP;
+            Data_Path_p -> Track_Kind = COMMON_TRACK;
+        }
     }
-
-    // 若左右边线都有中断点则为十字
-    if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] >= 1))
+    else 
     {
-        // Record = Img_Store_p -> ImgNum;
-        Loop_Kind = ACROSS_TRACK_LOOP;
-        Data_Path_p -> Track_Kind = ACROSS_TRACK;
-    }
-    // 若左右边线只有一边有中断点  //且当前图像序号和十字中存储的图像序号有间隔才为左右圆环：防止误判
-    else if((Data_Path_p -> InterruptNum[0] == 0) && (Data_Path_p -> InterruptNum[1] >= 1))
-    {
-        Loop_Kind = R_CIRCLE_TRACK_LOOP;
-        Data_Path_p -> Track_Kind = R_CIRCLE_TRACK;
-    }
-    else if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] == 0))
-    {
-        Loop_Kind = L_CIRCLE_TRACK_LOOP;
-        Data_Path_p -> Track_Kind = L_CIRCLE_TRACK;
-    }
-    else
-    {
-        Loop_Kind = COMMON_TRACK_LOOP;
-        Data_Path_p -> Track_Kind = COMMON_TRACK;
+        Loop_Kind = MODEL_TRACK_LOOP;
+        Data_Path_p -> Track_Kind = MODEL_TRACK;
     }
     return Loop_Kind;
 }
@@ -212,7 +221,7 @@ void Judge::ServoDirAngle_Judge(Data_Path *Data_Path_p)
     // 计算舵机方向和角度
     if((Data_Path_p -> ServoAngle) < 0)
     {
-		(Data_Path_p -> ServoDir) = 0;  // 左转
+        (Data_Path_p -> ServoDir) = 0;  // 左转
         (Data_Path_p -> ServoAngle) = abs(Data_Path_p -> ServoAngle);
     }
     else
@@ -250,12 +259,6 @@ void SYNC::UartSend_Change_To_Bit_SYNC(UartSendProtocol *UartSendProtocol_p)
     UartSendProtocol_p -> Data_2 = UartSendProtocol_p -> ServoAngle;
     UartSendProtocol_p -> Data_3 = UartSendProtocol_p -> MotorSpeed;
     UartSendProtocol_p -> Data_4 = UartSendProtocol_p -> Track_Kind;
-    UartSendProtocol_p -> Data_5 = UartSendProtocol_p -> Forward;
-    UartSendProtocol_p -> Data_6 = UartSendProtocol_p -> Path_Search_Start;
-    UartSendProtocol_p -> Data_7 = UartSendProtocol_p -> Path_Search_End;
-    UartSendProtocol_p -> Data_8 = UartSendProtocol_p -> Side_Search_Start;
-    UartSendProtocol_p -> Data_9 = UartSendProtocol_p -> Side_Search_End;
-    UartSendProtocol_p -> Data_10 = UartSendProtocol_p -> Game_EN;
 }
 
 
@@ -267,10 +270,6 @@ void SYNC::UartSend_Change_To_Bit_SYNC(UartSendProtocol *UartSendProtocol_p)
     ServoAngle
     MotorSpeed
     Track_Kind
-    Forward
-    Path_Search_Start
-    Path_Search_End
-    Game_EN
 */
 void SYNC::UartSend_Program_To_Change_SYNC(UartSendProtocol *UartSendProtocol_p , Data_Path *Data_Path_p , Function_EN *Function_EN_p)
 {
@@ -279,16 +278,6 @@ void SYNC::UartSend_Program_To_Change_SYNC(UartSendProtocol *UartSendProtocol_p 
     UartSendProtocol_p -> ServoAngle = Data_Path_p -> ServoAngle;
     UartSendProtocol_p -> MotorSpeed = Data_Path_p -> MotorSpeed;
     UartSendProtocol_p -> Track_Kind = (int)Data_Path_p -> Track_Kind;
-    UartSendProtocol_p -> Forward = Data_Path_p -> Forward;
-    UartSendProtocol_p -> Path_Search_Start = Data_Path_p -> Path_Search_Start;
-    UartSendProtocol_p -> Path_Search_End = Data_Path_p -> Path_Search_End;
-    UartSendProtocol_p -> Side_Search_Start = Data_Path_p -> Side_Search_Start;
-    UartSendProtocol_p -> Side_Search_End = Data_Path_p -> Side_Search_End;
-    switch(Function_EN_p -> Game_EN)
-    {
-        case false:{ UartSendProtocol_p -> Game_EN = 0; break; }
-        case true:{ UartSendProtocol_p -> Game_EN = 1; break; }
-    }
 }
 
 
@@ -387,7 +376,7 @@ void DataPrint(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
             break;
         }
         case ACROSS_TRACK:{ cout << "十字赛道" << endl; break; }
-        case AI_TRACK:{ cout << "AI" << endl; break; }
+        case MODEL_TRACK:{ cout << "AI" << endl; break; }
     }
     cout << "<-------------------------------------------------->" << endl;
 }

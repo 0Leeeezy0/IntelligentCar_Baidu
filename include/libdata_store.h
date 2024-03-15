@@ -14,12 +14,13 @@
 
 #define BAUDRATE 115200 // 串口波特率
 #define PI 3.1415926    // 圆周率
+#define FPS_TIME 1 // 帧间时间
 
 // 非串口接收初始化的调试参数
 #define UART_EN false    // 串口
 #define IMGCOMPRESS_EN true // 图像压缩
 #define UNPIVOT_EN true // 暂时没有用
-#define CAMERA USB_PC_CAMERA // 相机采集类型 摄像头/视频
+#define CAMERA USB_EB_CAMERA // 相机采集类型 摄像头/视频
 
 /*
     相机类型
@@ -45,8 +46,9 @@ typedef enum LoopKind
     R_CIRCLE_TRACK_LOOP = 5,   // 右圆环赛道循环
     L_CIRCLE_TRACK_LOOP = 6,   // 左圆环赛道循环
     ACROSS_TRACK_LOOP = 7,   // 十字赛道循环
-    AI_TRACK_LOOP = 8   // AI赛道循环
+    MODEL_TRACK_LOOP = 8   // 模型赛道循环
 }LoopKind;
+
 
 /*
     发送赛道类型
@@ -57,7 +59,7 @@ typedef enum TrackKind
     R_CIRCLE_TRACK = 1,   // 右圆环赛道
     L_CIRCLE_TRACK = 2,   // 左圆环赛道
     ACROSS_TRACK = 3,   // 十字赛道
-    AI_TRACK = 4,   // AI赛道
+    MODEL_TRACK = 4,   // 模型赛道
 }TrackKind;
 
 /*
@@ -69,6 +71,19 @@ typedef enum CircleTrackStep
     IN = 1, // 入环
     OUT = 2, // 出环
 }CircleTrackStep;
+
+/*
+    模型赛道标签
+*/
+typedef enum Model_TrackLable
+{
+    Cone_L = 0, // 左锥桶
+    Cone_R = 1, // 右锥桶
+    Block_L = 2, // 左路障
+    Block_R = 3, // 右路障
+    Garage_L = 4,   // 左车库
+    Garage_R = 5    // 右车库
+}Model_TrackLable;
 
 /*
     图像存储
@@ -105,6 +120,7 @@ typedef struct Function_EN
     bool ImgCompress_EN = IMGCOMPRESS_EN;   // 图像压缩使能
     bool Game_EN;   // 比赛开始
     LoopKind Loop_Kind_EN;  // 循环类型使能：0.图像循环 1.普通赛道循环 2.圆环赛道循环 3.十字赛道循环 4.AI赛道循环 5.串口发送循环
+    bool Model_EN;
 }Function_EN;
 
 /*
@@ -129,6 +145,7 @@ typedef struct Data_Path
     int MotorSpeed;    // 电机速度
     TrackKind Track_Kind; // 赛道类型：1.普通赛道 2.左圆环赛道 3.右圆环赛道 4.十字赛道
     CircleTrackStep Circle_Track_Step;  // 圆环入环步骤：1.准备入环 2.入环 3.出环
+    Model_TrackLable Model_Track_Lable;    // AI赛道标签：1.左锥桶 2.右锥桶 3.左路障 4.右路障 5.左车库 6.右车库
 }Data_Path;
 
 /*
@@ -147,24 +164,12 @@ typedef struct UartSendProtocol
     int ServoAngle;    // 舵机角度
     int MotorSpeed;    // 电机速度
     int Track_Kind;  // 赛道类型
-    int Forward;    // 前瞻点
-    int Path_Search_Start;  // 寻路径起始点
-    int Path_Search_End;    // 寻路径结束点
-    int Side_Search_Start; // 寻边线起始点
-    int Side_Search_End; // 寻边线结束点
-    int Game_EN;   // 比赛开始
 
     // 串口数据位
     unsigned char Data_1;
     unsigned char Data_2;
     unsigned char Data_3;
     unsigned char Data_4;
-    unsigned char Data_5;
-    unsigned char Data_6;
-    unsigned char Data_7;
-    unsigned char Data_8;
-    unsigned char Data_9;
-    unsigned char Data_10;
 
     //串口帧尾
     unsigned char CRC16 = 0XA2;    // 0xA2

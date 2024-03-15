@@ -125,10 +125,24 @@ CMakeFiles/DEMO.RUN.dir/src/path_side_search.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DEMO.RUN.dir/src/path_side_search.cpp.s"
 	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/path_side_search.cpp" -o CMakeFiles/DEMO.RUN.dir/src/path_side_search.cpp.s
 
+CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.o: CMakeFiles/DEMO.RUN.dir/flags.make
+CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.o: /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/path_AI.cpp
+CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.o: CMakeFiles/DEMO.RUN.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.o"
+	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.o -MF CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.o.d -o CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.o -c "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/path_AI.cpp"
+
+CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.i"
+	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/path_AI.cpp" > CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.i
+
+CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.s"
+	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/path_AI.cpp" -o CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.s
+
 CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.o: CMakeFiles/DEMO.RUN.dir/flags.make
 CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.o: /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libimage_process.cpp
 CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.o: CMakeFiles/DEMO.RUN.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.o"
 	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.o -MF CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.o.d -o CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.o -c "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libimage_process.cpp"
 
 CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.i: cmake_force
@@ -142,7 +156,7 @@ CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.s: cmake_force
 CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.o: CMakeFiles/DEMO.RUN.dir/flags.make
 CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.o: /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libdata_process.cpp
 CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.o: CMakeFiles/DEMO.RUN.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.o"
 	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.o -MF CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.o.d -o CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.o -c "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libdata_process.cpp"
 
 CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.i: cmake_force
@@ -153,24 +167,24 @@ CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.s"
 	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libdata_process.cpp" -o CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.s
 
-CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.o: CMakeFiles/DEMO.RUN.dir/flags.make
-CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.o: /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libmodel.cpp
-CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.o: CMakeFiles/DEMO.RUN.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.o"
-	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.o -MF CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.o.d -o CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.o -c "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libmodel.cpp"
+CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.o: CMakeFiles/DEMO.RUN.dir/flags.make
+CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.o: /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libmodel_onnx.cpp
+CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.o: CMakeFiles/DEMO.RUN.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.o"
+	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.o -MF CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.o.d -o CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.o -c "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libmodel_onnx.cpp"
 
-CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.i"
-	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libmodel.cpp" > CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.i
+CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.i"
+	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libmodel_onnx.cpp" > CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.i
 
-CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.s"
-	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libmodel.cpp" -o CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.s
+CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.s"
+	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libmodel_onnx.cpp" -o CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.s
 
 CMakeFiles/DEMO.RUN.dir/lib/libuart_wz.cpp.o: CMakeFiles/DEMO.RUN.dir/flags.make
 CMakeFiles/DEMO.RUN.dir/lib/libuart_wz.cpp.o: /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libuart_wz.cpp
 CMakeFiles/DEMO.RUN.dir/lib/libuart_wz.cpp.o: CMakeFiles/DEMO.RUN.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/DEMO.RUN.dir/lib/libuart_wz.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/DEMO.RUN.dir/lib/libuart_wz.cpp.o"
 	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DEMO.RUN.dir/lib/libuart_wz.cpp.o -MF CMakeFiles/DEMO.RUN.dir/lib/libuart_wz.cpp.o.d -o CMakeFiles/DEMO.RUN.dir/lib/libuart_wz.cpp.o -c "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libuart_wz.cpp"
 
 CMakeFiles/DEMO.RUN.dir/lib/libuart_wz.cpp.i: cmake_force
@@ -184,7 +198,7 @@ CMakeFiles/DEMO.RUN.dir/lib/libuart_wz.cpp.s: cmake_force
 CMakeFiles/DEMO.RUN.dir/lib/libuart_eb.cpp.o: CMakeFiles/DEMO.RUN.dir/flags.make
 CMakeFiles/DEMO.RUN.dir/lib/libuart_eb.cpp.o: /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libuart_eb.cpp
 CMakeFiles/DEMO.RUN.dir/lib/libuart_eb.cpp.o: CMakeFiles/DEMO.RUN.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/DEMO.RUN.dir/lib/libuart_eb.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/DEMO.RUN.dir/lib/libuart_eb.cpp.o"
 	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DEMO.RUN.dir/lib/libuart_eb.cpp.o -MF CMakeFiles/DEMO.RUN.dir/lib/libuart_eb.cpp.o.d -o CMakeFiles/DEMO.RUN.dir/lib/libuart_eb.cpp.o -c "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libuart_eb.cpp"
 
 CMakeFiles/DEMO.RUN.dir/lib/libuart_eb.cpp.i: cmake_force
@@ -201,9 +215,10 @@ DEMO_RUN_OBJECTS = \
 "CMakeFiles/DEMO.RUN.dir/src/path_across.cpp.o" \
 "CMakeFiles/DEMO.RUN.dir/src/path_circle.cpp.o" \
 "CMakeFiles/DEMO.RUN.dir/src/path_side_search.cpp.o" \
+"CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.o" \
 "CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.o" \
 "CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.o" \
-"CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.o" \
+"CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.o" \
 "CMakeFiles/DEMO.RUN.dir/lib/libuart_wz.cpp.o" \
 "CMakeFiles/DEMO.RUN.dir/lib/libuart_eb.cpp.o"
 
@@ -214,9 +229,10 @@ DEMO.RUN: CMakeFiles/DEMO.RUN.dir/src/main.cpp.o
 DEMO.RUN: CMakeFiles/DEMO.RUN.dir/src/path_across.cpp.o
 DEMO.RUN: CMakeFiles/DEMO.RUN.dir/src/path_circle.cpp.o
 DEMO.RUN: CMakeFiles/DEMO.RUN.dir/src/path_side_search.cpp.o
+DEMO.RUN: CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.o
 DEMO.RUN: CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.o
 DEMO.RUN: CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.o
-DEMO.RUN: CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.o
+DEMO.RUN: CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.o
 DEMO.RUN: CMakeFiles/DEMO.RUN.dir/lib/libuart_wz.cpp.o
 DEMO.RUN: CMakeFiles/DEMO.RUN.dir/lib/libuart_eb.cpp.o
 DEMO.RUN: CMakeFiles/DEMO.RUN.dir/build.make
@@ -237,7 +253,7 @@ DEMO.RUN: /usr/local/lib/libopencv_flann.so.4.9.0
 DEMO.RUN: /usr/local/lib/libopencv_imgproc.so.4.9.0
 DEMO.RUN: /usr/local/lib/libopencv_core.so.4.9.0
 DEMO.RUN: CMakeFiles/DEMO.RUN.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable DEMO.RUN"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable DEMO.RUN"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/DEMO.RUN.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

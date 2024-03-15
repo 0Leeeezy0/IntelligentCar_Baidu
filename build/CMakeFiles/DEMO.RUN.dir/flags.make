@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/g++-12
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include" -isystem /usr/local/include/opencv4
+CXX_INCLUDES = -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include" -I"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include/model" -isystem /usr/local/include/opencv4
 
 CXX_FLAGS = -g
 

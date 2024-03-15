@@ -5,14 +5,29 @@
 #include <iostream>
 #include <cmath>
 #include <stdio.h>
+#include <cstdio>
+#include <functional>
+#include <numeric>
+#include <string>
+#include <fstream>
+#include <algorithm>
 #include <stdlib.h>    
-#include <string.h>
 #include <unistd.h>    
 #include <sys/types.h>  
 #include <sys/stat.h>   
 #include <fcntl.h>      
 #include <termios.h>  
 #include <errno.h>
+#include <vector>
+#include <chrono>
+#include <unordered_map>
+#include <sys/time.h>
+#include <cstdlib>
+#include <memory>
 #include <opencv2/opencv.hpp>
+#include "json.hpp"
+#include "detection.hpp"
+#include "predictor_api.h"
+#include "onnxruntime_cxx_api.h"
 
 #endif

@@ -29,13 +29,15 @@ class Judge
             1.普通赛道类型
             2.圆环赛道类型
             3.十字赛道类型
+            4.AI赛道类型
             @参数说明
             Img_Store_p 图像存储指针
             Data_Path_p 路径相关数据指针
+            Function_EN_p 函数使能相关指针
             @返回值说明
             返回赛道循环类型
         */
-        LoopKind TrackKind_Judge_Vector(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
+        LoopKind TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Function_EN* Function_EN_p);
 
 
         /*

@@ -67,8 +67,8 @@ CMAKE_BINARY_DIR = "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/bin/cmake-gui -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -177,29 +177,29 @@ lib/libimage_process.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/DEMO.RUN.dir/build.make CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.s
 .PHONY : lib/libimage_process.cpp.s
 
-lib/libmodel.o: lib/libmodel.cpp.o
-.PHONY : lib/libmodel.o
+lib/libmodel_onnx.o: lib/libmodel_onnx.cpp.o
+.PHONY : lib/libmodel_onnx.o
 
 # target to build an object file
-lib/libmodel.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DEMO.RUN.dir/build.make CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.o
-.PHONY : lib/libmodel.cpp.o
+lib/libmodel_onnx.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DEMO.RUN.dir/build.make CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.o
+.PHONY : lib/libmodel_onnx.cpp.o
 
-lib/libmodel.i: lib/libmodel.cpp.i
-.PHONY : lib/libmodel.i
+lib/libmodel_onnx.i: lib/libmodel_onnx.cpp.i
+.PHONY : lib/libmodel_onnx.i
 
 # target to preprocess a source file
-lib/libmodel.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DEMO.RUN.dir/build.make CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.i
-.PHONY : lib/libmodel.cpp.i
+lib/libmodel_onnx.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DEMO.RUN.dir/build.make CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.i
+.PHONY : lib/libmodel_onnx.cpp.i
 
-lib/libmodel.s: lib/libmodel.cpp.s
-.PHONY : lib/libmodel.s
+lib/libmodel_onnx.s: lib/libmodel_onnx.cpp.s
+.PHONY : lib/libmodel_onnx.s
 
 # target to generate assembly for a file
-lib/libmodel.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DEMO.RUN.dir/build.make CMakeFiles/DEMO.RUN.dir/lib/libmodel.cpp.s
-.PHONY : lib/libmodel.cpp.s
+lib/libmodel_onnx.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DEMO.RUN.dir/build.make CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.s
+.PHONY : lib/libmodel_onnx.cpp.s
 
 lib/libuart_eb.o: lib/libuart_eb.cpp.o
 .PHONY : lib/libuart_eb.o
@@ -272,6 +272,30 @@ src/main.s: src/main.cpp.s
 src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/DEMO.RUN.dir/build.make CMakeFiles/DEMO.RUN.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
+
+src/path_AI.o: src/path_AI.cpp.o
+.PHONY : src/path_AI.o
+
+# target to build an object file
+src/path_AI.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DEMO.RUN.dir/build.make CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.o
+.PHONY : src/path_AI.cpp.o
+
+src/path_AI.i: src/path_AI.cpp.i
+.PHONY : src/path_AI.i
+
+# target to preprocess a source file
+src/path_AI.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DEMO.RUN.dir/build.make CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.i
+.PHONY : src/path_AI.cpp.i
+
+src/path_AI.s: src/path_AI.cpp.s
+.PHONY : src/path_AI.s
+
+# target to generate assembly for a file
+src/path_AI.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DEMO.RUN.dir/build.make CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.s
+.PHONY : src/path_AI.cpp.s
 
 src/path_across.o: src/path_across.cpp.o
 .PHONY : src/path_across.o
@@ -360,9 +384,9 @@ help:
 	@echo "... lib/libimage_process.o"
 	@echo "... lib/libimage_process.i"
 	@echo "... lib/libimage_process.s"
-	@echo "... lib/libmodel.o"
-	@echo "... lib/libmodel.i"
-	@echo "... lib/libmodel.s"
+	@echo "... lib/libmodel_onnx.o"
+	@echo "... lib/libmodel_onnx.i"
+	@echo "... lib/libmodel_onnx.s"
 	@echo "... lib/libuart_eb.o"
 	@echo "... lib/libuart_eb.i"
 	@echo "... lib/libuart_eb.s"
@@ -372,6 +396,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/path_AI.o"
+	@echo "... src/path_AI.i"
+	@echo "... src/path_AI.s"
 	@echo "... src/path_across.o"
 	@echo "... src/path_across.i"
 	@echo "... src/path_across.s"
