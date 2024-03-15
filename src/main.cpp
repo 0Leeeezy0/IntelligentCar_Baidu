@@ -11,7 +11,7 @@ int main()
     ImgProcess ImgProcess;
     Judge Judge;
     SYNC SYNC;
-    // PPNCDetection PPNCDetection;
+    PPNCDetection PPNCDetection;
     NDTensor Tensor;
     // 数据结构体指针定义
     Img_Store Img_Store_c; 
@@ -28,8 +28,8 @@ int main()
     Flag *Flag_p = &Flag_c; 
 
     // 变量设置
-    // vector<int64_t> InputSize = {320,320};  // 设置图像输入模型的尺寸，即张量尺寸
-    // unordered_map<string, NDTensor> Run_Tensor;   // 设置传入run()中的参数
+    vector<int64_t> InputSize = {320,320};  // 设置图像输入模型的尺寸，即张量尺寸
+    unordered_map<string, NDTensor> Run_Tensor;   // 设置传入run()中的参数
 
     // ONNX模型初始化
     ONNX_Model_Init("../model/post.onnx");
@@ -57,7 +57,7 @@ int main()
     }
 
     // 模型初始化
-    // PPNCDetection.init("../model");
+    PPNCDetection.init("../model");
     
     Function_EN_p -> Game_EN = true;
     Function_EN_p -> Loop_Kind_EN = UART_RECEIVE_LOOP;
@@ -83,10 +83,10 @@ int main()
 
                     // 获取模型预测结果
                     // PPNCDetection.TransposeAndCopyToTensor(Img_Store_p -> Img_Color,Tensor); // 将Mat格式图像转为张量
-                    // auto Run_Tensor = PPNCDetection.preprocess((Img_Store_p -> Img_Color),InputSize);
-                    // PPNCDetection.run(*Run_Tensor); // 模型输入图像预处理
-                    // PPNCDetection.render(); // 预测
-                    // PPNCDetection.drawBox(Img_Store_p -> Img_Color); // 识别结果画框
+                    auto Run_Tensor = PPNCDetection.preprocess((Img_Store_p -> Img_Color),InputSize);
+                    PPNCDetection.run(*Run_Tensor); // 模型输入图像预处理
+                    PPNCDetection.render(); // 预测
+                    PPNCDetection.drawBox(Img_Store_p -> Img_Color); // 识别结果画框
 
                     ImgSideSearch(Img_Store_p,Data_Path_p);   // 边线八邻域寻线
 

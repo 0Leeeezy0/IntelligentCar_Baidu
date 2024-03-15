@@ -37,6 +37,12 @@
 				"parent" : 0
 			},
 			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 21,
+				"parent" : 0
+			},
+			{
 				"command" : 2,
 				"file" : 0,
 				"line" : 47,
@@ -86,27 +92,27 @@
 			"includes" : 
 			[
 				{
-					"backtrace" : 4,
+					"backtrace" : 5,
 					"path" : "/usr/local/include/onnx"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/include/glib-2.0"
 				},
 				{
-					"backtrace" : 5,
+					"backtrace" : 6,
 					"path" : "/usr/lib/x86_64-linux-gnu/glib-2.0/include"
 				},
 				{
-					"backtrace" : 6,
+					"backtrace" : 7,
 					"path" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include"
 				},
 				{
-					"backtrace" : 7,
+					"backtrace" : 8,
 					"path" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include/model"
 				},
 				{
-					"backtrace" : 8,
+					"backtrace" : 9,
 					"isSystem" : true,
 					"path" : "/usr/local/include/opencv4"
 				}
@@ -146,7 +152,12 @@
 				"role" : "libraryPath"
 			},
 			{
-				"fragment" : "-Wl,-rpath,/usr/local/lib/onnx:/usr/local/lib",
+				"backtrace" : 3,
+				"fragment" : "-L\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./lib/model\"",
+				"role" : "libraryPath"
+			},
+			{
+				"fragment" : "-Wl,-rpath,\"/usr/local/lib/onnx:/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./lib/model:/usr/local/lib\"",
 				"role" : "libraries"
 			},
 			{
@@ -155,77 +166,82 @@
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 1,
+				"fragment" : "-l./lib/model/libppnc_runtime.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_gapi.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_highgui.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_ml.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_objdetect.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_photo.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_stitching.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_video.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_videoio.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_imgcodecs.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_dnn.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_calib3d.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_features2d.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_flann.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_imgproc.so.4.9.0",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
+				"backtrace" : 4,
 				"fragment" : "/usr/local/lib/libopencv_core.so.4.9.0",
 				"role" : "libraries"
 			}
