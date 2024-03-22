@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 #工程名字
-project(DEMO.RUN)
+project(INCAR.RUN)
 
 #OpenCV
 #用find_package方法引入OpenCV库
@@ -18,8 +18,8 @@ link_directories(/usr/local/lib/onnx)
 link_libraries(/usr/local/lib/onnx/libonnxruntime.so)
 
 #PPNC
-link_directories(./lib/model)
-link_libraries(./lib/model/libppnc_runtime.so)
+# link_directories(/usr/local/lib/ppnc)
+# link_libraries(/usr/local/lib/ppnc/libppnc_runtime.so)
 
 #开发端
 
@@ -36,7 +36,7 @@ add_executable(${PROJECT_NAME}  ./src/main.cpp
                                 ./src/path_across.cpp
                                 ./src/path_circle.cpp
                                 ./src/path_side_search.cpp
-                                ./src/path_AI.cpp
+                                ./src/path_model.cpp
                                 ./lib/libimage_process.cpp
                                 ./lib/libdata_process.cpp
                                 ./lib/libmodel_onnx.cpp

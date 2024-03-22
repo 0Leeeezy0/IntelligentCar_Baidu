@@ -11,7 +11,7 @@ using namespace cv;
 	然后用sobel算子检测边缘
 	最后再次二值化
 */
-void ImgProcess::ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
+void ImgProcess::ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,int Dilate_Factor,int Erode_Factor)
 {
 	ImgProcess::ImgUnpivot((Img_Store_p -> Img_Color) , (Img_Store_p -> Img_Color_Unpivot));
     (Img_Store_p -> Img_Track_Unpivot) = (Img_Store_p -> Img_Color_Unpivot).clone();
@@ -20,7 +20,15 @@ void ImgProcess::ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 	threshold((Img_Store_p -> Img_Gray_Unpivot) , (Img_Store_p -> Img_OTSU_Unpivot) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
 	ImgProcess::ImgSobel((Img_Store_p -> Img_OTSU_Unpivot));	//Sobel算子处理
 	threshold((Img_Store_p -> Img_OTSU_Unpivot) , (Img_Store_p -> Img_OTSU_Unpivot) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
-	ImgProcess::ImgSharpen((Img_Store_p -> Img_OTSU_Unpivot),5);
+	// ImgProcess::ImgSharpen((Img_Store_p -> Img_OTSU_Unpivot),5);
+	for(int i = 0;i <= Dilate_Factor;i++)
+	{
+		dilate((Img_Store_p -> Img_OTSU_Unpivot),(Img_Store_p -> Img_OTSU_Unpivot),(Img_Store_p -> Dilate_Kernel));
+	}
+	for(int i = 0;i <= Erode_Factor;i++)
+	{
+		erode((Img_Store_p -> Img_OTSU_Unpivot),(Img_Store_p -> Img_OTSU_Unpivot),(Img_Store_p -> Erode_Kernel));
+	}
 	// 加白框防止八邻域寻线出错
 	line((Img_Store_p -> Img_OTSU_Unpivot),Point(0,0),Point(319,0),Scalar(255),3);
 	line((Img_Store_p -> Img_OTSU_Unpivot),Point(319,0),Point(319,239),Scalar(255),3);

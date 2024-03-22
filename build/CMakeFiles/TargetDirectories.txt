@@ -1,3 +1,3 @@
-/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles/DEMO.RUN.dir
-/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles/edit_cache.dir
-/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build/CMakeFiles/rebuild_cache.dir
+/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build/CMakeFiles/INCAR.RUN.dir
+/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build/CMakeFiles/edit_cache.dir
+/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build/CMakeFiles/rebuild_cache.dir

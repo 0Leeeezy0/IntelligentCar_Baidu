@@ -8,21 +8,6 @@ class Judge
 {
     public:
 
-
-        /*
-            赛道循环类型决策
-            边线坐标差值法
-            1.普通赛道类型
-            2.圆环赛道类型
-            3.十字赛道类型
-            @参数说明
-            Data_Path_p 路径相关数据指针
-            @返回值说明
-            返回赛道循环类型
-        */
-        LoopKind TrackKind_Judge_Difference(Data_Path *Data_Path_p);
-
-
         /*
             赛道循环类型决策
             边线坐标向量法
@@ -38,6 +23,17 @@ class Judge
             返回赛道循环类型
         */
         LoopKind TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Function_EN* Function_EN_p);
+
+
+        /*
+            模型赛道决策
+            @参数说明
+            results 模型预测结果容器
+            Data_Path_p 路径相关数据指针
+            @返回值说明
+            返回赛道类型
+        */
+        LoopKind ModelTrack_Judge(std::vector<PredictResult> results,Data_Path *Data_Path_p);
 
 
         /*

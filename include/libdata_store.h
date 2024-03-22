@@ -5,8 +5,8 @@
 #define _LIBDATA_STORE_H_
 
 // 串口接收初始化的调试参数
-#define Forward_Default 80  // 调试参数
-#define Path_Search_Start_Default 50    // 调试参数
+#define Forward_Default 55  // 调试参数
+#define Path_Search_Start_Default 30   // 调试参数
 #define Path_Search_End_Default 140 // 调试参数
 #define Side_Search_Start_Default 10   // 调试参数
 #define Side_Search_End_Default 200   // 调试参数
@@ -15,12 +15,14 @@
 #define BAUDRATE 115200 // 串口波特率
 #define PI 3.1415926    // 圆周率
 #define FPS_TIME 1 // 帧间时间
+#define DILATE_FACTOR 0 // 边线图形学膨胀系数
+#define ERODE_FACTOR 2 // 边线图形学腐蚀系数
 
 // 非串口接收初始化的调试参数
 #define UART_EN false    // 串口
 #define IMGCOMPRESS_EN true // 图像压缩
 #define UNPIVOT_EN true // 暂时没有用
-#define CAMERA USB_EB_CAMERA // 相机采集类型 摄像头/视频
+#define CAMERA DEMO_VIDEO // 相机采集类型 摄像头/视频
 
 /*
     相机类型
@@ -73,9 +75,21 @@ typedef enum CircleTrackStep
 }CircleTrackStep;
 
 /*
-    模型赛道标签
+    模型赛道区域类型
 */
-typedef enum Model_TrackLable
+typedef enum ModelZoneKind
+{
+    Model_Bridge_Zone = 0,  // 桥梁区
+    Model_Crosswalk_Zone = 1,   // 斑马线区
+    Model_Danger_Zone = 2,  // 危险区
+    Model_Rescue_Zone = 3,  // 救援区
+    Model_Chase_Zone = 4,   // 追逐区
+}ModelZoneKind;
+
+/*
+    模型推理元素
+*/
+typedef enum ModelDetectionElement
 {
     Cone_L = 0, // 左锥桶
     Cone_R = 1, // 右锥桶
@@ -83,7 +97,7 @@ typedef enum Model_TrackLable
     Block_R = 3, // 右路障
     Garage_L = 4,   // 左车库
     Garage_R = 5    // 右车库
-}Model_TrackLable;
+}ModelDetectionElement;
 
 /*
     图像存储
@@ -99,6 +113,8 @@ typedef struct Img_Store
     cv::Mat Img_Track;
     cv::Mat Img_Track_Unpivot;  //使用
     cv::Mat Img_All;    // 使用
+    cv::Mat Dilate_Kernel = getStructuringElement(cv::MORPH_CROSS,cv::Size(2,2));  // 边线形态学膨胀核大小
+    cv::Mat Erode_Kernel = getStructuringElement(cv::MORPH_CROSS,cv::Size(2,2));  // 边线形态学腐蚀核大小
     int ImgNum;
 }Img_Store;
 
@@ -120,7 +136,6 @@ typedef struct Function_EN
     bool ImgCompress_EN = IMGCOMPRESS_EN;   // 图像压缩使能
     bool Game_EN;   // 比赛开始
     LoopKind Loop_Kind_EN;  // 循环类型使能：0.图像循环 1.普通赛道循环 2.圆环赛道循环 3.十字赛道循环 4.AI赛道循环 5.串口发送循环
-    bool Model_EN;
 }Function_EN;
 
 /*
@@ -133,6 +148,7 @@ typedef struct Data_Path
     int Path_Search_End;   // 寻路径结束点
     int Side_Search_Start; // 寻边线起始点
     int Side_Search_End; // 寻边线结束点
+    int Side_Width; // 左右边线起始点距离
     int SideCoordinate[10000][4] = {0};   // 左右边线坐标(中线寻线法)
     int SideCoordinate_Eight[10000][4] = {0};   // 左右边线坐标(八邻域)
     int NumSearch[2] = {0}; // 左右八邻域寻线坐标数量
@@ -145,7 +161,8 @@ typedef struct Data_Path
     int MotorSpeed;    // 电机速度
     TrackKind Track_Kind; // 赛道类型：1.普通赛道 2.左圆环赛道 3.右圆环赛道 4.十字赛道
     CircleTrackStep Circle_Track_Step;  // 圆环入环步骤：1.准备入环 2.入环 3.出环
-    Model_TrackLable Model_Track_Lable;    // AI赛道标签：1.左锥桶 2.右锥桶 3.左路障 4.右路障 5.左车库 6.右车库
+    ModelZoneKind Model_Zone_Kind;    // 模型赛道区域类型
+    // vector<Model_Detection_Element> Model_Detection_Element;    // 模型预测元素
 }Data_Path;
 
 /*

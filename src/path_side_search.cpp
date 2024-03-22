@@ -19,7 +19,7 @@ void ImgPathSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
     int Y = 0;
 
     // 设置路径起始坐标
-    Data_Path_p -> TrackCoordinate[0][0] = 160;
+    Data_Path_p -> TrackCoordinate[0][0] = ((Data_Path_p -> SideCoordinate_Eight[Data_Path_p -> Path_Search_Start][0])+(Data_Path_p -> SideCoordinate_Eight[Data_Path_p -> Path_Search_Start][2]))/2;
     Data_Path_p -> TrackCoordinate[0][1] = 239-(Data_Path_p -> Path_Search_Start);
 
     int NumSearch = 0;  //坐标数组的行序号
@@ -140,7 +140,7 @@ void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
             {
                 circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> SideCoordinate_Eight[0][0]),(Data_Path_p -> SideCoordinate_Eight[0][1])),6,Scalar(255,0,255),2);	//左边线起点画点
                 circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> SideCoordinate_Eight[0][2]),(Data_Path_p -> SideCoordinate_Eight[0][3])),6,Scalar(255,0,255),2);	//右边线起点画点
-
+                Data_Path_p -> Side_Width = abs((Data_Path_p -> SideCoordinate_Eight[0][0])-(Data_Path_p -> SideCoordinate_Eight[0][2]));
             }
             else
             {

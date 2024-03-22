@@ -1,52 +1,52 @@
 [
 {
-  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build",
-  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include\" -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include/model\" -isystem /usr/local/include/opencv4 -g -o CMakeFiles/DEMO.RUN.dir/src/main.cpp.o -c \"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/main.cpp\"",
-  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/main.cpp"
+  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build",
+  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include/model -isystem /usr/local/include/opencv4 -g -o CMakeFiles/INCAR.RUN.dir/src/main.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/src/main.cpp",
+  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/src/main.cpp"
 },
 {
-  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build",
-  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include\" -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include/model\" -isystem /usr/local/include/opencv4 -g -o CMakeFiles/DEMO.RUN.dir/src/path_across.cpp.o -c \"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/path_across.cpp\"",
-  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/path_across.cpp"
+  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build",
+  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include/model -isystem /usr/local/include/opencv4 -g -o CMakeFiles/INCAR.RUN.dir/src/path_across.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/src/path_across.cpp",
+  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/src/path_across.cpp"
 },
 {
-  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build",
-  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include\" -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include/model\" -isystem /usr/local/include/opencv4 -g -o CMakeFiles/DEMO.RUN.dir/src/path_circle.cpp.o -c \"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/path_circle.cpp\"",
-  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/path_circle.cpp"
+  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build",
+  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include/model -isystem /usr/local/include/opencv4 -g -o CMakeFiles/INCAR.RUN.dir/src/path_circle.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/src/path_circle.cpp",
+  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/src/path_circle.cpp"
 },
 {
-  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build",
-  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include\" -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include/model\" -isystem /usr/local/include/opencv4 -g -o CMakeFiles/DEMO.RUN.dir/src/path_side_search.cpp.o -c \"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/path_side_search.cpp\"",
-  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/path_side_search.cpp"
+  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build",
+  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include/model -isystem /usr/local/include/opencv4 -g -o CMakeFiles/INCAR.RUN.dir/src/path_side_search.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/src/path_side_search.cpp",
+  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/src/path_side_search.cpp"
 },
 {
-  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build",
-  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include\" -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include/model\" -isystem /usr/local/include/opencv4 -g -o CMakeFiles/DEMO.RUN.dir/src/path_AI.cpp.o -c \"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/path_AI.cpp\"",
-  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/src/path_AI.cpp"
+  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build",
+  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include/model -isystem /usr/local/include/opencv4 -g -o CMakeFiles/INCAR.RUN.dir/src/path_model.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/src/path_model.cpp",
+  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/src/path_model.cpp"
 },
 {
-  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build",
-  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include\" -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include/model\" -isystem /usr/local/include/opencv4 -g -o CMakeFiles/DEMO.RUN.dir/lib/libimage_process.cpp.o -c \"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libimage_process.cpp\"",
-  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libimage_process.cpp"
+  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build",
+  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include/model -isystem /usr/local/include/opencv4 -g -o CMakeFiles/INCAR.RUN.dir/lib/libimage_process.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/lib/libimage_process.cpp",
+  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/lib/libimage_process.cpp"
 },
 {
-  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build",
-  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include\" -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include/model\" -isystem /usr/local/include/opencv4 -g -o CMakeFiles/DEMO.RUN.dir/lib/libdata_process.cpp.o -c \"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libdata_process.cpp\"",
-  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libdata_process.cpp"
+  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build",
+  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include/model -isystem /usr/local/include/opencv4 -g -o CMakeFiles/INCAR.RUN.dir/lib/libdata_process.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/lib/libdata_process.cpp",
+  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/lib/libdata_process.cpp"
 },
 {
-  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build",
-  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include\" -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include/model\" -isystem /usr/local/include/opencv4 -g -o CMakeFiles/DEMO.RUN.dir/lib/libmodel_onnx.cpp.o -c \"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libmodel_onnx.cpp\"",
-  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libmodel_onnx.cpp"
+  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build",
+  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include/model -isystem /usr/local/include/opencv4 -g -o CMakeFiles/INCAR.RUN.dir/lib/libmodel_onnx.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/lib/libmodel_onnx.cpp",
+  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/lib/libmodel_onnx.cpp"
 },
 {
-  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build",
-  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include\" -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include/model\" -isystem /usr/local/include/opencv4 -g -o CMakeFiles/DEMO.RUN.dir/lib/libuart_wz.cpp.o -c \"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libuart_wz.cpp\"",
-  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libuart_wz.cpp"
+  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build",
+  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include/model -isystem /usr/local/include/opencv4 -g -o CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/lib/libuart_wz.cpp",
+  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/lib/libuart_wz.cpp"
 },
 {
-  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/build",
-  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include\" -I\"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/./include/model\" -isystem /usr/local/include/opencv4 -g -o CMakeFiles/DEMO.RUN.dir/lib/libuart_eb.cpp.o -c \"/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libuart_eb.cpp\"",
-  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/DEMO(2)/lib/libuart_eb.cpp"
+  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build",
+  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/./include/model -isystem /usr/local/include/opencv4 -g -o CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/lib/libuart_eb.cpp",
+  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/lib/libuart_eb.cpp"
 }
 ]

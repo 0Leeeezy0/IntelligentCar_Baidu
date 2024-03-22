@@ -11,8 +11,11 @@ int main()
     ImgProcess ImgProcess;
     Judge Judge;
     SYNC SYNC;
-    PPNCDetection PPNCDetection;
-    NDTensor Tensor;
+
+    // 模型部署库类定义
+    // PPNCDetection PPNCDetection;
+    // NDTensor Tensor;
+
     // 数据结构体指针定义
     Img_Store Img_Store_c; 
     Img_Store *Img_Store_p = &Img_Store_c;
@@ -27,12 +30,9 @@ int main()
     Flag Flag_c;
     Flag *Flag_p = &Flag_c; 
 
-    // 变量设置
-    vector<int64_t> InputSize = {320,320};  // 设置图像输入模型的尺寸，即张量尺寸
-    unordered_map<string, NDTensor> Run_Tensor;   // 设置传入run()中的参数
-
-    // ONNX模型初始化
-    ONNX_Model_Init("../model/post.onnx");
+    // 模型变量设置
+    // vector<int64_t> InputSize = {320,320};  // 设置图像输入模型的尺寸，即张量尺寸
+    // unordered_map<string, NDTensor> Run_Tensor;   // 设置传入run()中的参数
 
     //摄像头初始化
      VideoCapture Camera; // 定义相机
@@ -57,15 +57,10 @@ int main()
     }
 
     // 模型初始化
-    PPNCDetection.init("../model");
+    // PPNCDetection.init("../model");
     
     Function_EN_p -> Game_EN = true;
     Function_EN_p -> Loop_Kind_EN = UART_RECEIVE_LOOP;
-    /*
-        MODEL_EN AI使能，若部署了AI则该行注释掉，且若模型检测到物体，则将 MODEL_EN 置为 true,否则为 false
-        若 MODEL_EN 为true,则在 JUDGE_LOOP 循环中进行赛道循环切换会直接切换进 MODEL_Track_Loop 循环，执行AI赛道任务，并同时关闭断点检测   
-    */
-   Function_EN_p -> Model_EN = false; 
 
     while(Function_EN_p -> Game_EN == true)
     {   
@@ -79,15 +74,15 @@ int main()
                 {
                     Camera >> (Img_Store_p -> Img_Color);   // 将视频流转为图像流
                     ImgProcess.ImgCompress((Img_Store_p -> Img_Color),(Function_EN_p -> ImgCompress_EN));   // 图像压缩：可在数据存储头文件中决定是否要进行图像压缩
-                    ImgProcess.ImgPrepare(Img_Store_p,Data_Path_p); // 图像预处理
+                    ImgProcess.ImgPrepare(Img_Store_p,Data_Path_p,DILATE_FACTOR,ERODE_FACTOR); // 图像预处理
 
-                    // 获取模型预测结果
+                    // 模型预测结果获取
                     // PPNCDetection.TransposeAndCopyToTensor(Img_Store_p -> Img_Color,Tensor); // 将Mat格式图像转为张量
-                    auto Run_Tensor = PPNCDetection.preprocess((Img_Store_p -> Img_Color),InputSize);
-                    PPNCDetection.run(*Run_Tensor); // 模型输入图像预处理
-                    PPNCDetection.render(); // 预测
-                    PPNCDetection.drawBox(Img_Store_p -> Img_Color); // 识别结果画框
-
+                    // auto Run_Tensor = PPNCDetection.preprocess((Img_Store_p -> Img_Color),InputSize);
+                    // PPNCDetection.run(*Run_Tensor); // 模型输入图像预处理
+                    // PPNCDetection.render(); // 预测
+                    // PPNCDetection.drawBox(Img_Store_p -> Img_Color); // 识别结果画框
+                    
                     ImgSideSearch(Img_Store_p,Data_Path_p);   // 边线八邻域寻线
 
                     Img_Store_p -> ImgNum++;
@@ -120,12 +115,7 @@ int main()
         // 赛道状态机决策循环
         while( Function_EN_p -> Loop_Kind_EN == JUDGE_LOOP )
         {
-            // 使用AI预测结果进行决策
-            /*
-                1/2个锥桶根据锥桶在图像中的位置进行决策是左锥桶还是右锥桶，将 Function_EN_p -> AI_EN 置为true
-                路障，根据路障在图像中的位置决策是左路障还是右路障。将 Function_EN_p -> AI_EN 置为true
-                图像标志：根据图像LABLE决策进入左车库还是右车库，将 Function_EN_p -> AI_EN 置为true
-            */
+            // Function_EN_p -> Loop_Kind_EN = Judge.ModelTrack_Judge(PPNCDetection.results,Data_Path_p);  // 模型赛道决策
             Function_EN_p -> Loop_Kind_EN = Judge.TrackKind_Judge_Vector(Img_Store_p,Data_Path_p,Function_EN_p);  // 切换至赛道循环
             ImgProcess.ImgInterrupt(Img_Store_p,Data_Path_p);    // 边线断点绘制
         }
@@ -177,7 +167,7 @@ int main()
         }
 
         // AI赛道主循环
-        while( Function_EN_p -> Loop_Kind_EN == MODEL_TRACK_LOOP )
+        while( Function_EN_p -> Loop_Kind_EN == MODEL_TRACK_LOOP)
         {   
             /* 
                 左右锥桶判定条件：AI只检测到一个或两个锥桶，若锥桶在图像左侧为左锥桶，以此类推
@@ -185,14 +175,14 @@ int main()
                 左右车库判定条件：根据车库前获取的LABLE判定进左车库还是右车库
                 AI 赛道元素执行时不使用传统元素寻线等，只进行摄像头采集
             */
-            switch(Data_Path_p -> Model_Track_Lable)
+            switch(Data_Path_p -> Model_Zone_Kind)
             {
-                case Cone_L:{ break; }
-                case Cone_R:{ break; }
-                case Block_L:{ break; }
-                case Block_R:{ break; }
-                case Garage_L:{ break; }
-                case Garage_R:{ break; }
+
+                case Model_Bridge_Zone:{ break; }
+                case Model_Crosswalk_Zone:{ break; }
+                case Model_Danger_Zone:{ break; }
+                case Model_Rescue_Zone:{ break; }
+                case Model_Chase_Zone:{ break; }
             }
         }
     }

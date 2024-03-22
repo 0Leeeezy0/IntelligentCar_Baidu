@@ -6,86 +6,6 @@ using namespace cv;
 
 
 /*
-    TrackKind_Judge_Difference说明
-    边线坐标差值法
-    赛道循环类型决策
-    1.普通赛道循环类型
-    2.圆环赛道循环类型
-    3.十字赛道循环类型
-*/
-LoopKind Judge::TrackKind_Judge_Difference(Data_Path *Data_Path_p)
-{
-    int i;
-    int Max[2] = {0,0};
-    Data_Path_p -> InterruptNum[0] = 0;
-    Data_Path_p -> InterruptNum[1] = 0;
-    LoopKind Loop_Kind;
-    // 寻断点范围
-    for(i = (Data_Path_p ->Side_Search_Start)-(Data_Path_p -> Path_Search_Start);i <= (Data_Path_p ->Side_Search_End)-(Data_Path_p -> Path_Search_Start);i++)
-    {
-        // 获取最大左边线坐标差值以此计算中断点
-        if(abs((Data_Path_p -> SideCoordinate[i][0])-(Data_Path_p -> SideCoordinate[i-1][0])) > Max[0])
-        {
-            Max[0] = abs((Data_Path_p -> SideCoordinate[i][0])-(Data_Path_p -> SideCoordinate[i-1][0]));
-            if(Max[0] >= 10)
-            {
-                if(Data_Path_p -> InterruptNum[0] == 0)
-                {
-                    (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[0])][0]) = (Data_Path_p -> SideCoordinate[i-1][0]);
-                    (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[0])][1]) = (Data_Path_p -> SideCoordinate[i-1][1]);
-                }
-                else
-                {
-                    (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[0])][0]) = (Data_Path_p -> SideCoordinate[i][0]);
-                    (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[0])][1]) = (Data_Path_p -> SideCoordinate[i][1]);
-                }
-                Data_Path_p -> InterruptNum[0]++;
-                Max[0] = 0;
-            }
-        }
-        // 获取最大右边线坐标差值以此计算中断点
-        if(abs((Data_Path_p -> SideCoordinate[i][2])-(Data_Path_p -> SideCoordinate[i-1][2])) > Max[1])
-        {
-            Max[1] = abs((Data_Path_p -> SideCoordinate[i][2])-(Data_Path_p -> SideCoordinate[i-1][2]));
-            if(Max[1] >= 10)
-            {
-                if(Data_Path_p -> InterruptNum[1] == 0)
-                {
-                    (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[1])][2]) = (Data_Path_p -> SideCoordinate[i-1][2]);
-                    (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[1])][3]) = (Data_Path_p -> SideCoordinate[i-1][3]);
-                }
-                else
-                {
-                    (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[1])][2]) = (Data_Path_p -> SideCoordinate[i][2]);
-                    (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[1])][3]) = (Data_Path_p -> SideCoordinate[i][3]);
-                }
-                Data_Path_p -> InterruptNum[1]++;
-                Max[1] = 0;
-            }
-        }
-    }
-
-    if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] >= 1))
-    {
-        Loop_Kind = ACROSS_TRACK_LOOP;
-    }
-    if((Data_Path_p -> InterruptNum[0] == 0) && (Data_Path_p -> InterruptNum[1] >= 1))
-    {
-        Loop_Kind = R_CIRCLE_TRACK_LOOP;
-    }
-    if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] == 0))
-    {
-        Loop_Kind = L_CIRCLE_TRACK_LOOP;
-    }
-    if((Data_Path_p -> InterruptNum[0] == 0) && (Data_Path_p -> InterruptNum[1] == 0))
-    {
-        Loop_Kind = COMMON_TRACK_LOOP;
-    }
-    return Loop_Kind;
-}
-
-
-/*
     TrackKind_Judge_Vector说明
     边线坐标向量法
     赛道循环类型决策
@@ -97,7 +17,11 @@ LoopKind Judge::TrackKind_Judge_Difference(Data_Path *Data_Path_p)
 LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Function_EN* Function_EN_p)
 {
     LoopKind Loop_Kind;
-    if(Function_EN_p -> Model_EN == false)
+    static int State = 0;   // 状态记录
+    static int State_Across = 0;
+    static int State_Circle = 0;
+
+    if(Function_EN_p -> Loop_Kind_EN != MODEL_TRACK_LOOP)
     {
         int i;
         int j;
@@ -179,25 +103,32 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
         }
 
         // 若左右边线都有中断点则为十字
-        if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] >= 1))
+        if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] >= 1) && State - State_Circle >= 40)
         {
             // Record = Img_Store_p -> ImgNum;
+            State++;
+            State_Across = State;
             Loop_Kind = ACROSS_TRACK_LOOP;
             Data_Path_p -> Track_Kind = ACROSS_TRACK;
         }
         // 若左右边线只有一边有中断点  //且当前图像序号和十字中存储的图像序号有间隔才为左右圆环：防止误判
-        else if((Data_Path_p -> InterruptNum[0] == 0) && (Data_Path_p -> InterruptNum[1] >= 1))
+        else if((Data_Path_p -> InterruptNum[0] == 0) && (Data_Path_p -> InterruptNum[1] >= 1) && State - State_Across >= 40)
         {
+            State++;
+            State_Circle = State;
             Loop_Kind = R_CIRCLE_TRACK_LOOP;
             Data_Path_p -> Track_Kind = R_CIRCLE_TRACK;
         }
-        else if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] == 0))
+        else if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] == 0) && State - State_Across >= 40)
         {
+            State++;
+            State_Circle = State;
             Loop_Kind = L_CIRCLE_TRACK_LOOP;
             Data_Path_p -> Track_Kind = L_CIRCLE_TRACK;
         }
         else
         {
+            State++;
             Loop_Kind = COMMON_TRACK_LOOP;
             Data_Path_p -> Track_Kind = COMMON_TRACK;
         }
@@ -211,6 +142,26 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
 }
 
 
+/*
+    ModelTrack_Judge说明
+    模型赛道决策
+    本函数不集成至TrackKind_Judge_Vector中是为了在开发端能进行调试
+*/
+LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_Path_p)
+{
+    LoopKind Loop_Kind;
+    for(int i=0;i<results.size();i++)
+    {
+        PredictResult result = results[i];
+    
+        if(result.label == "bomb"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = Model_Danger_Zone; }
+        else if(result.label == "bridge"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = Model_Bridge_Zone; }
+        else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = Model_Crosswalk_Zone; }
+        // else if(result.label == "")
+        // 
+    }
+    return Loop_Kind;
+}
 /*
     ServoDirAngle_Judge说明
     计算舵机方向和舵机角度
