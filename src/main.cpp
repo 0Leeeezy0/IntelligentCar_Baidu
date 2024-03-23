@@ -133,7 +133,6 @@ int main()
         while( Function_EN_p -> Loop_Kind_EN == L_CIRCLE_TRACK_LOOP || Function_EN_p -> Loop_Kind_EN == R_CIRCLE_TRACK_LOOP)
         {
             Data_Path_p -> MotorSpeed = 20;
-            Data_Path_p -> Circle_Track_Step = CircleTrack_Step_Judge(Img_Store_p,Data_Path_p);
             switch(Data_Path_p -> Circle_Track_Step)
             {
                 case IN_PREPARE:
@@ -150,7 +149,7 @@ int main()
                 }
                 case OUT:
                 {
-                    // CircleTrack_Step_OUT(Img_Store_p,Data_Path_p);   // 出环补线
+                    CircleTrack_Step_OUT(Img_Store_p,Data_Path_p);   // 出环补线
                     ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
                 }
             }

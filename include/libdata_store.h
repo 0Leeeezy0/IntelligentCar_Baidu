@@ -22,7 +22,7 @@
 #define UART_EN false    // 串口
 #define IMGCOMPRESS_EN true // 图像压缩
 #define UNPIVOT_EN true // 暂时没有用
-#define CAMERA DEMO_VIDEO // 相机采集类型 摄像头/视频
+#define CAMERA USB_PC_CAMERA // 相机采集类型 摄像头/视频
 
 /*
     相机类型
@@ -72,6 +72,7 @@ typedef enum CircleTrackStep
     IN_PREPARE = 0, // 准备入环
     IN = 1, // 入环
     OUT = 2, // 出环
+    INIT = 3,   // 占位
 }CircleTrackStep;
 
 /*
@@ -156,11 +157,12 @@ typedef struct Data_Path
     int TrackCoordinate[10000][2] = {0};   // 路径线坐标
     int InterruptCoordinate[10000][4] = {0};  // 左右边线断点坐标
     int InterruptNum[2] = {0};    // 边线断点数量
+    int CircleTime = 0; // 进入圆环的图像序号
     int ServoDir;  // 舵机方向
     int ServoAngle;    // 舵机角度
     int MotorSpeed;    // 电机速度
     TrackKind Track_Kind; // 赛道类型：1.普通赛道 2.左圆环赛道 3.右圆环赛道 4.十字赛道
-    CircleTrackStep Circle_Track_Step;  // 圆环入环步骤：1.准备入环 2.入环 3.出环
+    CircleTrackStep Circle_Track_Step = INIT;  // 圆环入环步骤：1.准备入环 2.入环 3.出环
     ModelZoneKind Model_Zone_Kind;    // 模型赛道区域类型
     // vector<Model_Detection_Element> Model_Detection_Element;    // 模型预测元素
 }Data_Path;

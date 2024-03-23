@@ -29,6 +29,7 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
         Data_Path_p -> InterruptNum[0] = 0;
         Data_Path_p -> InterruptNum[1] = 0;
         int Vector[2][4] = {0}; // 左右中断点与上下两点构成的向量坐标
+        int Vector_Add_Unit[1][4];   // 左右中断点上下两向量加和
         int Vector_ScalarProduct[2] = {0};  // 左右中断点向量点乘
         float Vector_Module[4] = {0};   // 左右中断点向量的模
         float AngleVector[2] = {0}; // 左右中断点向量夹角(角度制)
@@ -62,6 +63,12 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
                 //  cout << abs(AngleVector[0]) << endl;
                 (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[0])][0]) = (Data_Path_p -> SideCoordinate_Eight[i][0]);
                 (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[0])][1]) = (Data_Path_p -> SideCoordinate_Eight[i][1]);
+                if(Data_Path_p -> InterruptNum[0] == 0)
+                {
+                    // 向量加和
+                    Vector_Add_Unit[0][0] = (Vector[0][0]+Vector[1][0])/abs(Vector[0][0]+Vector[1][0]);
+                    Vector_Add_Unit[0][1] = (Vector[0][1]+Vector[1][1])/abs(Vector[0][1]+Vector[1][1]);
+                }
                 Data_Path_p -> InterruptNum[0]++;
                 i = i+10;
             }
@@ -96,6 +103,12 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
                 // cout << abs(AngleVector[1]) << endl;
                 (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[1])][2]) = (Data_Path_p -> SideCoordinate_Eight[j][2]);
                 (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[1])][3]) = (Data_Path_p -> SideCoordinate_Eight[j][3]);
+                if(Data_Path_p -> InterruptNum[1] == 0)
+                {
+                    // 向量加和
+                    Vector_Add_Unit[0][2] = (Vector[0][2]+Vector[1][2])/abs(Vector[0][2]+Vector[1][2]);
+                    Vector_Add_Unit[0][3] = (Vector[0][3]+Vector[1][3])/abs(Vector[0][3]+Vector[1][3]);
+                }
                 Data_Path_p -> InterruptNum[1]++;
                 j = j+10;
             }
@@ -116,8 +129,21 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
         {
             State++;
             State_Circle = State;
+            Data_Path_p -> CircleTime = Img_Store_p -> ImgNum;
             Loop_Kind = R_CIRCLE_TRACK_LOOP;
             Data_Path_p -> Track_Kind = R_CIRCLE_TRACK;
+            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE) && Vector_Add_Unit[0][3] == 1)
+            {
+                Data_Path_p -> Circle_Track_Step = IN_PREPARE;
+            }
+            else if(Vector_Add_Unit[0][3] == -1)   
+            {
+                Data_Path_p -> Circle_Track_Step = IN;
+            }   
+            else
+            {
+                Data_Path_p -> Circle_Track_Step = OUT;
+            }
         }
         else if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] == 0) && State - State_Across >= 40)
         {
@@ -125,12 +151,28 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
             State_Circle = State;
             Loop_Kind = L_CIRCLE_TRACK_LOOP;
             Data_Path_p -> Track_Kind = L_CIRCLE_TRACK;
+            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE) && Vector_Add_Unit[0][1] == 1)
+            {
+                Data_Path_p -> Circle_Track_Step = IN_PREPARE;
+            }
+            else if(Vector_Add_Unit[0][1] == -1)   
+            {
+                Data_Path_p -> Circle_Track_Step = IN;
+            }   
+            else
+            {
+                Data_Path_p -> Circle_Track_Step = OUT;
+            }
         }
         else
         {
             State++;
             Loop_Kind = COMMON_TRACK_LOOP;
             Data_Path_p -> Track_Kind = COMMON_TRACK;
+            if((Data_Path_p -> Circle_Track_Step) == OUT)
+            {
+                Data_Path_p -> Circle_Track_Step = INIT;
+            }
         }
     }
     else 
@@ -312,6 +354,7 @@ void DataPrint(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
                 case IN_PREPARE:{cout << "准备入环" << endl; break;}
                 case IN:{cout << "入环" << endl; break;}
                 case OUT:{cout << "出环" << endl; break;}
+                case INIT:{cout << "初始化" << endl; break;}
             }
             break;
         }
@@ -323,6 +366,7 @@ void DataPrint(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
                 case IN_PREPARE:{cout << "准备入环" << endl; break;}
                 case IN:{cout << "入环" << endl; break;}
                 case OUT:{cout << "出环" << endl; break;}
+                case INIT:{cout << "初始化" << endl; break;}
             }
             break;
         }

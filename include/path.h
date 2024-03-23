@@ -34,19 +34,13 @@ void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
 void AcrossTrack(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
 
 
-/*
-    圆环赛道步骤
-    @参数说明
-    Img_Store_p 图像存储指针
-    Data_Path_p 路径数据指针
-*/
-// 圆环步骤决策
-CircleTrackStep CircleTrack_Step_Judge(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
-
 // 圆环准备入环步骤：补线
 void CircleTrack_Step_IN_Prepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
 
 // 圆环入环步骤：补线
 void CircleTrack_Step_IN(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
+
+// 圆环出环步骤：补线
+void CircleTrack_Step_OUT(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
 
 #endif
