@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build"
+			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/IntelligentCar_Baidu/build"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -155,10 +155,10 @@
 				},
 				{
 					"name" : "HELPSTRING",
-					"value" : "CXX compiler"
+					"value" : "No help, variable specified on the command line."
 				}
 			],
-			"type" : "STRING",
+			"type" : "FILEPATH",
 			"value" : "/usr/bin/g++-12"
 		},
 		{
@@ -283,10 +283,10 @@
 				},
 				{
 					"name" : "HELPSTRING",
-					"value" : "C compiler"
+					"value" : "No help, variable specified on the command line."
 				}
 			],
-			"type" : "STRING",
+			"type" : "FILEPATH",
 			"value" : "/usr/bin/gcc-12"
 		},
 		{
@@ -555,7 +555,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build/CMakeFiles/pkgRedirects"
+			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/IntelligentCar_Baidu/build/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -615,7 +615,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR"
+			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/IntelligentCar_Baidu"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1595,7 +1595,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR/build"
+			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/IntelligentCar_Baidu/build"
 		},
 		{
 			"name" : "INCAR.RUN_IS_TOP_LEVEL",
@@ -1619,7 +1619,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/SMART_CAR"
+			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/IntelligentCar_Baidu"
 		},
 		{
 			"name" : "OpenCV_DIR",

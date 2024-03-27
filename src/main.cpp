@@ -27,8 +27,6 @@ int main()
     UartSendProtocol *UartSendProtocol_p = &UartSendProtocol_c;
     UartReceiveProtocol UartReceiveProtocol_c;
     UartReceiveProtocol *UartReceiveProtocol_p = &UartReceiveProtocol_c;
-    Flag Flag_c;
-    Flag *Flag_p = &Flag_c; 
 
     // 模型变量设置
     // vector<int64_t> InputSize = {320,320};  // 设置图像输入模型的尺寸，即张量尺寸
@@ -137,21 +135,19 @@ int main()
                 case IN_PREPARE:
                 {
                     CircleTrack_Step_IN_Prepare(Img_Store_p,Data_Path_p);   // 准备入环补线
-                    ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
                     break;
                 }
                 case IN:
                 {
                     CircleTrack_Step_IN(Img_Store_p,Data_Path_p);   // 入环补线
-                    ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
                     break;
                 }
                 case OUT:
                 {
-                    CircleTrack_Step_OUT(Img_Store_p,Data_Path_p);   // 出环补线
-                    ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
+                    // CircleTrack_Step_OUT(Img_Store_p,Data_Path_p);   // 出环补线
                 }
             }
+            ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
             ImgProcess.ImgShow(Img_Store_p,Data_Path_p);    // 图像合成显示并保存
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
         }

@@ -117,16 +117,17 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
         }
 
         // 若左右边线都有中断点则为十字
-        if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] >= 1) && State - State_Circle >= 40)
+        if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] >= 1) && State - State_Circle >= 200)
         {
             // Record = Img_Store_p -> ImgNum;
             State++;
             State_Across = State;
             Loop_Kind = ACROSS_TRACK_LOOP;
             Data_Path_p -> Track_Kind = ACROSS_TRACK;
+            Data_Path_p -> Circle_Track_Step = INIT;
         }
         // 若左右边线只有一边有中断点  //且当前图像序号和十字中存储的图像序号有间隔才为左右圆环：防止误判
-        else if((Data_Path_p -> InterruptNum[0] == 0) && (Data_Path_p -> InterruptNum[1] >= 1) && State - State_Across >= 40)
+        else if((Data_Path_p -> InterruptNum[0] == 0) && (Data_Path_p -> InterruptNum[1] >= 1) && State - State_Across >= 200)
         {
             State++;
             State_Circle = State;
@@ -137,7 +138,7 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
             {
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
             }
-            if(Vector_Add_Unit[0][3] == -1 && (Img_Store_p -> ImgNum)-OutTime >= 100)   
+            if(Vector_Add_Unit[0][3] == -1 && (Img_Store_p -> ImgNum)-OutTime >= 100 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
             {
                 Data_Path_p -> Circle_Track_Step = IN;
             }   
@@ -147,7 +148,7 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
                 OutTime = Img_Store_p -> ImgNum;
             }
         }
-        else if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] == 0) && State - State_Across >= 40)
+        else if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] == 0) && State - State_Across >= 200)
         {
             State++;
             State_Circle = State;
@@ -157,11 +158,11 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
             {
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
             }
-            if(Vector_Add_Unit[0][1] == -1 && (Img_Store_p -> ImgNum)-OutTime >= 100)   
+            if(Vector_Add_Unit[0][1] == -1 && (Img_Store_p -> ImgNum)-OutTime >= 100 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
             {
                 Data_Path_p -> Circle_Track_Step = IN;
             }   
-            if(Vector_Add_Unit[0][3] == 1 && ((Data_Path_p -> Circle_Track_Step) == IN || (Data_Path_p -> Circle_Track_Step) == OUT))
+            if(Vector_Add_Unit[0][1] == 1 && ((Data_Path_p -> Circle_Track_Step) == IN || (Data_Path_p -> Circle_Track_Step) == OUT))
             {
                 Data_Path_p -> Circle_Track_Step = OUT;
                 OutTime = Img_Store_p -> ImgNum;
@@ -215,7 +216,23 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
 */
 void Judge::ServoDirAngle_Judge(Data_Path *Data_Path_p)
 {
+    static int Count = 0; 
+    static int Dir = 0;
     (Data_Path_p -> ServoAngle) = (Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][0]) - 160;
+    if(Data_Path_p -> Circle_Track_Step == OUT)
+    {
+        Count = 0;
+        switch(Data_Path_p -> Track_Kind)
+        {
+            case L_CIRCLE_TRACK:{ Dir = 1; break; }
+            case R_CIRCLE_TRACK:{ Dir = -1; break; }
+        }
+    }
+    Count++;
+    if(Count <= 10)
+    {
+        (Data_Path_p -> ServoAngle) = Dir*100;
+    }
     // 计算舵机方向和角度
     if((Data_Path_p -> ServoAngle) < 0)
     {
@@ -241,11 +258,11 @@ void Judge::MotorSpeed_Judge(Data_Path *Data_Path_p)
         {
             if(Data_Path_p -> ServoAngle > 30 || Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN || Data_Path_p -> Circle_Track_Step == OUT )
             {
-                Data_Path_p -> MotorSpeed = 28;
+                Data_Path_p -> MotorSpeed = 25;
             }
             else
             {
-                Data_Path_p -> MotorSpeed = 45;
+                Data_Path_p -> MotorSpeed = 40;
             }
             break;
         }

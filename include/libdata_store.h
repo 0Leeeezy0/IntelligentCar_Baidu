@@ -120,14 +120,6 @@ typedef struct Img_Store
 }Img_Store;
 
 /*
-    标志位设置
-*/
-typedef struct Flag
-{
-    bool CameraInit;
-}Flag;
-
-/*
     函数使能
 */
 typedef struct Function_EN
