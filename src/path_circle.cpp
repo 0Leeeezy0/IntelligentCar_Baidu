@@ -63,14 +63,14 @@ void CircleTrack_Step_IN(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 }
 
 
-// 圆环出环步骤：补线
+// 圆环准备出环步骤：补线
 void CircleTrack_Step_OUT(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
     switch(Data_Path_p -> Track_Kind)
     {
         case L_CIRCLE_TRACK:
         {
-            // 右出环补线
+            // 右准备出环补线
             // 赛道彩色图像
             line((Img_Store_p -> Img_Track_Unpivot),Point(319,100),Point((Data_Path_p -> InterruptCoordinate[0][0]),(Data_Path_p -> InterruptCoordinate[0][1])),Scalar(128,0,128),4);
             // 赛道二值化图像
@@ -80,7 +80,7 @@ void CircleTrack_Step_OUT(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
         }
         case R_CIRCLE_TRACK:
         {
-            // 左出环补线
+            // 左准备出环补线
             // 赛道彩色图像
             line((Img_Store_p -> Img_Track_Unpivot),Point(0,100),Point((Data_Path_p -> InterruptCoordinate[0][2]),(Data_Path_p -> InterruptCoordinate[0][3])),Scalar(128,0,128),4);
             // 赛道二值化图像

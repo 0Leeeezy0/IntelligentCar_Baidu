@@ -20,6 +20,7 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
     static int State = 0;   // 状态记录
     static int State_Across = 0;
     static int State_Circle = 0;
+    static int OutTime = 0;    // 出环时间
 
     if(Function_EN_p -> Loop_Kind_EN != MODEL_TRACK_LOOP)
     {
@@ -136,13 +137,14 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
             {
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
             }
-            else if(Vector_Add_Unit[0][3] == -1)   
+            if(Vector_Add_Unit[0][3] == -1 && (Img_Store_p -> ImgNum)-OutTime >= 100)   
             {
                 Data_Path_p -> Circle_Track_Step = IN;
             }   
-            else
+            if(Vector_Add_Unit[0][3] == 1 && ((Data_Path_p -> Circle_Track_Step) == IN || (Data_Path_p -> Circle_Track_Step) == OUT))
             {
                 Data_Path_p -> Circle_Track_Step = OUT;
+                OutTime = Img_Store_p -> ImgNum;
             }
         }
         else if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] == 0) && State - State_Across >= 40)
@@ -155,13 +157,14 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
             {
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
             }
-            else if(Vector_Add_Unit[0][1] == -1)   
+            if(Vector_Add_Unit[0][1] == -1 && (Img_Store_p -> ImgNum)-OutTime >= 100)   
             {
                 Data_Path_p -> Circle_Track_Step = IN;
             }   
-            else
+            if(Vector_Add_Unit[0][3] == 1 && ((Data_Path_p -> Circle_Track_Step) == IN || (Data_Path_p -> Circle_Track_Step) == OUT))
             {
                 Data_Path_p -> Circle_Track_Step = OUT;
+                OutTime = Img_Store_p -> ImgNum;
             }
         }
         else
@@ -204,6 +207,8 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
     }
     return Loop_Kind;
 }
+
+
 /*
     ServoDirAngle_Judge说明
     计算舵机方向和舵机角度
@@ -220,6 +225,45 @@ void Judge::ServoDirAngle_Judge(Data_Path *Data_Path_p)
     else
     {
         (Data_Path_p -> ServoDir) = 1;  // 右转
+    }
+}
+
+
+/*
+    MotorSpeed_Judge说明
+    电机速度决策
+*/
+void Judge::MotorSpeed_Judge(Data_Path *Data_Path_p)
+{
+    switch(Data_Path_p -> Track_Kind)
+    {
+        case COMMON_TRACK:
+        {
+            if(Data_Path_p -> ServoAngle > 30 || Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN || Data_Path_p -> Circle_Track_Step == OUT )
+            {
+                Data_Path_p -> MotorSpeed = 28;
+            }
+            else
+            {
+                Data_Path_p -> MotorSpeed = 45;
+            }
+            break;
+        }
+        case L_CIRCLE_TRACK:
+        {
+            Data_Path_p -> MotorSpeed = 25;
+            break;
+        }
+        case R_CIRCLE_TRACK:
+        {
+            Data_Path_p -> MotorSpeed = 25;
+            break;
+        }
+        case ACROSS_TRACK:
+        {
+            Data_Path_p -> MotorSpeed = 25;
+            break;
+        }
     }
 }
 

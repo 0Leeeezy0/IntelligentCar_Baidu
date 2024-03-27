@@ -102,6 +102,7 @@ int main()
                 case UART_SEND_LOOP:
                 {
                     Judge.ServoDirAngle_Judge(Data_Path_p);
+                    Judge.MotorSpeed_Judge(Data_Path_p);
                     DataPrint(Data_Path_p,Function_EN_p);
                     SYNC.UartSend_Program_To_Change_SYNC(UartSendProtocol_p , Data_Path_p , Function_EN_p); // 同步程序数据至串口发送协议
                     Uart.UartSend(UartSendProtocol_p , (Function_EN_p -> Uart_EN));
@@ -123,16 +124,14 @@ int main()
         // 普通赛道主循环
         while( Function_EN_p -> Loop_Kind_EN == COMMON_TRACK_LOOP )
         {
-            Data_Path_p -> MotorSpeed = 30;
             ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
             ImgProcess.ImgShow(Img_Store_p,Data_Path_p);    // 图像合成显示并保存
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
         }
 
         // 左右圆环赛道主循环
-        while( Function_EN_p -> Loop_Kind_EN == L_CIRCLE_TRACK_LOOP || Function_EN_p -> Loop_Kind_EN == R_CIRCLE_TRACK_LOOP)
+        while( Function_EN_p -> Loop_Kind_EN == L_CIRCLE_TRACK_LOOP || Function_EN_p -> Loop_Kind_EN == R_CIRCLE_TRACK_LOOP )
         {
-            Data_Path_p -> MotorSpeed = 20;
             switch(Data_Path_p -> Circle_Track_Step)
             {
                 case IN_PREPARE:
@@ -160,7 +159,6 @@ int main()
         // 十字赛道主循环
         while( Function_EN_p -> Loop_Kind_EN == ACROSS_TRACK_LOOP )
         {
-            Data_Path_p -> MotorSpeed = 20;
             AcrossTrack(Img_Store_p,Data_Path_p);
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
         }

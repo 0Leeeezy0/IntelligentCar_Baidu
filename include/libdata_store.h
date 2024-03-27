@@ -19,10 +19,10 @@
 #define ERODE_FACTOR 2 // 边线图形学腐蚀系数
 
 // 非串口接收初始化的调试参数
-#define UART_EN false    // 串口
+#define UART_EN true    // 串口
 #define IMGCOMPRESS_EN true // 图像压缩
 #define UNPIVOT_EN true // 暂时没有用
-#define CAMERA USB_PC_CAMERA // 相机采集类型 摄像头/视频
+#define CAMERA USB_EB_CAMERA // 相机采集类型 摄像头/视频
 
 /*
     相机类型
@@ -71,7 +71,7 @@ typedef enum CircleTrackStep
 {
     IN_PREPARE = 0, // 准备入环
     IN = 1, // 入环
-    OUT = 2, // 出环
+    OUT = 2,    // 出环
     INIT = 3,   // 占位
 }CircleTrackStep;
 

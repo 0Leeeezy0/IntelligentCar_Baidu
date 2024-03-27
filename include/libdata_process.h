@@ -42,6 +42,14 @@ class Judge
             Data_Path_p 路径相关数据指针
         */
         void ServoDirAngle_Judge(Data_Path *Data_Path_p);
+
+
+        /*
+            电机速度决策
+            @参数说明
+            Data_Path_p 路径相关数据指针
+        */
+        void MotorSpeed_Judge(Data_Path *Data_Path_p);
 };
 
 
