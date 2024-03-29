@@ -27,6 +27,8 @@ int main()
     UartSendProtocol *UartSendProtocol_p = &UartSendProtocol_c;
     UartReceiveProtocol UartReceiveProtocol_c;
     UartReceiveProtocol *UartReceiveProtocol_p = &UartReceiveProtocol_c;
+    Flag Flag_c;
+    Flag *Flag_p = &Flag_c; 
 
     // 模型变量设置
     // vector<int64_t> InputSize = {320,320};  // 设置图像输入模型的尺寸，即张量尺寸
@@ -116,7 +118,7 @@ int main()
         {
             // Function_EN_p -> Loop_Kind_EN = Judge.ModelTrack_Judge(PPNCDetection.results,Data_Path_p);  // 模型赛道决策
             Function_EN_p -> Loop_Kind_EN = Judge.TrackKind_Judge_Vector(Img_Store_p,Data_Path_p,Function_EN_p);  // 切换至赛道循环
-            ImgProcess.ImgInterrupt(Img_Store_p,Data_Path_p);    // 边线断点绘制
+            ImgProcess.ImgElementPointDraw(Img_Store_p,Data_Path_p);   // 绘制边线元素特征点
         }
 
         // 普通赛道主循环
@@ -135,19 +137,21 @@ int main()
                 case IN_PREPARE:
                 {
                     CircleTrack_Step_IN_Prepare(Img_Store_p,Data_Path_p);   // 准备入环补线
+                    ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
                     break;
                 }
                 case IN:
                 {
                     CircleTrack_Step_IN(Img_Store_p,Data_Path_p);   // 入环补线
+                    ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
                     break;
                 }
                 case OUT:
                 {
-                    // CircleTrack_Step_OUT(Img_Store_p,Data_Path_p);   // 出环补线
+                    CircleTrack_Step_OUT(Img_Store_p,Data_Path_p);   // 出环补线
+                    ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
                 }
             }
-            ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
             ImgProcess.ImgShow(Img_Store_p,Data_Path_p);    // 图像合成显示并保存
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
         }

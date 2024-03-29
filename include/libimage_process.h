@@ -39,12 +39,12 @@ class ImgProcess
 
 
         /*
-            图像边线断点绘制
+            图像边线元素特征点绘制
             @参数说明
             Img_Store_p 图像存储指针
             Data_Path_p 路径相关指针
         */
-        void ImgInterrupt(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
+        void ImgElementPointDraw(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
 
     private:
 

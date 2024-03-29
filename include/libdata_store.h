@@ -120,6 +120,14 @@ typedef struct Img_Store
 }Img_Store;
 
 /*
+    标志位设置
+*/
+typedef struct Flag
+{
+    bool CameraInit;
+}Flag;
+
+/*
     函数使能
 */
 typedef struct Function_EN
@@ -147,8 +155,10 @@ typedef struct Data_Path
     int NumSearch[2] = {0}; // 左右八邻域寻线坐标数量
     int CircleRecord[100000][2] = {0}; // 左右圆环赛道记录
     int TrackCoordinate[10000][2] = {0};   // 路径线坐标
-    int InterruptCoordinate[10000][4] = {0};  // 左右边线断点坐标
-    int InterruptNum[2] = {0};    // 边线断点数量
+    int AcrossPointCoordinate[10000][4] = {0};  // 左右边线十字元素特征点坐标
+    int CirclePointCoordinate[10000][4] = {0};  // 左右边线圆环元素特征点坐标
+    int AcrossPointNum[2] = {0};    // 十字特征点数量
+    int CirclePointNum[2] = {0};    // 圆环特征点数量
     int CircleTime = 0; // 进入圆环的图像序号
     int ServoDir;  // 舵机方向
     int ServoAngle;    // 舵机角度

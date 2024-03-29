@@ -289,7 +289,9 @@ public:
             auto score = std::to_string(result.score);
             int pointY = result.y - 20;
             if (pointY < 0)
-            pointY = 0;
+            {
+                pointY = 0;
+            }
             cv::Rect rectText(result.x, pointY, result.width, 20);
             cv::rectangle(img, rectText, getCvcolor(result.type), -1);
             std::string label_name = result.label + " [" + score.substr(0, score.find(".") + 3) + "]";

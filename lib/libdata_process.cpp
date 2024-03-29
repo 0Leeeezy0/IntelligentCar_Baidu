@@ -27,10 +27,12 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
         int i;
         int j;
         // static int Record;
-        Data_Path_p -> InterruptNum[0] = 0;
-        Data_Path_p -> InterruptNum[1] = 0;
+        Data_Path_p -> AcrossPointNum[0] = 0;  
+        Data_Path_p -> AcrossPointNum[1] = 0;
+        Data_Path_p -> CirclePointNum[0] = 0;
+        Data_Path_p -> CirclePointNum[1] = 0;
         int Vector[2][4] = {0}; // 左右中断点与上下两点构成的向量坐标
-        int Vector_Add_Unit[1][4];   // 左右中断点上下两向量加和
+        int Vector_Add_Unit[4];   // 左右中断点上下两向量加和
         int Vector_ScalarProduct[2] = {0};  // 左右中断点向量点乘
         float Vector_Module[4] = {0};   // 左右中断点向量的模
         float AngleVector[2] = {0}; // 左右中断点向量夹角(角度制)
@@ -58,19 +60,29 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
                 // cout << AngleVector[0] << "  " << AngleVector[1] << endl;
             }
 
-            // 计算中断点并存储坐标，前提：断点坐标不再边框上
-            if(abs(AngleVector[0]) > 70 && abs(AngleVector[0]) < 125 && (Data_Path_p -> SideCoordinate_Eight[i][0]) > 30)
+            // 识别元素特征点点并存储坐标，前提：断点坐标不在边框上
+            // 十字特征点：90左右
+            if(abs(AngleVector[0]) > 80 && abs(AngleVector[0]) < 100 && (Data_Path_p -> SideCoordinate_Eight[i][0]) > 30)
             {
                 //  cout << abs(AngleVector[0]) << endl;
-                (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[0])][0]) = (Data_Path_p -> SideCoordinate_Eight[i][0]);
-                (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[0])][1]) = (Data_Path_p -> SideCoordinate_Eight[i][1]);
-                if(Data_Path_p -> InterruptNum[0] == 0)
+                (Data_Path_p -> AcrossPointCoordinate[(Data_Path_p -> AcrossPointNum[0])][0]) = (Data_Path_p -> SideCoordinate_Eight[i][0]);
+                (Data_Path_p -> AcrossPointCoordinate[(Data_Path_p -> AcrossPointNum[0])][1]) = (Data_Path_p -> SideCoordinate_Eight[i][1]);
+                Data_Path_p -> AcrossPointNum[0]++;
+                i = i+10;
+            }
+            // 圆环特征点：60左右
+            if(abs(AngleVector[0]) > 50 && abs(AngleVector[0]) < 70 && (Data_Path_p -> SideCoordinate_Eight[i][0]) > 30)
+            {
+                //  cout << abs(AngleVector[0]) << endl;
+                (Data_Path_p -> CirclePointCoordinate[(Data_Path_p -> CirclePointNum[0])][0]) = (Data_Path_p -> SideCoordinate_Eight[i][0]);
+                (Data_Path_p -> CirclePointCoordinate[(Data_Path_p -> CirclePointNum[0])][1]) = (Data_Path_p -> SideCoordinate_Eight[i][1]);
+                if(Data_Path_p -> CirclePointNum[0] == 0)
                 {
                     // 向量加和
-                    Vector_Add_Unit[0][0] = (Vector[0][0]+Vector[1][0])/abs(Vector[0][0]+Vector[1][0]);
-                    Vector_Add_Unit[0][1] = (Vector[0][1]+Vector[1][1])/abs(Vector[0][1]+Vector[1][1]);
+                    Vector_Add_Unit[0] = (Vector[0][0]+Vector[1][0])/abs(Vector[0][0]+Vector[1][0]);
+                    Vector_Add_Unit[1] = (Vector[0][1]+Vector[1][1])/abs(Vector[0][1]+Vector[1][1]);
                 }
-                Data_Path_p -> InterruptNum[0]++;
+                Data_Path_p -> CirclePointNum[0]++;
                 i = i+10;
             }
             i++;
@@ -98,71 +110,80 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
                 // cout << AngleVector[0] << "  " << AngleVector[1] << endl;
             }
 
-            // 计算中断点并存储坐标，前提：断点坐标不在边框上
-            if(abs(AngleVector[1]) > 70 && abs(AngleVector[1]) < 125 && 319-(Data_Path_p -> SideCoordinate_Eight[j][2]) > 30)
+            // 识别元素特征点点并存储坐标，前提：断点坐标不在边框上
+            // 十字特征点：90左右
+            if(abs(AngleVector[1]) > 80 && abs(AngleVector[1]) < 100 && (Data_Path_p -> SideCoordinate_Eight[i][2]) > 30)
             {
-                // cout << abs(AngleVector[1]) << endl;
-                (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[1])][2]) = (Data_Path_p -> SideCoordinate_Eight[j][2]);
-                (Data_Path_p -> InterruptCoordinate[(Data_Path_p -> InterruptNum[1])][3]) = (Data_Path_p -> SideCoordinate_Eight[j][3]);
-                if(Data_Path_p -> InterruptNum[1] == 0)
+                //  cout << abs(AngleVector[0]) << endl;
+                (Data_Path_p -> AcrossPointCoordinate[(Data_Path_p -> AcrossPointNum[1])][2]) = (Data_Path_p -> SideCoordinate_Eight[j][2]);
+                (Data_Path_p -> AcrossPointCoordinate[(Data_Path_p -> AcrossPointNum[1])][3]) = (Data_Path_p -> SideCoordinate_Eight[j][3]);
+                Data_Path_p -> AcrossPointNum[1]++;
+                j = j+10;
+            }
+            // 圆环特征点：60左右
+            if(abs(AngleVector[0]) > 50 && abs(AngleVector[0]) < 70 && (Data_Path_p -> SideCoordinate_Eight[i][2]) > 30)
+            {
+                //  cout << abs(AngleVector[0]) << endl;
+                (Data_Path_p -> CirclePointCoordinate[(Data_Path_p -> CirclePointNum[1])][2]) = (Data_Path_p -> SideCoordinate_Eight[j][2]);
+                (Data_Path_p -> CirclePointCoordinate[(Data_Path_p -> CirclePointNum[1])][3]) = (Data_Path_p -> SideCoordinate_Eight[j][3]);
+                if(Data_Path_p -> CirclePointNum[1] == 0)
                 {
                     // 向量加和
-                    Vector_Add_Unit[0][2] = (Vector[0][2]+Vector[1][2])/abs(Vector[0][2]+Vector[1][2]);
-                    Vector_Add_Unit[0][3] = (Vector[0][3]+Vector[1][3])/abs(Vector[0][3]+Vector[1][3]);
+                    Vector_Add_Unit[2] = (Vector[0][2]+Vector[1][2])/abs(Vector[0][2]+Vector[1][2]);
+                    Vector_Add_Unit[3] = (Vector[0][3]+Vector[1][3])/abs(Vector[0][3]+Vector[1][3]);
                 }
-                Data_Path_p -> InterruptNum[1]++;
+                Data_Path_p -> CirclePointNum[1]++;
                 j = j+10;
             }
             j++;
         }
 
-        // 若左右边线都有中断点则为十字
-        if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] >= 1) && State - State_Circle >= 200)
+        // 若左右边线有一边右十字特征点且左右边线都没有圆环特征点则为十字
+        if(((Data_Path_p -> AcrossPointNum[0] >= 1) || (Data_Path_p -> AcrossPointNum[1] >= 1)) && ((Data_Path_p -> CirclePointNum[0] == 0) && (Data_Path_p -> CirclePointNum[1] == 0)) && State - State_Circle >= 40)
         {
             // Record = Img_Store_p -> ImgNum;
             State++;
             State_Across = State;
             Loop_Kind = ACROSS_TRACK_LOOP;
             Data_Path_p -> Track_Kind = ACROSS_TRACK;
-            Data_Path_p -> Circle_Track_Step = INIT;
         }
         // 若左右边线只有一边有中断点  //且当前图像序号和十字中存储的图像序号有间隔才为左右圆环：防止误判
-        else if((Data_Path_p -> InterruptNum[0] == 0) && (Data_Path_p -> InterruptNum[1] >= 1) && State - State_Across >= 200)
+        else if((Data_Path_p -> CirclePointNum[0] == 0) && (Data_Path_p -> CirclePointNum[1] >= 1) && State - State_Across >= 40)
         {
             State++;
             State_Circle = State;
             Data_Path_p -> CircleTime = Img_Store_p -> ImgNum;
             Loop_Kind = R_CIRCLE_TRACK_LOOP;
             Data_Path_p -> Track_Kind = R_CIRCLE_TRACK;
-            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE) && Vector_Add_Unit[0][3] == 1)
+            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE) && Vector_Add_Unit[3] == 1)
             {
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
             }
-            if(Vector_Add_Unit[0][3] == -1 && (Img_Store_p -> ImgNum)-OutTime >= 100 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
+            if(Vector_Add_Unit[3] == -1 && (Img_Store_p -> ImgNum)-OutTime >= 100)   
             {
                 Data_Path_p -> Circle_Track_Step = IN;
             }   
-            if(Vector_Add_Unit[0][3] == 1 && ((Data_Path_p -> Circle_Track_Step) == IN || (Data_Path_p -> Circle_Track_Step) == OUT))
+            if(Vector_Add_Unit[3] == 1 && ((Data_Path_p -> Circle_Track_Step) == IN || (Data_Path_p -> Circle_Track_Step) == OUT))
             {
                 Data_Path_p -> Circle_Track_Step = OUT;
                 OutTime = Img_Store_p -> ImgNum;
             }
         }
-        else if((Data_Path_p -> InterruptNum[0] >= 1) && (Data_Path_p -> InterruptNum[1] == 0) && State - State_Across >= 200)
+        else if((Data_Path_p -> CirclePointNum[0] >= 1) && (Data_Path_p -> CirclePointNum[1] == 0) && State - State_Across >= 40)
         {
             State++;
             State_Circle = State;
             Loop_Kind = L_CIRCLE_TRACK_LOOP;
             Data_Path_p -> Track_Kind = L_CIRCLE_TRACK;
-            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE) && Vector_Add_Unit[0][1] == 1)
+            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE) && Vector_Add_Unit[1] == 1)
             {
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
             }
-            if(Vector_Add_Unit[0][1] == -1 && (Img_Store_p -> ImgNum)-OutTime >= 100 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
+            if(Vector_Add_Unit[1] == -1 && (Img_Store_p -> ImgNum)-OutTime >= 100)   
             {
                 Data_Path_p -> Circle_Track_Step = IN;
             }   
-            if(Vector_Add_Unit[0][1] == 1 && ((Data_Path_p -> Circle_Track_Step) == IN || (Data_Path_p -> Circle_Track_Step) == OUT))
+            if(Vector_Add_Unit[1] == 1 && ((Data_Path_p -> Circle_Track_Step) == IN || (Data_Path_p -> Circle_Track_Step) == OUT))
             {
                 Data_Path_p -> Circle_Track_Step = OUT;
                 OutTime = Img_Store_p -> ImgNum;
@@ -216,23 +237,7 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
 */
 void Judge::ServoDirAngle_Judge(Data_Path *Data_Path_p)
 {
-    static int Count = 0; 
-    static int Dir = 0;
     (Data_Path_p -> ServoAngle) = (Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][0]) - 160;
-    if(Data_Path_p -> Circle_Track_Step == OUT)
-    {
-        Count = 0;
-        switch(Data_Path_p -> Track_Kind)
-        {
-            case L_CIRCLE_TRACK:{ Dir = 1; break; }
-            case R_CIRCLE_TRACK:{ Dir = -1; break; }
-        }
-    }
-    Count++;
-    if(Count <= 10)
-    {
-        (Data_Path_p -> ServoAngle) = Dir*100;
-    }
     // 计算舵机方向和角度
     if((Data_Path_p -> ServoAngle) < 0)
     {
@@ -258,11 +263,11 @@ void Judge::MotorSpeed_Judge(Data_Path *Data_Path_p)
         {
             if(Data_Path_p -> ServoAngle > 30 || Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN || Data_Path_p -> Circle_Track_Step == OUT )
             {
-                Data_Path_p -> MotorSpeed = 25;
+                Data_Path_p -> MotorSpeed = 28;
             }
             else
             {
-                Data_Path_p -> MotorSpeed = 40;
+                Data_Path_p -> MotorSpeed = 45;
             }
             break;
         }
@@ -432,7 +437,7 @@ void DataPrint(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
             break;
         }
         case ACROSS_TRACK:{ cout << "十字赛道" << endl; break; }
-        case MODEL_TRACK:{ cout << "AI" << endl; break; }
+        case MODEL_TRACK:{ cout << "模型赛道" << endl; break; }
     }
     cout << "<-------------------------------------------------->" << endl;
 }

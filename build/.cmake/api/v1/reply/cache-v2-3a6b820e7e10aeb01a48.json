@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/IntelligentCar_Baidu/build"
+			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR/build"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -555,7 +555,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/IntelligentCar_Baidu/build/CMakeFiles/pkgRedirects"
+			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR/build/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -615,7 +615,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/IntelligentCar_Baidu"
+			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1595,7 +1595,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/IntelligentCar_Baidu/build"
+			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR/build"
 		},
 		{
 			"name" : "INCAR.RUN_IS_TOP_LEVEL",
@@ -1619,7 +1619,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/IntelligentCar_Baidu"
+			"value" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR"
 		},
 		{
 			"name" : "OpenCV_DIR",
