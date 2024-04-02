@@ -1,0 +1,14 @@
+{
+	"UART_EN" : false,
+	"IMGCOMPRESS_EN" : true,
+	"CAMERA_EN" : 2,
+	"VIDEO_SHOW_EN" : true,
+	"ACROSS_IDENTIFY_EN" : true,
+	"CIRCLE_IDENTIFY_EN" : false,
+
+	"MIN_POINT_ANGLE" : 80,
+	"MAX_POINT_ANGLE" : 110,
+
+	"MIN_MOTOR_SPEED" : 25,
+	"MAX_MOTOR_SPEED" : 37
+}

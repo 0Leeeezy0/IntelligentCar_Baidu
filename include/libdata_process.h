@@ -57,6 +57,15 @@ class SYNC
 {
     public:
         /*
+            车辆上位机设置文件数据同步
+            @参数说明
+            Function_EN_p 函数使能指针
+            Data_Path_p 路径相关数据指针
+        */
+        void ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p);
+
+        
+        /*
             串口接收协议数据交换区和数据位同步
             unsigned char -> int
             @参数说明

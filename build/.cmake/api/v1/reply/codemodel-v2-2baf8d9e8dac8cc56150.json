@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "INCAR.RUN::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-INCAR.RUN-Debug-be1a81599062296c1a3d.json",
+					"jsonFile" : "target-INCAR.RUN-Debug-f7d952d76d412456c282.json",
 					"name" : "INCAR.RUN",
 					"projectIndex" : 0
 				}
@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR/build",
-		"source" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR"
+		"build" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/IntelligentCar_Baidu/build",
+		"source" : "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/IntelligentCar_Baidu"
 	},
 	"version" : 
 	{

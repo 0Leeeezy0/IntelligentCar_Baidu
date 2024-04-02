@@ -189,6 +189,7 @@ void ImgProcess::ImgCompress(Mat& Img,bool ImgCompress_EN)
 */
 void ImgProcess::ImgShow(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
+	ImgProcess::ImgElementPonitDraw(Img_Store_p,Data_Path_p); 
 	ImgProcess::ImgForwardLine(Img_Store_p,Data_Path_p);
 	ImgProcess::ImgReferenceLine(Img_Store_p,Data_Path_p);
 	ImgProcess::ImgSynthesis(Img_Store_p);
@@ -197,76 +198,44 @@ void ImgProcess::ImgShow(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 
 
 /*
-    ImgElementPointDraw说明
-	图像边线元素特征点点绘制
+    ImgElementPonitDraw说明
+	图像边线元素拐点点绘制
 	限制绘制数目
 */
-void ImgProcess::ImgElementPointDraw(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
+void ImgProcess::ImgElementPonitDraw(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
 	// 变量设置
 	int i = 0;
 	int j = 0;
-	// 左边线十字特征点绘制
-	if((Data_Path_p -> AcrossPointNum[0]) >= 1)
+	// 左边线拐点点绘制
+	if((Data_Path_p -> ElementPointNum[0]) >= 1)
 	{
-		for(i = 0;i <= (Data_Path_p -> AcrossPointNum[0])-1;i++)
+		for(i = 0;i <= (Data_Path_p -> ElementPointNum[0])-1;i++)
 		{
 			if(i == 0)
 			{
-				putText((Img_Store_p -> Img_Track_Unpivot),to_string(Data_Path_p -> AcrossPointNum[0]),Point((Data_Path_p -> AcrossPointCoordinate[i][0]),(Data_Path_p -> AcrossPointCoordinate[i][1])),FONT_HERSHEY_COMPLEX,0.6,(255,0,255),1);
-				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> AcrossPointCoordinate[i][0]),(Data_Path_p -> AcrossPointCoordinate[i][1])),6,Scalar(0,255,255),2);	// 左边线特征点画点：黄色
+				putText((Img_Store_p -> Img_Track_Unpivot),to_string(Data_Path_p -> ElementPointNum[0]),Point((Data_Path_p -> ElementPointCoordinate[i][0]),(Data_Path_p -> ElementPointCoordinate[i][1])),FONT_HERSHEY_COMPLEX,0.6,(255,0,255),1);
+				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> ElementPointCoordinate[i][0]),(Data_Path_p -> ElementPointCoordinate[i][1])),6,Scalar(0,255,255),2);	// 左边线断点画点：黄色
 			}
 			else
 			{
-				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> AcrossPointCoordinate[i][0]),(Data_Path_p -> AcrossPointCoordinate[i][1])),6,Scalar(255,255,0),2);	// 左边线特征点画点：蓝色
+				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> ElementPointCoordinate[i][0]),(Data_Path_p -> ElementPointCoordinate[i][1])),6,Scalar(255,255,0),2);	// 左边线断点画点：蓝色
 			}
 		}
 	}
-	// 右边线十字特征点绘制
-	if((Data_Path_p -> AcrossPointNum[1]) >= 1)
+	// 右边线拐点点绘制
+	if((Data_Path_p -> ElementPointNum[1]) >= 1)
 	{
-		for(j = 0;j <= (Data_Path_p -> AcrossPointNum[1])-1;j++)
+		for(j = 0;j <= (Data_Path_p -> ElementPointNum[1])-1;j++)
 		{
 			if(j == 0)
 			{
-				putText((Img_Store_p -> Img_Track_Unpivot),to_string(Data_Path_p -> AcrossPointNum[1]),Point((Data_Path_p -> AcrossPointCoordinate[j][2]),(Data_Path_p -> AcrossPointCoordinate[j][3])),FONT_HERSHEY_COMPLEX,0.6,(255,0,255),1);
-				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> AcrossPointCoordinate[j][2]),(Data_Path_p -> AcrossPointCoordinate[j][3])),6,Scalar(0,255,255),2);	// 右边线特征点点画点：黄色
+				putText((Img_Store_p -> Img_Track_Unpivot),to_string(Data_Path_p -> ElementPointNum[1]),Point((Data_Path_p -> ElementPointCoordinate[j][2]),(Data_Path_p -> ElementPointCoordinate[j][3])),FONT_HERSHEY_COMPLEX,0.6,(255,0,255),1);
+				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> ElementPointCoordinate[j][2]),(Data_Path_p -> ElementPointCoordinate[j][3])),6,Scalar(0,255,255),2);	// 右边线断点画点：黄色
 			}
 			else
 			{
-				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> AcrossPointCoordinate[j][2]),(Data_Path_p -> AcrossPointCoordinate[j][3])),6,Scalar(255,255,0),2);	// 右边线特征点画点：蓝色
-			}
-		}
-	}
-	// 左边线圆环特征点绘制
-	if((Data_Path_p -> CirclePointNum[0]) >= 1)
-	{
-		for(i = 0;i <= (Data_Path_p -> CirclePointNum[0])-1;i++)
-		{
-			if(i == 0)
-			{
-				putText((Img_Store_p -> Img_Track_Unpivot),to_string(Data_Path_p -> CirclePointNum[0]),Point((Data_Path_p -> CirclePointCoordinate[i][0]),(Data_Path_p -> CirclePointCoordinate[i][1])),FONT_HERSHEY_COMPLEX,0.6,(255,0,255),1);
-				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> CirclePointCoordinate[i][0]),(Data_Path_p -> CirclePointCoordinate[i][1])),6,Scalar(0,255,255),2);	// 左边线特征点画点：黄色
-			}
-			else
-			{
-				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> CirclePointCoordinate[i][0]),(Data_Path_p -> CirclePointCoordinate[i][1])),6,Scalar(255,255,0),2);	// 左边线特征点画点：蓝色
-			}
-		}
-	}
-	// 右边线圆环特征点绘制
-	if((Data_Path_p -> CirclePointNum[1]) >= 1)
-	{
-		for(j = 0;j <= (Data_Path_p -> CirclePointNum[1])-1;j++)
-		{
-			if(j == 0)
-			{
-				putText((Img_Store_p -> Img_Track_Unpivot),to_string(Data_Path_p -> CirclePointNum[1]),Point((Data_Path_p -> CirclePointCoordinate[j][2]),(Data_Path_p -> CirclePointCoordinate[j][3])),FONT_HERSHEY_COMPLEX,0.6,(255,0,255),1);
-				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> CirclePointCoordinate[j][2]),(Data_Path_p -> CirclePointCoordinate[j][3])),6,Scalar(0,255,255),2);	// 右边线断点画点：黄色
-			}
-			else
-			{
-				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> CirclePointCoordinate[j][2]),(Data_Path_p -> CirclePointCoordinate[j][3])),6,Scalar(255,255,0),2);	// 右边线断点画点：蓝色
+				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> ElementPointCoordinate[j][2]),(Data_Path_p -> ElementPointCoordinate[j][3])),6,Scalar(255,255,0),2);	// 右边线断点画点：蓝色
 			}
 		}
 	}

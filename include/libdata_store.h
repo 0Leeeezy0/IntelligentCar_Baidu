@@ -7,9 +7,9 @@
 // 串口接收初始化的调试参数
 #define Forward_Default 55  // 调试参数
 #define Path_Search_Start_Default 30   // 调试参数
-#define Path_Search_End_Default 140 // 调试参数
+#define Path_Search_End_Default 170 // 调试参数
 #define Side_Search_Start_Default 10   // 调试参数
-#define Side_Search_End_Default 200   // 调试参数
+#define Side_Search_End_Default 170   // 调试参数
 #define Game_EN_Default 1   // 调试参数
 
 #define BAUDRATE 115200 // 串口波特率
@@ -17,12 +17,6 @@
 #define FPS_TIME 1 // 帧间时间
 #define DILATE_FACTOR 0 // 边线图形学膨胀系数
 #define ERODE_FACTOR 2 // 边线图形学腐蚀系数
-
-// 非串口接收初始化的调试参数
-#define UART_EN true    // 串口
-#define IMGCOMPRESS_EN true // 图像压缩
-#define UNPIVOT_EN true // 暂时没有用
-#define CAMERA USB_EB_CAMERA // 相机采集类型 摄像头/视频
 
 /*
     相机类型
@@ -132,10 +126,13 @@ typedef struct Flag
 */
 typedef struct Function_EN
 {
-    bool Uart_EN = UART_EN; // 串口使能
-    bool Unpivot_EN = UNPIVOT_EN;   // 逆透视使能
-    bool ImgCompress_EN = IMGCOMPRESS_EN;   // 图像压缩使能
+    bool Uart_EN; // 串口使能
+    bool ImgCompress_EN;   // 图像压缩使能
+    CameraKind Camera_EN;   // 相机使能
     bool Game_EN;   // 比赛开始
+    bool VideoShow_EN;  // 图像显示使能
+    bool AcrossIdentify_EN;    // 十字特征点识别使能
+    bool CircleIdentify_EN;    // 圆环特征点识别使能
     LoopKind Loop_Kind_EN;  // 循环类型使能：0.图像循环 1.普通赛道循环 2.圆环赛道循环 3.十字赛道循环 4.AI赛道循环 5.串口发送循环
 }Function_EN;
 
@@ -155,10 +152,10 @@ typedef struct Data_Path
     int NumSearch[2] = {0}; // 左右八邻域寻线坐标数量
     int CircleRecord[100000][2] = {0}; // 左右圆环赛道记录
     int TrackCoordinate[10000][2] = {0};   // 路径线坐标
-    int AcrossPointCoordinate[10000][4] = {0};  // 左右边线十字元素特征点坐标
-    int CirclePointCoordinate[10000][4] = {0};  // 左右边线圆环元素特征点坐标
-    int AcrossPointNum[2] = {0};    // 十字特征点数量
-    int CirclePointNum[2] = {0};    // 圆环特征点数量
+    int PointIdentifyAngle[2] = {0};    // 元素特征点角度
+    int ElementPointCoordinate[10000][4] = {0};  // 左右边线元素特征点坐标
+    int ElementPointNum[2] = {0};    // 元素特征点数量
+    int MotorSpeedInterval[2] = {0};    // 电机速度区间
     int CircleTime = 0; // 进入圆环的图像序号
     int ServoDir;  // 舵机方向
     int ServoAngle;    // 舵机角度
