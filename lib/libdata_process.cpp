@@ -59,7 +59,7 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
             }
 
             // 计算拐点并存储坐标，前提：拐点坐标不再边框上
-            if(abs(AngleVector[0]) > (Data_Path_p -> PointIdentifyAngle[0]) && abs(AngleVector[0]) < (Data_Path_p -> PointIdentifyAngle[1]) && (Data_Path_p -> SideCoordinate_Eight[i][0]) > 30)
+            if(abs(AngleVector[0]) > (Data_Path_p -> PointIdentifyAngle[0]) && abs(AngleVector[0]) < (Data_Path_p -> PointIdentifyAngle[1]) && (Data_Path_p -> SideCoordinate_Eight[i][0]) > 30 && (Vector[0][1] < 8 || Vector[1][1] < 8))
             {
                 //  cout << abs(AngleVector[0]) << endl;
                 (Data_Path_p -> ElementPointCoordinate[(Data_Path_p -> ElementPointNum[0])][0]) = (Data_Path_p -> SideCoordinate_Eight[i][0]);
@@ -99,7 +99,7 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
             }
 
             // 计算拐点点并存储坐标，前提：拐点坐标不在边框上
-            if(abs(AngleVector[1]) > (Data_Path_p -> PointIdentifyAngle[0]) && abs(AngleVector[1]) < (Data_Path_p -> PointIdentifyAngle[1]) && 319-(Data_Path_p -> SideCoordinate_Eight[j][2]) > 30)
+            if(abs(AngleVector[1]) > (Data_Path_p -> PointIdentifyAngle[0]) && abs(AngleVector[1]) < (Data_Path_p -> PointIdentifyAngle[1]) && 319-(Data_Path_p -> SideCoordinate_Eight[j][2]) > 30 && (Vector[0][3] < 8 || Vector[1][3] < 8))
             {
                 // cout << abs(AngleVector[1]) << endl;
                 (Data_Path_p -> ElementPointCoordinate[(Data_Path_p -> ElementPointNum[1])][2]) = (Data_Path_p -> SideCoordinate_Eight[j][2]);
@@ -117,7 +117,7 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
         }
 
         // 若左右边线都有中断点则为十字
-        if((Data_Path_p -> ElementPointNum[0] >= 1) && (Data_Path_p -> ElementPointNum[1] >= 1) && State - State_Circle >= 50 && Function_EN_p -> AcrossIdentify_EN == true)
+        if((Data_Path_p -> ElementPointNum[0] >= 1) && (Data_Path_p -> ElementPointNum[1] >= 1) && Function_EN_p -> AcrossIdentify_EN == true)
         {
             // Record = Img_Store_p -> ImgNum;
             State++;
@@ -130,7 +130,6 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
         else if((Data_Path_p -> ElementPointNum[0] == 0) && (Data_Path_p -> ElementPointNum[1] >= 1) && State - State_Across >= 50 && Function_EN_p -> CircleIdentify_EN == true)
         {
             State++;
-            State_Circle = State;
             Data_Path_p -> CircleTime = Img_Store_p -> ImgNum;
             Loop_Kind = R_CIRCLE_TRACK_LOOP;
             Data_Path_p -> Track_Kind = R_CIRCLE_TRACK;
@@ -151,7 +150,6 @@ LoopKind Judge::TrackKind_Judge_Vector(Img_Store* Img_Store_p,Data_Path *Data_Pa
         else if((Data_Path_p -> ElementPointNum[0] >= 1) && (Data_Path_p -> ElementPointNum[1] == 0) && State - State_Across >= 50 && Function_EN_p -> CircleIdentify_EN == true)
         {
             State++;
-            State_Circle = State;
             Loop_Kind = L_CIRCLE_TRACK_LOOP;
             Data_Path_p -> Track_Kind = L_CIRCLE_TRACK;
             if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE) && Vector_Add_Unit[0][1] == 1)
@@ -295,7 +293,8 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     nlohmann::json ConfigData = nlohmann::json::parse(ConfigFile);
 
     Function_EN_p -> Uart_EN = ConfigData.at("UART_EN");    // 获取串口使能参数
-    Function_EN_p -> ImgCompress_EN = ConfigData.at("IMGCOMPRESS_EN");  // 获取图像压缩使能参数
+    Function_EN_p -> ImgUnpivot_EN = ConfigData.at("IMG_UNPIVOT_EN");   // 获取图像逆透视使能参数
+    Function_EN_p -> ImgCompress_EN = ConfigData.at("IMG_COMPRESS_EN");  // 获取图像压缩使能参数
     Function_EN_p -> Camera_EN = CameraKind(ConfigData.at("CAMERA_EN"));   // 获取摄像头使能参数
     Function_EN_p -> VideoShow_EN = ConfigData.at("VIDEO_SHOW_EN"); // 获取图像显示使能参数
     Function_EN_p -> AcrossIdentify_EN = ConfigData.at("ACROSS_IDENTIFY_EN");   // 获取十字特征点识别使能参数
@@ -304,6 +303,8 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     Data_Path_p -> PointIdentifyAngle[1] = ConfigData.at("MAX_POINT_ANGLE"); 
     Data_Path_p -> MotorSpeedInterval[0] = ConfigData.at("MIN_MOTOR_SPEED");  // 获取电机速度区间
     Data_Path_p -> MotorSpeedInterval[1] = ConfigData.at("MAX_MOTOR_SPEED"); 
+    Data_Path_p -> DilateErode_Factor[0] = ConfigData.at("DILATE_FACTOR");  // 获取图形学膨胀系数
+    Data_Path_p -> DilateErode_Factor[1] = ConfigData.at("ERODE_FACTOR");  // 获取图形学腐蚀系数
 }
 
 

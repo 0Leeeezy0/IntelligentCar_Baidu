@@ -41,6 +41,4 @@ void AcrossTrack(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 		line((Img_Store_p -> Img_OTSU_Unpivot),Point((Data_Path_p -> SideCoordinate_Eight[0][2]),(Data_Path_p -> SideCoordinate_Eight[0][3])),Point((Data_Path_p -> ElementPointCoordinate[Data_Path_p -> ElementPointNum[1]-1][2]),(Data_Path_p -> ElementPointCoordinate[Data_Path_p -> ElementPointNum[1]-1][3])),Scalar(255),4);
 		line((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> SideCoordinate_Eight[0][2]),(Data_Path_p -> SideCoordinate_Eight[0][3])),Point((Data_Path_p -> ElementPointCoordinate[Data_Path_p -> ElementPointNum[1]-1][2]),(Data_Path_p -> ElementPointCoordinate[Data_Path_p -> ElementPointNum[1]-1][3])),Scalar(128,0,128),4);	
 	}
-
-    ImgProcess.ImgShow(Img_Store_p,Data_Path_p);    // 图像合成显示并保存
 }

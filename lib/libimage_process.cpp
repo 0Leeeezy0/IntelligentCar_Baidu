@@ -11,9 +11,16 @@ using namespace cv;
 	然后用sobel算子检测边缘
 	最后再次二值化
 */
-void ImgProcess::ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,int Dilate_Factor,int Erode_Factor)
+void ImgProcess::ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p,int Dilate_Factor,int Erode_Factor)
 {
-	ImgProcess::ImgUnpivot((Img_Store_p -> Img_Color) , (Img_Store_p -> Img_Color_Unpivot));
+	if(Function_EN_p -> ImgUnpivot_EN == true)
+	{
+		ImgProcess::ImgUnpivot((Img_Store_p -> Img_Color) , (Img_Store_p -> Img_Color_Unpivot));
+	}
+	else
+	{
+		Img_Store_p -> Img_Color_Unpivot = (Img_Store_p -> Img_Color).clone();
+	}
     (Img_Store_p -> Img_Track_Unpivot) = (Img_Store_p -> Img_Color_Unpivot).clone();
 	cvtColor((Img_Store_p -> Img_Color_Unpivot) , (Img_Store_p -> Img_Gray_Unpivot) , COLOR_BGR2GRAY);  //彩色图像灰度化
 	// blur((Img_Store_p -> Img_Gray_Unpivot) , (Img_Store_p -> Img_Gray_Unpivot) , Size(18,18) , Point(-1,-1));	//均值滤波	
@@ -96,8 +103,8 @@ void ImgProcess::ImgUnpivot(Mat Img,Mat& Img_Unpivot)
     Point2f SrcPoints[] = { 
 		Point2f(0,240),
 		Point2f(320,240),
-		Point2f(115,25),
-		Point2f(205,25) };
+		Point2f(120,25),
+		Point2f(200,25) };
  
 	Point2f DstPoints[] = {
 		Point2f(80,240),
@@ -115,7 +122,7 @@ void ImgProcess::ImgUnpivot(Mat Img,Mat& Img_Unpivot)
 	ImgSynthesis说明
 	将多个图像合成在同一窗口
 */
-void ImgProcess::ImgSynthesis(Img_Store *Img_Store_p)
+void ImgProcess::ImgSynthesis(Img_Store *Img_Store_p,Function_EN *Function_EN_p)
 {
 	int ImgAllWidth = (Img_Store_p -> Img_Color).cols;	//宽度
 	int ImgAllHeight = (Img_Store_p -> Img_Color).rows; //高度
@@ -134,7 +141,11 @@ void ImgProcess::ImgSynthesis(Img_Store *Img_Store_p)
 	(Img_Store_p -> Img_OTSU_Unpivot).copyTo(ImgAll(Rect(ImgAllWidth*2+12,0,ImgAllWidth,ImgAllHeight))); 
 
     (Img_Store_p -> Img_All) = ImgAll;
-	imshow("CAMERA",(Img_Store_p -> Img_All));
+
+	if(Function_EN_p -> VideoShow_EN == true)
+	{
+		imshow("CAMERA",(Img_Store_p -> Img_All));
+	}
 }
 
 
@@ -187,12 +198,12 @@ void ImgProcess::ImgCompress(Mat& Img,bool ImgCompress_EN)
 	ImgShow说明
 	图像合成显示并保存
 */
-void ImgProcess::ImgShow(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
+void ImgProcess::ImgShow(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p)
 {
 	ImgProcess::ImgElementPonitDraw(Img_Store_p,Data_Path_p); 
 	ImgProcess::ImgForwardLine(Img_Store_p,Data_Path_p);
 	ImgProcess::ImgReferenceLine(Img_Store_p,Data_Path_p);
-	ImgProcess::ImgSynthesis(Img_Store_p);
+	ImgProcess::ImgSynthesis(Img_Store_p,Function_EN_p);
 	ImgProcess::ImgSave(Img_Store_p);
 }
 

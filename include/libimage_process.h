@@ -16,7 +16,7 @@ class ImgProcess
             Dilate_Factor 边线图形学膨胀系数
             Erode_Factor 边线图形学腐蚀系数
         */
-        void ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,int Dilate_Factor,int Erode_Factor);
+        void ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p,int Dilate_Factor,int Erode_Factor);
 
 
         /*
@@ -34,8 +34,9 @@ class ImgProcess
             @参数说明
             Img_Store_p 图像存储指针
             Data_Path_p 路径相关数据指针
+            Function_EN_p 函数使能指针
         */
-        void ImgShow(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
+        void ImgShow(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p);
 
 
         /*
@@ -72,8 +73,9 @@ class ImgProcess
             将多个图像合成在同一窗口
             @参数说明
             Img_Store_p 图像存储指针
+            Function_EN_p 函数使能指针
         */
-        void ImgSynthesis(Img_Store *Img_Store_p);
+        void ImgSynthesis(Img_Store *Img_Store_p,Function_EN *Function_EN_p);
 
 
         /*

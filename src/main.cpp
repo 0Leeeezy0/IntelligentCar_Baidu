@@ -75,7 +75,7 @@ int main()
                 {
                     Camera >> (Img_Store_p -> Img_Color);   // 将视频流转为图像流
                     ImgProcess.ImgCompress((Img_Store_p -> Img_Color),(Function_EN_p -> ImgCompress_EN));   // 图像压缩：可在数据存储头文件中决定是否要进行图像压缩
-                    ImgProcess.ImgPrepare(Img_Store_p,Data_Path_p,DILATE_FACTOR,ERODE_FACTOR); // 图像预处理
+                    ImgProcess.ImgPrepare(Img_Store_p,Data_Path_p,Function_EN_p,Data_Path_p -> DilateErode_Factor[0],Data_Path_p -> DilateErode_Factor[1]); // 图像预处理
 
                     // 模型预测结果获取
                     // PPNCDetection.TransposeAndCopyToTensor(Img_Store_p -> Img_Color,Tensor); // 将Mat格式图像转为张量
@@ -88,7 +88,7 @@ int main()
 
                     Img_Store_p -> ImgNum++;
                     Function_EN_p -> Loop_Kind_EN = JUDGE_LOOP;
-                    waitKey(FPS_TIME);
+                    waitKey(1);
                     break;
                 }
                 // 串口接收参数
@@ -125,7 +125,7 @@ int main()
         while( Function_EN_p -> Loop_Kind_EN == COMMON_TRACK_LOOP )
         {
             ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
-            ImgProcess.ImgShow(Img_Store_p,Data_Path_p);    // 图像合成显示并保存
+            ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
         }
 
@@ -150,15 +150,16 @@ int main()
                 }
             }
             ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
-            ImgProcess.ImgShow(Img_Store_p,Data_Path_p);    // 图像合成显示并保存
+            ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
         }
 
         // 十字赛道主循环
         while( Function_EN_p -> Loop_Kind_EN == ACROSS_TRACK_LOOP )
         {
-            AcrossTrack(Img_Store_p,Data_Path_p);
+            AcrossTrack(Img_Store_p,Data_Path_p);   // 十字赛道补线
             ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
+            ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
         }
 
