@@ -118,7 +118,7 @@ int main()
         while( Function_EN_p -> Loop_Kind_EN == JUDGE_LOOP )
         {
             // Function_EN_p -> Loop_Kind_EN = Judge.ModelTrack_Judge(PPNCDetection.results,Data_Path_p);  // 模型赛道决策
-            Function_EN_p -> Loop_Kind_EN = Judge.TrackKind_Judge_Vector(Img_Store_p,Data_Path_p,Function_EN_p);  // 切换至赛道循环
+            Function_EN_p -> Loop_Kind_EN = Judge.TrackKind_Judge(Img_Store_p,Data_Path_p,Function_EN_p);  // 切换至赛道循环
         }
 
         // 普通赛道主循环

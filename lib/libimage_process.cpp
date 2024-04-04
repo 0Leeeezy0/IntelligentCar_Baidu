@@ -13,34 +13,33 @@ using namespace cv;
 */
 void ImgProcess::ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p,int Dilate_Factor,int Erode_Factor)
 {
-	if(Function_EN_p -> ImgUnpivot_EN == true)
-	{
-		ImgProcess::ImgUnpivot((Img_Store_p -> Img_Color) , (Img_Store_p -> Img_Color_Unpivot));
-	}
-	else
-	{
-		Img_Store_p -> Img_Color_Unpivot = (Img_Store_p -> Img_Color).clone();
-	}
-    (Img_Store_p -> Img_Track_Unpivot) = (Img_Store_p -> Img_Color_Unpivot).clone();
+    (Img_Store_p -> Img_Track) = (Img_Store_p -> Img_Color).clone();
+	cvtColor((Img_Store_p -> Img_Color) , (Img_Store_p -> Img_Gray) , COLOR_BGR2GRAY);  //彩色图像灰度化
+	// blur((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_Gray) , Size(18,18) , Point(-1,-1));	//均值滤波	
+	threshold((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_OTSU) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
+	ImgProcess::ImgSobel((Img_Store_p -> Img_OTSU));	//Sobel算子处理
+	threshold((Img_Store_p -> Img_OTSU) , (Img_Store_p -> Img_OTSU) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
+	
+	ImgUnpivot(Img_Store_p -> Img_Color,Img_Store_p -> Img_Color_Unpivot);
 	cvtColor((Img_Store_p -> Img_Color_Unpivot) , (Img_Store_p -> Img_Gray_Unpivot) , COLOR_BGR2GRAY);  //彩色图像灰度化
-	// blur((Img_Store_p -> Img_Gray_Unpivot) , (Img_Store_p -> Img_Gray_Unpivot) , Size(18,18) , Point(-1,-1));	//均值滤波	
+	// blur((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_Gray) , Size(18,18) , Point(-1,-1));	//均值滤波	
 	threshold((Img_Store_p -> Img_Gray_Unpivot) , (Img_Store_p -> Img_OTSU_Unpivot) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
 	ImgProcess::ImgSobel((Img_Store_p -> Img_OTSU_Unpivot));	//Sobel算子处理
 	threshold((Img_Store_p -> Img_OTSU_Unpivot) , (Img_Store_p -> Img_OTSU_Unpivot) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
-	// ImgProcess::ImgSharpen((Img_Store_p -> Img_OTSU_Unpivot),5);
+	// ImgProcess::ImgSharpen((Img_Store_p -> Img_OTSU),5);
 	for(int i = 0;i <= Dilate_Factor;i++)
 	{
-		dilate((Img_Store_p -> Img_OTSU_Unpivot),(Img_Store_p -> Img_OTSU_Unpivot),(Img_Store_p -> Dilate_Kernel));
+		dilate((Img_Store_p -> Img_OTSU),(Img_Store_p -> Img_OTSU),(Img_Store_p -> Dilate_Kernel));
 	}
 	for(int i = 0;i <= Erode_Factor;i++)
 	{
-		erode((Img_Store_p -> Img_OTSU_Unpivot),(Img_Store_p -> Img_OTSU_Unpivot),(Img_Store_p -> Erode_Kernel));
+		erode((Img_Store_p -> Img_OTSU),(Img_Store_p -> Img_OTSU),(Img_Store_p -> Erode_Kernel));
 	}
 	// 加白框防止八邻域寻线出错
-	line((Img_Store_p -> Img_OTSU_Unpivot),Point(0,0),Point(319,0),Scalar(255),3);
-	line((Img_Store_p -> Img_OTSU_Unpivot),Point(319,0),Point(319,239),Scalar(255),3);
-	line((Img_Store_p -> Img_OTSU_Unpivot),Point(319,239),Point(0,239),Scalar(255),3);
-	line((Img_Store_p -> Img_OTSU_Unpivot),Point(0,239),Point(0,0),Scalar(255),3);
+	line((Img_Store_p -> Img_OTSU),Point(0,0),Point(319,0),Scalar(255),3);
+	line((Img_Store_p -> Img_OTSU),Point(319,0),Point(319,239),Scalar(255),3);
+	line((Img_Store_p -> Img_OTSU),Point(319,239),Point(0,239),Scalar(255),3);
+	line((Img_Store_p -> Img_OTSU),Point(0,239),Point(0,0),Scalar(255),3);
 }
 
 
@@ -126,9 +125,10 @@ void ImgProcess::ImgSynthesis(Img_Store *Img_Store_p,Function_EN *Function_EN_p)
 {
 	int ImgAllWidth = (Img_Store_p -> Img_Color).cols;	//宽度
 	int ImgAllHeight = (Img_Store_p -> Img_Color).rows; //高度
-	Mat ImgAll = Mat(ImgAllHeight,ImgAllWidth*3+18,CV_8UC3,Scalar(0,0,0));	//显示全部画面的画布
+	Mat ImgAll = Mat(ImgAllHeight*2+6,ImgAllWidth*3+18,CV_8UC3,Scalar(0,0,0));	//显示全部画面的画布
 
 	//统一图像的类型为8UC3
+	cvtColor((Img_Store_p -> Img_OTSU) , (Img_Store_p -> Img_OTSU) ,COLOR_GRAY2RGB);
 	cvtColor((Img_Store_p -> Img_OTSU_Unpivot) , (Img_Store_p -> Img_OTSU_Unpivot) ,COLOR_GRAY2RGB);
 
 	//Rect roi(ImgAllWidth*i,0,ImgAllWidth,ImgAllHeight);  
@@ -137,8 +137,11 @@ void ImgProcess::ImgSynthesis(Img_Store *Img_Store_p,Function_EN *Function_EN_p)
 	//此处简化
     
 	(Img_Store_p -> Img_Color).copyTo(ImgAll(Rect(0,0,ImgAllWidth,ImgAllHeight))); 
-	(Img_Store_p -> Img_Track_Unpivot).copyTo(ImgAll(Rect(ImgAllWidth+6,0,ImgAllWidth,ImgAllHeight)));  
-	(Img_Store_p -> Img_OTSU_Unpivot).copyTo(ImgAll(Rect(ImgAllWidth*2+12,0,ImgAllWidth,ImgAllHeight))); 
+	(Img_Store_p -> Img_Track).copyTo(ImgAll(Rect(ImgAllWidth+6,0,ImgAllWidth,ImgAllHeight)));  
+	(Img_Store_p -> Img_OTSU).copyTo(ImgAll(Rect(ImgAllWidth*2+12,0,ImgAllWidth,ImgAllHeight))); 
+	(Img_Store_p -> Img_Color_Unpivot).copyTo(ImgAll(Rect(0,ImgAllHeight+6,ImgAllWidth,ImgAllHeight))); 
+	(Img_Store_p -> Img_OTSU_Unpivot).copyTo(ImgAll(Rect(ImgAllWidth+6,ImgAllHeight+6,ImgAllWidth,ImgAllHeight))); 
+	(Img_Store_p -> Img_Text).copyTo(ImgAll(Rect(ImgAllWidth*2+12,ImgAllHeight+6,ImgAllWidth,ImgAllHeight))); 
 
     (Img_Store_p -> Img_All) = ImgAll;
 
@@ -171,8 +174,8 @@ void ImgProcess::ImgSave(Img_Store *Img_Store_p)
 */
 void ImgProcess::ImgForwardLine(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
-    line((Img_Store_p -> Img_Track_Unpivot),Point(160,300),Point((Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][0]),(Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][1])),Scalar(255,0,0),3);
-	putText((Img_Store_p -> Img_Track_Unpivot),to_string(abs(160-(Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][0]))),Point((Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][0]),(Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][1])),FONT_HERSHEY_COMPLEX,0.6,(255,255,255),1);
+    line((Img_Store_p -> Img_Track),Point(160,300),Point((Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][0]),(Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][1])),Scalar(255,0,0),3);
+	putText((Img_Store_p -> Img_Track),to_string(abs(160-(Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][0]))),Point((Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][0]),(Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][1])),FONT_HERSHEY_COMPLEX,0.6,(255,255,255),1);
 }
 
 
@@ -195,58 +198,123 @@ void ImgProcess::ImgCompress(Mat& Img,bool ImgCompress_EN)
 
 
 /*
+	ImgText说明
+	赛道类型、圆环步骤显示
+*/
+void ImgProcess::ImgText(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
+{
+	int ImgWidth = (Img_Store_p -> Img_Color).cols;	// 宽度
+	int ImgHeight = (Img_Store_p -> Img_Color).rows; // 高度
+	(Img_Store_p -> Img_Text) = Mat(ImgHeight,ImgWidth,CV_8UC3,Scalar(0,0,0));	// 显示文字画布
+
+	string TextTrackKind[5] = {"COMMON_TRACK","R_CIRCLE_TRACK","L_CIRCLE_TRACK","ACROSS_TRACK","MODEL_TRACK"};
+	string TextCircleTrackStep[4] = {"IN_PREPARE","IN","OUT","INIT"};
+
+	putText((Img_Store_p -> Img_Text),TextTrackKind[int(Data_Path_p -> Track_Kind)],Point(5,30),FONT_HERSHEY_COMPLEX,1,(255),2);
+	putText((Img_Store_p -> Img_Text),TextCircleTrackStep[int(Data_Path_p -> Circle_Track_Step)],Point(5,70),FONT_HERSHEY_COMPLEX,1,(255),2);
+}
+
+
+/*
 	ImgShow说明
 	图像合成显示并保存
 */
 void ImgProcess::ImgShow(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p)
 {
-	ImgProcess::ImgElementPonitDraw(Img_Store_p,Data_Path_p); 
+	ImgProcess::ImgInflectionPointDraw(Img_Store_p,Data_Path_p); 
+	ImgProcess::ImgBendPointDraw(Img_Store_p,Data_Path_p); 
 	ImgProcess::ImgForwardLine(Img_Store_p,Data_Path_p);
 	ImgProcess::ImgReferenceLine(Img_Store_p,Data_Path_p);
+	ImgProcess::ImgText(Img_Store_p,Data_Path_p);
 	ImgProcess::ImgSynthesis(Img_Store_p,Function_EN_p);
 	ImgProcess::ImgSave(Img_Store_p);
 }
 
 
 /*
-    ImgElementPonitDraw说明
-	图像边线元素拐点点绘制
+    ImgInflectionPointDraw说明
+	图像边线拐点绘制
 	限制绘制数目
 */
-void ImgProcess::ImgElementPonitDraw(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
+void ImgProcess::ImgInflectionPointDraw(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
 	// 变量设置
 	int i = 0;
 	int j = 0;
 	// 左边线拐点点绘制
-	if((Data_Path_p -> ElementPointNum[0]) >= 1)
+	if((Data_Path_p -> InflectionPointNum[0]) >= 1)
 	{
-		for(i = 0;i <= (Data_Path_p -> ElementPointNum[0])-1;i++)
+		for(i = 0;i <= (Data_Path_p -> InflectionPointNum[0])-1;i++)
 		{
 			if(i == 0)
 			{
-				putText((Img_Store_p -> Img_Track_Unpivot),to_string(Data_Path_p -> ElementPointNum[0]),Point((Data_Path_p -> ElementPointCoordinate[i][0]),(Data_Path_p -> ElementPointCoordinate[i][1])),FONT_HERSHEY_COMPLEX,0.6,(255,0,255),1);
-				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> ElementPointCoordinate[i][0]),(Data_Path_p -> ElementPointCoordinate[i][1])),6,Scalar(0,255,255),2);	// 左边线断点画点：黄色
+				putText((Img_Store_p -> Img_Track),to_string(Data_Path_p -> InflectionPointNum[0]),Point((Data_Path_p -> InflectionPointCoordinate[i][0]),(Data_Path_p -> InflectionPointCoordinate[i][1])),FONT_HERSHEY_COMPLEX,0.6,(255,0,255),1);
+				circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> InflectionPointCoordinate[i][0]),(Data_Path_p -> InflectionPointCoordinate[i][1])),6,Scalar(128,128,0),2);	// 左边线断点画点：浅蓝色
 			}
 			else
 			{
-				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> ElementPointCoordinate[i][0]),(Data_Path_p -> ElementPointCoordinate[i][1])),6,Scalar(255,255,0),2);	// 左边线断点画点：蓝色
+				circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> InflectionPointCoordinate[i][0]),(Data_Path_p -> InflectionPointCoordinate[i][1])),6,Scalar(255,255,0),2);	// 左边线断点画点：蓝色
 			}
 		}
 	}
 	// 右边线拐点点绘制
-	if((Data_Path_p -> ElementPointNum[1]) >= 1)
+	if((Data_Path_p -> InflectionPointNum[1]) >= 1)
 	{
-		for(j = 0;j <= (Data_Path_p -> ElementPointNum[1])-1;j++)
+		for(j = 0;j <= (Data_Path_p -> InflectionPointNum[1])-1;j++)
 		{
 			if(j == 0)
 			{
-				putText((Img_Store_p -> Img_Track_Unpivot),to_string(Data_Path_p -> ElementPointNum[1]),Point((Data_Path_p -> ElementPointCoordinate[j][2]),(Data_Path_p -> ElementPointCoordinate[j][3])),FONT_HERSHEY_COMPLEX,0.6,(255,0,255),1);
-				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> ElementPointCoordinate[j][2]),(Data_Path_p -> ElementPointCoordinate[j][3])),6,Scalar(0,255,255),2);	// 右边线断点画点：黄色
+				putText((Img_Store_p -> Img_Track),to_string(Data_Path_p -> InflectionPointNum[1]),Point((Data_Path_p -> InflectionPointCoordinate[j][2]),(Data_Path_p -> InflectionPointCoordinate[j][3])),FONT_HERSHEY_COMPLEX,0.6,(255,0,255),1);
+				circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> InflectionPointCoordinate[j][2]),(Data_Path_p -> InflectionPointCoordinate[j][3])),6,Scalar(128,128,0),2);	// 右边线断点画点：浅蓝色
 			}
 			else
 			{
-				circle((Img_Store_p -> Img_Track_Unpivot),Point((Data_Path_p -> ElementPointCoordinate[j][2]),(Data_Path_p -> ElementPointCoordinate[j][3])),6,Scalar(255,255,0),2);	// 右边线断点画点：蓝色
+				circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> InflectionPointCoordinate[j][2]),(Data_Path_p -> InflectionPointCoordinate[j][3])),6,Scalar(255,255,0),2);	// 右边线断点画点：蓝色
+			}
+		}
+	}
+}
+
+
+/*
+    ImgBendPointDraw说明
+	图像边线弯点绘制
+	限制绘制数目
+*/
+void ImgProcess::ImgBendPointDraw(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
+{
+	// 变量设置
+	int i = 0;
+	int j = 0;
+	// 左边线弯点点绘制
+	if((Data_Path_p -> BendPointNum[0]) >= 1)
+	{
+		for(i = 0;i <= (Data_Path_p -> BendPointNum[0])-1;i++)
+		{
+			if(i == 0)
+			{
+				putText((Img_Store_p -> Img_Track),to_string(Data_Path_p -> BendPointNum[0]),Point((Data_Path_p -> BendPointCoordinate[i][0]),(Data_Path_p -> BendPointCoordinate[i][1])),FONT_HERSHEY_COMPLEX,0.6,(255,0,255),1);
+				circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> BendPointCoordinate[i][0]),(Data_Path_p -> BendPointCoordinate[i][1])),6,Scalar(0,128,128),2);	// 左边线断点画点：浅黄色
+			}
+			else
+			{
+				circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> BendPointCoordinate[i][0]),(Data_Path_p -> BendPointCoordinate[i][1])),6,Scalar(0,255,255),2);	// 左边线断点画点：黄色
+			}
+		}
+	}
+	// 右边线弯点点绘制
+	if((Data_Path_p -> BendPointNum[1]) >= 1)
+	{
+		for(j = 0;j <= (Data_Path_p -> BendPointNum[1])-1;j++)
+		{
+			if(j == 0)
+			{
+				putText((Img_Store_p -> Img_Track),to_string(Data_Path_p -> BendPointNum[1]),Point((Data_Path_p -> BendPointCoordinate[j][2]),(Data_Path_p -> BendPointCoordinate[j][3])),FONT_HERSHEY_COMPLEX,0.6,(255,0,255),1);
+				circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> BendPointCoordinate[j][2]),(Data_Path_p -> BendPointCoordinate[j][3])),6,Scalar(0,128,128),2);	// 右边线断点画点：浅黄色
+			}
+			else
+			{
+				circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> BendPointCoordinate[j][2]),(Data_Path_p -> BendPointCoordinate[j][3])),6,Scalar(0,255,255),2);	// 右边线断点画点：黄色
 			}
 		}
 	}
@@ -256,15 +324,15 @@ void ImgProcess::ImgElementPonitDraw(Img_Store *Img_Store_p,Data_Path *Data_Path
 /*
 	ImgReferenceLine说明
 	图像参考线绘制
-	1.边线断点起始线
-	2.边线断点结束线
+	1.边线拐点起始线
+	2.边线拐点结束线
 	3.中心竖线
 */
 void ImgProcess::ImgReferenceLine(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
-	line((Img_Store_p -> Img_Track_Unpivot),Point(0,239-(Data_Path_p -> Path_Search_Start)),Point(319,239-(Data_Path_p -> Path_Search_Start)),Scalar(0,0,255),1);	// 寻路径起始线
-	line((Img_Store_p -> Img_Track_Unpivot),Point(0,239-(Data_Path_p -> Path_Search_End)),Point(319,239-(Data_Path_p -> Path_Search_End)),Scalar(0,0,255),1);	// 寻路径结束线
-	line((Img_Store_p -> Img_Track_Unpivot),Point(0,239-(Data_Path_p -> Side_Search_Start)),Point(319,239-(Data_Path_p -> Side_Search_Start)),Scalar(255,0,255),1);	// 寻边线起始线
-	line((Img_Store_p -> Img_Track_Unpivot),Point(0,239-(Data_Path_p -> Side_Search_End)),Point(319,239-(Data_Path_p -> Side_Search_End)),Scalar(255,0,255),1);	// 寻边线结束线
-	line((Img_Store_p -> Img_Track_Unpivot),Point(160,239-(Data_Path_p -> Path_Search_Start)),Point(160,239-(Data_Path_p -> Path_Search_End)),Scalar(0,0,255),1);	// 中心竖线
+	line((Img_Store_p -> Img_Track),Point(0,239-(Data_Path_p -> Path_Search_Start)),Point(319,239-(Data_Path_p -> Path_Search_Start)),Scalar(0,0,255),1);	// 寻路径起始线
+	line((Img_Store_p -> Img_Track),Point(0,239-(Data_Path_p -> Path_Search_End)),Point(319,239-(Data_Path_p -> Path_Search_End)),Scalar(0,0,255),1);	// 寻路径结束线
+	line((Img_Store_p -> Img_Track),Point(0,239-(Data_Path_p -> Side_Search_Start)),Point(319,239-(Data_Path_p -> Side_Search_Start)),Scalar(255,0,255),1);	// 寻边线起始线
+	line((Img_Store_p -> Img_Track),Point(0,239-(Data_Path_p -> Side_Search_End)),Point(319,239-(Data_Path_p -> Side_Search_End)),Scalar(255,0,255),1);	// 寻边线结束线
+	line((Img_Store_p -> Img_Track),Point(160,239-(Data_Path_p -> Path_Search_Start)),Point(160,239-(Data_Path_p -> Path_Search_End)),Scalar(0,0,255),1);	// 中心竖线
 }

@@ -8,7 +8,7 @@
 #define Forward_Default 55  // 调试参数
 #define Path_Search_Start_Default 30   // 调试参数
 #define Path_Search_End_Default 170 // 调试参数
-#define Side_Search_Start_Default 10   // 调试参数
+#define Side_Search_Start_Default 30   // 调试参数
 #define Side_Search_End_Default 200   // 调试参数
 #define Game_EN_Default 1   // 调试参数
 
@@ -97,13 +97,14 @@ typedef enum ModelDetectionElement
 typedef struct Img_Store
 {
     cv::Mat Img_Color;  // 使用
-    cv::Mat Img_Color_Unpivot;  // 使用
-    cv::Mat Img_Gray;
-    cv::Mat Img_Gray_Unpivot;   // 使用
-    cv::Mat Img_OTSU;
+    cv::Mat Img_Color_Unpivot;
+    cv::Mat Img_Gray;     // 使用
+    cv::Mat Img_Gray_Unpivot; 
+    cv::Mat Img_OTSU;     // 使用
     cv::Mat Img_OTSU_Unpivot;   // 使用
-    cv::Mat Img_Track;
-    cv::Mat Img_Track_Unpivot;  //使用
+    cv::Mat Img_Track;    // 使用
+    cv::Mat Img_Track_Unpivot; 
+    cv::Mat Img_Text;   // 使用
     cv::Mat Img_All;    // 使用
     cv::Mat Dilate_Kernel = getStructuringElement(cv::MORPH_CROSS,cv::Size(2,2));  // 边线形态学膨胀核大小
     cv::Mat Erode_Kernel = getStructuringElement(cv::MORPH_CROSS,cv::Size(2,2));  // 边线形态学腐蚀核大小
@@ -124,7 +125,6 @@ typedef struct Flag
 typedef struct Function_EN
 {
     bool Uart_EN; // 串口使能
-    bool ImgUnpivot_EN; // 逆透视使能
     bool ImgCompress_EN;   // 图像压缩使能
     CameraKind Camera_EN;   // 相机使能
     bool Game_EN;   // 比赛开始
@@ -150,9 +150,15 @@ typedef struct Data_Path
     int NumSearch[2] = {0}; // 左右八邻域寻线坐标数量
     int CircleRecord[100000][2] = {0}; // 左右圆环赛道记录
     int TrackCoordinate[10000][2] = {0};   // 路径线坐标
-    int PointIdentifyAngle[2] = {0};    // 元素特征点角度
-    int ElementPointCoordinate[10000][4] = {0};  // 左右边线元素特征点坐标
-    int ElementPointNum[2] = {0};    // 元素特征点数量
+    int Vector_Add_Unit[1][4];   // 左右中断点上下两向量加和
+    int InflectionPointIdentifyAngle[2] = {0};    // 元素拐点角度
+    int InflectionPointVectorDistance = 0;   // 边线元素拐点向量距离
+    int InflectionPointCoordinate[10000][4] = {0};  // 左右边线元素拐点坐标
+    int InflectionPointNum[2] = {0};    // 元素拐点数量
+    int BendPointIdentifyAngle[2] = {0};    // 边线弯点角度
+    int BendPointVectorDistance = 0;   // 边线弯点向量距离
+    int BendPointCoordinate[10000][4] = {0};  // 左右边线弯点坐标
+    int BendPointNum[2] = {0};    // 边线弯点数量
     int MotorSpeedInterval[2] = {0};    // 电机速度区间
     int DilateErode_Factor[2] = {0};    // 图形学膨胀腐蚀系数
     int CircleTime = 0; // 进入圆环的图像序号

@@ -38,6 +38,7 @@ class ImgProcess
         */
         void ImgShow(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p);
 
+    private:
 
         /*
             图像边线拐点绘制
@@ -45,9 +46,17 @@ class ImgProcess
             Img_Store_p 图像存储指针
             Data_Path_p 路径相关指针
         */
-        void ImgElementPonitDraw(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
+        void ImgInflectionPointDraw(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
 
-    private:
+
+        /*
+            图像边线弯点绘制
+            @参数说明
+            Img_Store_p 图像存储指针
+            Data_Path_p 路径相关指针
+        */
+        void ImgBendPointDraw(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
+        
 
         /*
             通过原图像和高斯滤波图像进行融合进行图像锐化
@@ -56,6 +65,15 @@ class ImgProcess
             blursize 传入高斯滤波内核大小
         */
         void ImgSharpen(cv::Mat &Img,int blursize);
+
+
+        /*
+            赛道类型、圆环步骤显示
+            @参数说明
+            Img_Store_p 图像存储指针
+            Data_Path_p 路径相关数据指针
+        */
+        void ImgText(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
 
 
         /*
