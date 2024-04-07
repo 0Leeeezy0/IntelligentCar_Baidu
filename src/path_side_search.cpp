@@ -140,7 +140,6 @@ void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
             {
                 circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> SideCoordinate_Eight[0][0]),(Data_Path_p -> SideCoordinate_Eight[0][1])),6,Scalar(255,0,255),2);	//左边线起点画点
                 circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> SideCoordinate_Eight[0][2]),(Data_Path_p -> SideCoordinate_Eight[0][3])),6,Scalar(255,0,255),2);	//右边线起点画点
-                Data_Path_p -> Side_Width = abs((Data_Path_p -> SideCoordinate_Eight[0][0])-(Data_Path_p -> SideCoordinate_Eight[0][2]));
             }
             else
             {

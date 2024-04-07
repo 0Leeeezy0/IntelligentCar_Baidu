@@ -19,7 +19,7 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
     static int State = 0;   // 状态记录
     static int State_Across = 0;
     static int State_Circle = 0;
-    static int OutTime = 0;    // 出环时间
+    static int Out_Time = 0;    // 出环时间
 
     if(Function_EN_p -> Loop_Kind_EN != MODEL_TRACK_LOOP)
     {
@@ -44,18 +44,18 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
             Data_Path_p -> CircleTime = Img_Store_p -> ImgNum;
             Loop_Kind = R_CIRCLE_TRACK_LOOP;
             Data_Path_p -> Track_Kind = R_CIRCLE_TRACK;
-            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE) && Data_Path_p -> Vector_Add_Unit[0][3] == 1)
+            Data_Path_p -> Previous_Circle_Kind = R_CIRCLE_TRACK;
+            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE) && Data_Path_p -> Vector_Add_Unit_Dir[1] == 1 && Function_EN_p -> Gyroscope_EN == false)
             {
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
             }
-            if(Data_Path_p -> Vector_Add_Unit[0][3] == -1 && (Img_Store_p -> ImgNum)-OutTime >= 100 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
+            if(Data_Path_p -> Vector_Add_Unit_Dir[1] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN) && Function_EN_p -> Gyroscope_EN == false)   
             {
                 Data_Path_p -> Circle_Track_Step = IN;
             }   
-            if(Data_Path_p -> Vector_Add_Unit[0][3] == 1 && ((Data_Path_p -> Circle_Track_Step) == IN || (Data_Path_p -> Circle_Track_Step) == OUT))
+            if(Function_EN_p -> Gyroscope_EN == true)
             {
-                Data_Path_p -> Circle_Track_Step = OUT;
-                OutTime = Img_Store_p -> ImgNum;
+
             }
         }
         else if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] == 0) && State - State_Across >= 50 && Function_EN_p -> CircleIdentify_EN == true)
@@ -63,25 +63,32 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
             State++;
             Loop_Kind = L_CIRCLE_TRACK_LOOP;
             Data_Path_p -> Track_Kind = L_CIRCLE_TRACK;
-            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE) && Data_Path_p -> Vector_Add_Unit[0][1] == 1)
+            Data_Path_p -> Previous_Circle_Kind = L_CIRCLE_TRACK;
+            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE) && Data_Path_p -> Vector_Add_Unit_Dir[0] == 1 && Function_EN_p -> Gyroscope_EN == false)
             {
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
             }
-            if(Data_Path_p -> Vector_Add_Unit[0][1] == -1 && (Img_Store_p -> ImgNum)-OutTime >= 100 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
+            if(Data_Path_p -> Vector_Add_Unit_Dir[0] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN) && Function_EN_p -> Gyroscope_EN == false)   
             {
                 Data_Path_p -> Circle_Track_Step = IN;
             }   
-            if(Data_Path_p -> Vector_Add_Unit[0][1] == 1 && ((Data_Path_p -> Circle_Track_Step) == IN || (Data_Path_p -> Circle_Track_Step) == OUT))
+            if(Function_EN_p -> Gyroscope_EN == true)
             {
-                Data_Path_p -> Circle_Track_Step = OUT;
-                OutTime = Img_Store_p -> ImgNum;
+                
             }
         }
         else
         {
             State++;
             Loop_Kind = COMMON_TRACK_LOOP;
-            Data_Path_p -> Track_Kind = COMMON_TRACK;
+            if((Data_Path_p -> BendPointNum[0] >= 1) || (Data_Path_p -> BendPointNum[1] >= 1))
+            {
+                Data_Path_p -> Track_Kind = BEND_TRACK;
+            }
+            else
+            {
+                Data_Path_p -> Track_Kind = STRIGHT_TRACK;
+            }
             if((Data_Path_p -> Circle_Track_Step) == OUT)
             {
                 Data_Path_p -> Circle_Track_Step = INIT;
@@ -163,7 +170,7 @@ void Judge::MotorSpeed_Judge(Data_Path *Data_Path_p)
 {
     switch(Data_Path_p -> Track_Kind)
     {
-        case COMMON_TRACK:
+        case STRIGHT_TRACK:
         {
             if(Data_Path_p -> ServoAngle > 30 || Data_Path_p -> Circle_Track_Step == IN_PREPARE)
             {
@@ -173,6 +180,11 @@ void Judge::MotorSpeed_Judge(Data_Path *Data_Path_p)
             {
                 Data_Path_p -> MotorSpeed = Data_Path_p -> MotorSpeedInterval[1];
             }
+            break;
+        }
+        case BEND_TRACK:
+        {
+            Data_Path_p -> MotorSpeed = int(((Data_Path_p -> MotorSpeedInterval[0])+(Data_Path_p -> MotorSpeedInterval[1]))/2);
             break;
         }
         case L_CIRCLE_TRACK:
@@ -234,7 +246,7 @@ void Judge::InflectionPointSearch(Img_Store* Img_Store_p,Data_Path *Data_Path_p)
         }
 
         // 计算拐点并存储坐标，前提：拐点坐标不再边框上
-        if(abs(AngleVector[0]) > (Data_Path_p -> InflectionPointIdentifyAngle[0]) && abs(AngleVector[0]) < (Data_Path_p -> InflectionPointIdentifyAngle[1]) && (Data_Path_p -> SideCoordinate_Eight[i][0]) > 30)
+        if(abs(AngleVector[0]) > (Data_Path_p -> InflectionPointIdentifyAngle[0]) && abs(AngleVector[0]) < (Data_Path_p -> InflectionPointIdentifyAngle[1]) && (Data_Path_p -> SideCoordinate_Eight[i][0]) > 30 && (Vector[0][1]*Vector[1][1]) >= -40)
         {
             //  cout << abs(AngleVector[0]) << endl;
             (Data_Path_p -> InflectionPointCoordinate[(Data_Path_p -> InflectionPointNum[0])][0]) = (Data_Path_p -> SideCoordinate_Eight[i][0]);
@@ -242,8 +254,7 @@ void Judge::InflectionPointSearch(Img_Store* Img_Store_p,Data_Path *Data_Path_p)
             if(Data_Path_p -> InflectionPointNum[0] == 0)
             {
                 // 向量加和
-                Data_Path_p -> Vector_Add_Unit[0][0] = (Vector[0][0]+Vector[1][0])/abs(Vector[0][0]+Vector[1][0]);
-                Data_Path_p -> Vector_Add_Unit[0][1] = (Vector[0][1]+Vector[1][1])/abs(Vector[0][1]+Vector[1][1]);
+                Data_Path_p -> Vector_Add_Unit_Dir[0] = (Vector[0][1]+Vector[1][1])/abs(Vector[0][1]+Vector[1][1]);
             }
             Data_Path_p -> InflectionPointNum[0]++;
             i = i+10;
@@ -274,7 +285,7 @@ void Judge::InflectionPointSearch(Img_Store* Img_Store_p,Data_Path *Data_Path_p)
         }
 
         // 计算拐点并存储坐标，前提：拐点坐标不在边框上
-        if(abs(AngleVector[1]) > (Data_Path_p -> InflectionPointIdentifyAngle[0]) && abs(AngleVector[1]) < (Data_Path_p -> InflectionPointIdentifyAngle[1]) && 319-(Data_Path_p -> SideCoordinate_Eight[j][2]) > 30)
+        if(abs(AngleVector[1]) > (Data_Path_p -> InflectionPointIdentifyAngle[0]) && abs(AngleVector[1]) < (Data_Path_p -> InflectionPointIdentifyAngle[1]) && 319-(Data_Path_p -> SideCoordinate_Eight[j][2]) > 30 && (Vector[0][3]*Vector[1][3]) >= -40)
         {
             // cout << abs(AngleVector[1]) << endl;
             (Data_Path_p -> InflectionPointCoordinate[(Data_Path_p -> InflectionPointNum[1])][2]) = (Data_Path_p -> SideCoordinate_Eight[j][2]);
@@ -282,8 +293,7 @@ void Judge::InflectionPointSearch(Img_Store* Img_Store_p,Data_Path *Data_Path_p)
             if(Data_Path_p -> InflectionPointNum[1] == 0)
             {
                 // 向量加和
-                Data_Path_p -> Vector_Add_Unit[0][2] = (Vector[0][2]+Vector[1][2])/abs(Vector[0][2]+Vector[1][2]);
-                Data_Path_p -> Vector_Add_Unit[0][3] = (Vector[0][3]+Vector[1][3])/abs(Vector[0][3]+Vector[1][3]);
+                Data_Path_p -> Vector_Add_Unit_Dir[1] = (Vector[0][3]+Vector[1][3])/abs(Vector[0][3]+Vector[1][3]);
             }
             Data_Path_p -> InflectionPointNum[1]++;
             j = j+10;
@@ -338,12 +348,6 @@ void Judge::BendPointSearch(Img_Store* Img_Store_p,Data_Path *Data_Path_p)
             //  cout << abs(AngleVector[0]) << endl;
             (Data_Path_p -> BendPointCoordinate[(Data_Path_p -> BendPointNum[0])][0]) = (Data_Path_p -> SideCoordinate_Eight[i][0]);
             (Data_Path_p -> BendPointCoordinate[(Data_Path_p -> BendPointNum[0])][1]) = (Data_Path_p -> SideCoordinate_Eight[i][1]);
-            if(Data_Path_p -> BendPointNum[0] == 0)
-            {
-                // 向量加和
-                Data_Path_p -> Vector_Add_Unit[0][0] = (Vector[0][0]+Vector[1][0])/abs(Vector[0][0]+Vector[1][0]);
-                Data_Path_p -> Vector_Add_Unit[0][1] = (Vector[0][1]+Vector[1][1])/abs(Vector[0][1]+Vector[1][1]);
-            }
             Data_Path_p -> BendPointNum[0]++;
             i = i+10;
         }
@@ -378,12 +382,6 @@ void Judge::BendPointSearch(Img_Store* Img_Store_p,Data_Path *Data_Path_p)
             // cout << abs(AngleVector[1]) << endl;
             (Data_Path_p -> BendPointCoordinate[(Data_Path_p -> BendPointNum[1])][2]) = (Data_Path_p -> SideCoordinate_Eight[j][2]);
             (Data_Path_p -> BendPointCoordinate[(Data_Path_p -> BendPointNum[1])][3]) = (Data_Path_p -> SideCoordinate_Eight[j][3]);
-            if(Data_Path_p -> InflectionPointNum[1] == 0)
-            {
-                // 向量加和
-                Data_Path_p -> Vector_Add_Unit[0][2] = (Vector[0][2]+Vector[1][2])/abs(Vector[0][2]+Vector[1][2]);
-                Data_Path_p -> Vector_Add_Unit[0][3] = (Vector[0][3]+Vector[1][3])/abs(Vector[0][3]+Vector[1][3]);
-            }
             Data_Path_p -> BendPointNum[1]++;
             j = j+10;
         }
@@ -428,6 +426,7 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     Data_Path_p -> InflectionPointIdentifyAngle[1] = ConfigData.at("MAX_INFLECTION_POINT_ANGLE"); 
     Data_Path_p -> BendPointIdentifyAngle[0] = ConfigData.at("MIN_BEND_POINT_ANGLE");  // 获取边线弯点角度区间
     Data_Path_p -> BendPointIdentifyAngle[1] = ConfigData.at("MAX_BEND_POINT_ANGLE"); 
+    Data_Path_p -> TrackWidth = ConfigData.at("TRACK_WIDTH");   // 获取赛道宽度参数
     Data_Path_p -> MotorSpeedInterval[0] = ConfigData.at("MIN_MOTOR_SPEED");  // 获取电机速度区间
     Data_Path_p -> MotorSpeedInterval[1] = ConfigData.at("MAX_MOTOR_SPEED"); 
     Data_Path_p -> DilateErode_Factor[0] = ConfigData.at("DILATE_FACTOR");  // 获取图形学膨胀系数
@@ -447,7 +446,8 @@ void SYNC::UartReceive_Bit_To_Change_SYNC(UartReceiveProtocol *UartReceiveProtoc
     UartReceiveProtocol_p -> Path_Search_End = UartReceiveProtocol_p -> Data_3;
     UartReceiveProtocol_p -> Side_Search_Start = UartReceiveProtocol_p -> Data_4;
     UartReceiveProtocol_p -> Side_Search_End = UartReceiveProtocol_p -> Data_5;
-    UartReceiveProtocol_p -> Game_EN = UartReceiveProtocol_p -> Data_6;
+    UartReceiveProtocol_p -> Gyroscope_EN = UartReceiveProtocol_p ->Data_6;
+    UartReceiveProtocol_p -> Game_EN = UartReceiveProtocol_p -> Data_7;
 }
 
 
@@ -504,6 +504,7 @@ void SYNC::UartReceive_Change_To_Program_SYNC(UartReceiveProtocol *UartReceivePr
     Data_Path_p -> Path_Search_End = UartReceiveProtocol_p -> Path_Search_End;
     Data_Path_p -> Side_Search_Start = UartReceiveProtocol_p -> Side_Search_Start;
     Data_Path_p -> Side_Search_End = UartReceiveProtocol_p -> Side_Search_End;
+    Function_EN_p -> Gyroscope_EN = UartReceiveProtocol_p -> Gyroscope_EN;
     Function_EN_p -> Game_EN = (bool)UartReceiveProtocol_p -> Game_EN;
 }
 
@@ -556,7 +557,8 @@ void DataPrint(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     cout <<  "赛道类型：";
     switch(Data_Path_p -> Track_Kind)
     {
-        case COMMON_TRACK:{ cout << "普通赛道" << endl; break; }
+        case STRIGHT_TRACK:{ cout << "直赛道" << endl; break; }
+        case BEND_TRACK:{ cout << "弯赛道" << endl; break; }
         case R_CIRCLE_TRACK:
         { 
             cout << "右圆环赛道  "; 

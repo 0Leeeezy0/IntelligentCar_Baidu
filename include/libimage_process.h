@@ -72,8 +72,9 @@ class ImgProcess
             @参数说明
             Img_Store_p 图像存储指针
             Data_Path_p 路径相关数据指针
+            Function_EN_p 函数使能指针
         */
-        void ImgText(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
+        void ImgText(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p);
 
 
         /*

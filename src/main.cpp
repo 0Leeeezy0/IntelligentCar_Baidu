@@ -102,8 +102,6 @@ int main()
                 // 串口发送
                 case UART_SEND_LOOP:
                 {
-                    Judge.ServoDirAngle_Judge(Data_Path_p);
-                    Judge.MotorSpeed_Judge(Data_Path_p);
                     DataPrint(Data_Path_p,Function_EN_p);
                     SYNC.UartSend_Program_To_Change_SYNC(UartSendProtocol_p , Data_Path_p , Function_EN_p); // 同步程序数据至串口发送协议
                     Uart.UartSend(UartSendProtocol_p , (Function_EN_p -> Uart_EN));
@@ -124,8 +122,14 @@ int main()
         // 普通赛道主循环
         while( Function_EN_p -> Loop_Kind_EN == COMMON_TRACK_LOOP )
         {
+            if(Data_Path_p -> Circle_Track_Step == IN_PREPARE)
+            {
+                CircleTrack_Step_IN_Prepare_Stright(Img_Store_p,Data_Path_p);   // 准备入环补线
+            }
             ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
             ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
+            Judge.ServoDirAngle_Judge(Data_Path_p); // 舵机角度计算
+            Judge.MotorSpeed_Judge(Data_Path_p);    // 电机速度决策
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
         }
 
@@ -144,13 +148,15 @@ int main()
                     CircleTrack_Step_IN(Img_Store_p,Data_Path_p);   // 入环补线
                     break;
                 }
-                case OUT:
-                {
-                    // CircleTrack_Step_OUT(Img_Store_p,Data_Path_p);   // 出环补线
-                }
             }
             ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
             ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
+            Judge.ServoDirAngle_Judge(Data_Path_p); // 舵机角度计算
+            Judge.MotorSpeed_Judge(Data_Path_p);    // 电机速度决策
+            if(Data_Path_p -> Circle_Track_Step == OUT)
+            {
+                CircleTrack_Step_OUT(Img_Store_p,Data_Path_p);   // 出环打角
+            }
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
         }
 
@@ -160,6 +166,8 @@ int main()
             AcrossTrack(Img_Store_p,Data_Path_p);   // 十字赛道补线
             ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
             ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
+            Judge.ServoDirAngle_Judge(Data_Path_p); // 舵机角度计算
+            Judge.MotorSpeed_Judge(Data_Path_p);    // 电机速度决策
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
         }
 

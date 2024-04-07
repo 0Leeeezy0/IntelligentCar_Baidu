@@ -20,12 +20,13 @@ void ImgProcess::ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Functi
 	ImgProcess::ImgSobel((Img_Store_p -> Img_OTSU));	//Sobel算子处理
 	threshold((Img_Store_p -> Img_OTSU) , (Img_Store_p -> Img_OTSU) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
 	
-	ImgUnpivot(Img_Store_p -> Img_Color,Img_Store_p -> Img_Color_Unpivot);
-	cvtColor((Img_Store_p -> Img_Color_Unpivot) , (Img_Store_p -> Img_Gray_Unpivot) , COLOR_BGR2GRAY);  //彩色图像灰度化
-	// blur((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_Gray) , Size(18,18) , Point(-1,-1));	//均值滤波	
-	threshold((Img_Store_p -> Img_Gray_Unpivot) , (Img_Store_p -> Img_OTSU_Unpivot) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
-	ImgProcess::ImgSobel((Img_Store_p -> Img_OTSU_Unpivot));	//Sobel算子处理
-	threshold((Img_Store_p -> Img_OTSU_Unpivot) , (Img_Store_p -> Img_OTSU_Unpivot) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
+	// ImgUnpivot(Img_Store_p -> Img_Color,Img_Store_p -> Img_Color_Unpivot);
+	// cvtColor((Img_Store_p -> Img_Color_Unpivot) , (Img_Store_p -> Img_Gray_Unpivot) , COLOR_BGR2GRAY);  //彩色图像灰度化
+	// // blur((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_Gray) , Size(18,18) , Point(-1,-1));	//均值滤波	
+	// threshold((Img_Store_p -> Img_Gray_Unpivot) , (Img_Store_p -> Img_OTSU_Unpivot) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
+	// ImgProcess::ImgSobel((Img_Store_p -> Img_OTSU_Unpivot));	//Sobel算子处理
+	// threshold((Img_Store_p -> Img_OTSU_Unpivot) , (Img_Store_p -> Img_OTSU_Unpivot) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
+
 	// ImgProcess::ImgSharpen((Img_Store_p -> Img_OTSU),5);
 	for(int i = 0;i <= Dilate_Factor;i++)
 	{
@@ -125,11 +126,11 @@ void ImgProcess::ImgSynthesis(Img_Store *Img_Store_p,Function_EN *Function_EN_p)
 {
 	int ImgAllWidth = (Img_Store_p -> Img_Color).cols;	//宽度
 	int ImgAllHeight = (Img_Store_p -> Img_Color).rows; //高度
-	Mat ImgAll = Mat(ImgAllHeight*2+6,ImgAllWidth*3+18,CV_8UC3,Scalar(0,0,0));	//显示全部画面的画布
+	Mat ImgAll = Mat(ImgAllHeight+130,ImgAllWidth*3+18,CV_8UC3,Scalar(0,0,0));	//显示全部画面的画布
 
 	//统一图像的类型为8UC3
 	cvtColor((Img_Store_p -> Img_OTSU) , (Img_Store_p -> Img_OTSU) ,COLOR_GRAY2RGB);
-	cvtColor((Img_Store_p -> Img_OTSU_Unpivot) , (Img_Store_p -> Img_OTSU_Unpivot) ,COLOR_GRAY2RGB);
+	// cvtColor((Img_Store_p -> Img_OTSU_Unpivot) , (Img_Store_p -> Img_OTSU_Unpivot) ,COLOR_GRAY2RGB);
 
 	//Rect roi(ImgAllWidth*i,0,ImgAllWidth,ImgAllHeight);  
 	//定义一个矩形roi
@@ -139,9 +140,7 @@ void ImgProcess::ImgSynthesis(Img_Store *Img_Store_p,Function_EN *Function_EN_p)
 	(Img_Store_p -> Img_Color).copyTo(ImgAll(Rect(0,0,ImgAllWidth,ImgAllHeight))); 
 	(Img_Store_p -> Img_Track).copyTo(ImgAll(Rect(ImgAllWidth+6,0,ImgAllWidth,ImgAllHeight)));  
 	(Img_Store_p -> Img_OTSU).copyTo(ImgAll(Rect(ImgAllWidth*2+12,0,ImgAllWidth,ImgAllHeight))); 
-	(Img_Store_p -> Img_Color_Unpivot).copyTo(ImgAll(Rect(0,ImgAllHeight+6,ImgAllWidth,ImgAllHeight))); 
-	(Img_Store_p -> Img_OTSU_Unpivot).copyTo(ImgAll(Rect(ImgAllWidth+6,ImgAllHeight+6,ImgAllWidth,ImgAllHeight))); 
-	(Img_Store_p -> Img_Text).copyTo(ImgAll(Rect(ImgAllWidth*2+12,ImgAllHeight+6,ImgAllWidth,ImgAllHeight))); 
+	(Img_Store_p -> Img_Text).copyTo(ImgAll(Rect(ImgAllWidth+6,ImgAllHeight+6,ImgAllWidth,120))); 
 
     (Img_Store_p -> Img_All) = ImgAll;
 
@@ -201,17 +200,18 @@ void ImgProcess::ImgCompress(Mat& Img,bool ImgCompress_EN)
 	ImgText说明
 	赛道类型、圆环步骤显示
 */
-void ImgProcess::ImgText(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
+void ImgProcess::ImgText(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p)
 {
 	int ImgWidth = (Img_Store_p -> Img_Color).cols;	// 宽度
-	int ImgHeight = (Img_Store_p -> Img_Color).rows; // 高度
-	(Img_Store_p -> Img_Text) = Mat(ImgHeight,ImgWidth,CV_8UC3,Scalar(0,0,0));	// 显示文字画布
+	(Img_Store_p -> Img_Text) = Mat(120,ImgWidth,CV_8UC3,Scalar(0,0,0));	// 显示文字画布
 
-	string TextTrackKind[5] = {"COMMON_TRACK","R_CIRCLE_TRACK","L_CIRCLE_TRACK","ACROSS_TRACK","MODEL_TRACK"};
+	string TextTrackKind[6] = {"STRIGHT_TRACK","BEND_TRACK","R_CIRCLE_TRACK","L_CIRCLE_TRACK","ACROSS_TRACK","MODEL_TRACK"};
 	string TextCircleTrackStep[4] = {"IN_PREPARE","IN","OUT","INIT"};
+	string TextGyroscope[2] = {"FALSE","TRUE"};
 
-	putText((Img_Store_p -> Img_Text),TextTrackKind[int(Data_Path_p -> Track_Kind)],Point(5,30),FONT_HERSHEY_COMPLEX,1,(255),2);
-	putText((Img_Store_p -> Img_Text),TextCircleTrackStep[int(Data_Path_p -> Circle_Track_Step)],Point(5,70),FONT_HERSHEY_COMPLEX,1,(255),2);
+	putText((Img_Store_p -> Img_Text),TextTrackKind[int(Data_Path_p -> Track_Kind)],Point(5,25),FONT_HERSHEY_COMPLEX,1,(255),2);
+	putText((Img_Store_p -> Img_Text),TextCircleTrackStep[int(Data_Path_p -> Circle_Track_Step)],Point(5,65),FONT_HERSHEY_COMPLEX,1,(255),2);
+	putText((Img_Store_p -> Img_Text),TextGyroscope[int(Function_EN_p -> Gyroscope_EN)],Point(5,105),FONT_HERSHEY_COMPLEX,1,(255),2);
 }
 
 
@@ -225,7 +225,7 @@ void ImgProcess::ImgShow(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_
 	ImgProcess::ImgBendPointDraw(Img_Store_p,Data_Path_p); 
 	ImgProcess::ImgForwardLine(Img_Store_p,Data_Path_p);
 	ImgProcess::ImgReferenceLine(Img_Store_p,Data_Path_p);
-	ImgProcess::ImgText(Img_Store_p,Data_Path_p);
+	ImgProcess::ImgText(Img_Store_p,Data_Path_p,Function_EN_p);
 	ImgProcess::ImgSynthesis(Img_Store_p,Function_EN_p);
 	ImgProcess::ImgSave(Img_Store_p);
 }
