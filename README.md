@@ -35,6 +35,32 @@
     ├── path_circle.cpp 圆环相关
     └── path_side_search.cpp    赛道路径、边缘相关
 ```
+# 配置文件config.json参数
+```json
+	"UART_EN" : 串口使能
+	"IMG_COMPRESS_EN" : 图像压缩使能
+	"CAMERA_EN" : 摄像头类型使能：0.演示视频 1.开发端摄像头 2.开发端USB摄像头 3.边缘计算平台USB摄像头
+	"VIDEO_SHOW_EN" : 摄像头获取图像显示使能
+	"ACROSS_IDENTIFY_EN" : 十字赛道使能
+	"CIRCLE_IDENTIFY_EN" : 圆环赛道使能
+
+	"POINT_DISTANCE" : 向量法向量两点距离
+	"MIN_INFLECTION_POINT_ANGLE" : 最小拐点识别角度
+	"MAX_INFLECTION_POINT_ANGLE" : 最大拐点识别角度
+	"MIN_BEND_POINT_ANGLE" : 最小弯点识别角度
+	"MAX_BEND_POINT_ANGLE" : 最大弯点识别角度
+
+	"TRACK_WIDTH" : 赛道边线结束线宽度
+
+	"MIN_MOTOR_SPEED" : 最小电机速度
+	"MAX_MOTOR_SPEED" : 最大电机速度
+	"CIRCLE_OUT_SERVO_ANGLE" : 出环舵机角度
+
+	"DILATE_FACTOR" : 图形学膨胀系数
+	"ERODE_FACTOR" : 图形学腐蚀系数
+
+	"BRIDGE_TIME" : 桥梁区域时间
+```
 # 库接口(API)
 ## libdata_process 数据处理库
 ### Judge类

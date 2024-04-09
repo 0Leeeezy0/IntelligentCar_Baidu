@@ -1,7 +1,7 @@
 {
-	"UART_EN" : false,
+	"UART_EN" : true,
 	"IMG_COMPRESS_EN" : true,
-	"CAMERA_EN" : 2,
+	"CAMERA_EN" : 3,
 	"VIDEO_SHOW_EN" : true,
 	"ACROSS_IDENTIFY_EN" : true,
 	"CIRCLE_IDENTIFY_EN" : true,
@@ -16,7 +16,11 @@
 
 	"MIN_MOTOR_SPEED" : 25,
 	"MAX_MOTOR_SPEED" : 37,
+	"CIRCLE_OUT_SERVO_ANGLE" : 55,
 
 	"DILATE_FACTOR" : 0,
-	"ERODE_FACTOR" : 1
+	"ERODE_FACTOR" : 1, 
+
+	"BRIDGE_TIME" : 40,
+	"CROSSWALK_TIME" : 40
 }

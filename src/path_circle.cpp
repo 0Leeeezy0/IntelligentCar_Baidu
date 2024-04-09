@@ -101,14 +101,16 @@ void CircleTrack_Step_OUT(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
     {
         case L_CIRCLE_TRACK:
         {
-            // 右准备出环打角
-
+            // 出左环打角
+            Data_Path_p -> ServoDir = 0;
+            Data_Path_p -> ServoAngle = Data_Path_p -> CircleOutServoAngle;
             break;
         }
         case R_CIRCLE_TRACK:
         {
-            // 左准备出环打角
-
+            // 出右环打角
+            Data_Path_p -> ServoDir = 1;
+            Data_Path_p -> ServoAngle = Data_Path_p -> CircleOutServoAngle;
             break;
         }
     }

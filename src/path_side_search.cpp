@@ -203,7 +203,7 @@ void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
                 }
             }
 
-            if((Data_Path_p -> SideCoordinate_Eight[NumSearch[0]][0]) > 289)
+            if((Data_Path_p -> SideCoordinate_Eight[NumSearch[0]][0]) > 239)
             {
                 break;
             } 
@@ -263,7 +263,7 @@ void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
                 }
             }
 
-            if((Data_Path_p -> SideCoordinate_Eight[NumSearch[1]][2]) < 30)
+            if((Data_Path_p -> SideCoordinate_Eight[NumSearch[1]][2]) < 80)
             {
                 break;
             } 

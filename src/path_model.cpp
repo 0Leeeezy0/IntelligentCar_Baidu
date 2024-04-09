@@ -5,30 +5,51 @@ using namespace std;
 using namespace cv;
 
 /*
-    Cone_Path说明
-
+    Brigdge_Zone说明
+    桥梁区域
 */
-void Cone_Path()
+void Bridge_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
-
+    Data_Path_p -> MotorSpeed = Data_Path_p -> MotorSpeedInterval[1]+10;
+    ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
 }
 
 
 /*
-    Block_Path说明
+    Danger_Zone说明
 
 */
-void Block_Path()
+void Danger_Zone()
 {
-
+    
 }
 
 
 /*
-    Garage_Path说明
+    Crosswalk_Zone说明
 
 */
-void Garage_Path()
+void Crosswalk_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
+{
+    switch(Data_Path_p -> Model_Crosswalk_Zone_Step)
+    {
+        case START:{ Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; Data_Path_p -> MotorSpeed = 40; break; }
+        case STOP_PREPARE:{ Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; Data_Path_p -> MotorSpeed = 20; break; }
+        case STOP:{ Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; Data_Path_p -> MotorSpeed = 0; break; }
+    }
+}
+
+
+/*
+    *_Garage_Path说明
+
+*/
+void R_Garage_Zone()
+{
+    
+}
+
+void L_Garage_Zone()
 {
     
 }

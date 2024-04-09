@@ -53,7 +53,7 @@ typedef enum TrackKind
     R_CIRCLE_TRACK = 2,   // 右圆环赛道
     L_CIRCLE_TRACK = 3,   // 左圆环赛道
     ACROSS_TRACK = 4,   // 十字赛道
-    MODEL_TRACK = 5,   // 模型赛道
+    MODEL_TRACK = 5,    // 模型赛道
 }TrackKind;
 
 
@@ -64,21 +64,44 @@ typedef enum CircleTrackStep
 {
     IN_PREPARE = 0, // 准备入环
     IN = 1, // 入环
-    OUT = 2,    // 出环
-    INIT = 3,   // 占位
+    OUT_PREPARE = 2,     // 准备出环
+    OUT = 3,    // 出环
+    INIT = 4,   // 占位
 }CircleTrackStep;
 
 
 /*
-    模型赛道车库步骤
+    模型救援赛道车库步骤
 */
-typedef enum GarageStep
+typedef enum RescureZoneStep
 {
-    GARAGE_IN_PREPARE = 0,   // 准备入车库
-    GARAGE_IN = 1,   // 入车库
-    GARAGE_STOP = 2,   // 停车
-    GARAGE_OUT = 3,   // 出车库
-}GarageStep;
+    L_GARAGE_IN_PREPARE = 0,   // 准备入左车库
+    L_GARAGE_IN = 1,   // 入左车库
+    L_GARAGE_OUT = 3,   // 出左车库
+    R_GARAGE_IN_PREPARE = 4,   // 准备入右车库
+    R_GARAGE_IN = 5,   // 入右车库
+    R_GARAGE_OUT = 6,   // 出右车库
+}RescureZoneStep;
+
+
+/*
+    模型斑马线赛道车库步骤
+*/
+typedef enum CrosswalkZoneStep
+{
+    START = 0,   // 发车
+    STOP_PREPARE = 1, // 准备停车
+    STOP = 2,   // 停车
+}CrosswalkZoneStep;
+
+
+/*
+    模型追逐区赛道步骤
+*/
+typedef enum ChaseZoneStep
+{
+
+}ChaseZoneStep;
 
 
 /*
@@ -86,11 +109,11 @@ typedef enum GarageStep
 */
 typedef enum ModelZoneKind
 {
-    Model_Bridge_Zone = 0,  // 桥梁区,对应bridge
-    Model_Crosswalk_Zone = 1,   // 斑马线区,对应crosswalk
-    Model_Danger_Zone = 2,  // 危险区,对应bomb
-    Model_Rescue_Zone = 3,  // 救援区,对应patient,tumble,evil,thief
-    Model_Chase_Zone = 4,   // 追逐区,对应spy
+    BRIDGE_ZONE = 0,  // 桥梁区,对应bridge
+    CROSSWALK_ZONE = 1,   // 斑马线区,对应crosswalk
+    DANGER_ZONE = 2,  // 危险区,对应bomb
+    RESCURE_ZONE = 3,  // 救援区,对应patient,tumble,evil,thief
+    CHASE_ZONE = 4,   // 追逐区,对应spy
 }ModelZoneKind;
 
 
@@ -99,19 +122,19 @@ typedef enum ModelZoneKind
 */
 typedef enum ModelDetectionElement
 {
-    bomb = 0,   // 炸弹
-    bridge = 1, // 桥梁
-    safety = 2, // 安全
-    cone = 3,  // 锥桶
-    crosswalk = 4,  // 斑马线
-    danger = 5,     // 危险
-    evil = 6,   // 恶人
-    block = 7,  // 路障
-    patient = 8,    // 病人
-    prop = 9,   // 道具
-    spy = 10,   // 间谍
-    thief = 11, // 小偷
-    tumble = 12    // 翻滚
+    BOMB = 0,   // 炸弹
+    BRIDGE = 1, // 桥梁
+    SAFTY = 2, // 安全
+    CONE = 3,  // 锥桶
+    CROSSWALK = 4,  // 斑马线
+    DANGER = 5,     // 危险
+    EVIL = 6,   // 恶人
+    BLOCK = 7,  // 路障
+    PATIENT = 8,    // 病人
+    PROP = 9,   // 道具
+    SPY = 10,   // 间谍
+    THIEF = 11, // 小偷
+    TUMBLE = 12    // 翻滚
 }ModelDetectionElement;
 
 /*
@@ -163,37 +186,47 @@ typedef struct Function_EN
 */
 typedef struct Data_Path
 {
+    // 赛道识别参数
     int Forward;    // 前瞻点
     int Path_Search_Start; // 寻路径起始点
     int Path_Search_End;   // 寻路径结束点
     int Side_Search_Start; // 寻边线起始点
     int Side_Search_End; // 寻边线结束点
+    int TrackWidth = 0; // 赛道宽度
+    int InflectionPointIdentifyAngle[2] = {0};    // 元素拐点识别角度
+    int InflectionPointVectorDistance = 0;   // 边线元素拐点向量距离
+    int BendPointIdentifyAngle[2] = {0};    // 边线弯点识别角度
+    int BendPointVectorDistance = 0;   // 边线弯点向量距离
+    int MotorSpeedInterval[2] = {0};    // 电机速度区间
+    int DilateErode_Factor[2] = {0};    // 图形学膨胀腐蚀系数
+    int CircleOutServoAngle = 0;    // 出环舵机角度
+    
+    // 赛道识别结果
+    // 边线结果
     int SideCoordinate[10000][4] = {0};   // 左右边线坐标(中线寻线法)
     int SideCoordinate_Eight[10000][4] = {0};   // 左右边线坐标(八邻域)
     int NumSearch[2] = {0}; // 左右八邻域寻线坐标数量
-    int CircleRecord[100000][2] = {0}; // 左右圆环赛道记录
     int TrackCoordinate[10000][2] = {0};   // 路径线坐标
     int Vector_Add_Unit_Dir[2];   // 左右拐点上下两向量纵坐标加和方向
-    int InflectionPointIdentifyAngle[2] = {0};    // 元素拐点角度
-    int InflectionPointVectorDistance = 0;   // 边线元素拐点向量距离
     int InflectionPointCoordinate[10000][4] = {0};  // 左右边线元素拐点坐标
     int InflectionPointNum[2] = {0};    // 元素拐点数量
-    int BendPointIdentifyAngle[2] = {0};    // 边线弯点角度
-    int BendPointVectorDistance = 0;   // 边线弯点向量距离
-    int BendPointCoordinate[10000][4] = {0};  // 左右边线弯点坐标
     int BendPointNum[2] = {0};    // 边线弯点数量
-    int MotorSpeedInterval[2] = {0};    // 电机速度区间
-    int DilateErode_Factor[2] = {0};    // 图形学膨胀腐蚀系数
-    int TrackWidth = 0; // 赛道宽度
-    int CircleTime = 0; // 进入圆环的图像序号
-    int ServoDir;  // 舵机方向
-    int ServoAngle;    // 舵机角度
-    int MotorSpeed;    // 电机速度
+    int BendPointCoordinate[10000][4] = {0};  // 左右边线弯点坐标
     TrackKind Track_Kind; // 赛道类型：1.普通赛道 2.左圆环赛道 3.右圆环赛道 4.十字赛道
     CircleTrackStep Circle_Track_Step = INIT;  // 圆环入环步骤：1.准备入环 2.入环 3.出环
     TrackKind Previous_Circle_Kind; // 目前圆环类型
-    ModelZoneKind Model_Zone_Kind;    // 模型赛道区域类型
-    // vector<Model_Detection_Element> Model_Detection_Element;    // 模型预测元素
+    // 控制参数
+    int ServoDir;  // 舵机方向
+    int ServoAngle;    // 舵机角度
+    int MotorSpeed;    // 电机速度
+
+    // 模型赛道参数
+    ModelZoneKind Model_Zone_Kind = CROSSWALK_ZONE;    // 模型赛道区域类型
+    CrosswalkZoneStep Model_Crosswalk_Zone_Step = START;    // 模型斑马线赛道步骤
+    RescureZoneStep Model_Rescure_Zone_Step;    // 模型救援赛道步骤
+    ChaseZoneStep Model_Chase_Zone_Step;    // 模型追逐区赛道步骤
+    int BridgeTime = 0; // 进入桥梁区域的时间
+    int CrosswalkTime = 0;  // 进入斑马线区域的时间
 }Data_Path;
 
 /*
@@ -212,6 +245,8 @@ typedef struct UartSendProtocol
     int ServoAngle;    // 舵机角度
     int MotorSpeed;    // 电机速度
     int Track_Kind;  // 赛道类型
+    RescureZoneStep Model_Rescure_Zone_Step;    // 模型救援赛道步骤
+    ChaseZoneStep Model_Chase_Zone_Step;    // 模型追逐区赛道步骤
 
     // 串口数据位
     unsigned char Data_1;

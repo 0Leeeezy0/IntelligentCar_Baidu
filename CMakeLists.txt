@@ -18,8 +18,8 @@ link_directories(/usr/local/lib/onnx)
 link_libraries(/usr/local/lib/onnx/libonnxruntime.so)
 
 #PPNC
-# link_directories(/usr/local/lib/ppnc)
-# link_libraries(/usr/local/lib/ppnc/libppnc_runtime.so)
+link_directories(/usr/local/lib/ppnc)
+link_libraries(/usr/local/lib/ppnc/libppnc_runtime.so)
 
 #开发端
 

@@ -13,8 +13,8 @@ int main()
     SYNC SYNC;
 
     // 模型部署库类定义
-    // PPNCDetection PPNCDetection;
-    // NDTensor Tensor;
+    PPNCDetection PPNCDetection;
+    NDTensor Tensor;
 
     // 数据结构体指针定义
     Img_Store Img_Store_c; 
@@ -29,8 +29,8 @@ int main()
     UartReceiveProtocol *UartReceiveProtocol_p = &UartReceiveProtocol_c;
 
     // 模型变量设置
-    // vector<int64_t> InputSize = {320,320};  // 设置图像输入模型的尺寸，即张量尺寸
-    // unordered_map<string, NDTensor> Run_Tensor;   // 设置传入run()中的参数
+    vector<int64_t> InputSize = {320,320};  // 设置图像输入模型的尺寸，即张量尺寸
+    unordered_map<string, NDTensor> Run_Tensor;   // 设置传入run()中的参数
 
     // 参数获取
     SYNC.ConfigData_SYNC(Data_Path_p,Function_EN_p);
@@ -58,7 +58,7 @@ int main()
     }
 
     // 模型初始化
-    // PPNCDetection.init("../model");
+    PPNCDetection.init("../model");
     
     Function_EN_p -> Game_EN = true;
     Function_EN_p -> Loop_Kind_EN = UART_RECEIVE_LOOP;
@@ -78,11 +78,10 @@ int main()
                     ImgProcess.ImgPrepare(Img_Store_p,Data_Path_p,Function_EN_p,Data_Path_p -> DilateErode_Factor[0],Data_Path_p -> DilateErode_Factor[1]); // 图像预处理
 
                     // 模型预测结果获取
-                    // PPNCDetection.TransposeAndCopyToTensor(Img_Store_p -> Img_Color,Tensor); // 将Mat格式图像转为张量
-                    // auto Run_Tensor = PPNCDetection.preprocess((Img_Store_p -> Img_Color),InputSize);
-                    // PPNCDetection.run(*Run_Tensor); // 模型输入图像预处理
-                    // PPNCDetection.render(); // 预测
-                    // PPNCDetection.drawBox(Img_Store_p -> Img_Color); // 识别结果画框
+                    auto Run_Tensor = PPNCDetection.preprocess((Img_Store_p -> Img_Color),InputSize);
+                    PPNCDetection.run(*Run_Tensor); // 模型输入图像预处理
+                    PPNCDetection.render(); // 预测
+                    PPNCDetection.drawBox(Img_Store_p -> Img_Color); // 识别结果画框
                     
                     ImgSideSearch(Img_Store_p,Data_Path_p);   // 边线八邻域寻线
 
@@ -115,7 +114,7 @@ int main()
         // 赛道状态机决策循环
         while( Function_EN_p -> Loop_Kind_EN == JUDGE_LOOP )
         {
-            // Function_EN_p -> Loop_Kind_EN = Judge.ModelTrack_Judge(PPNCDetection.results,Data_Path_p);  // 模型赛道决策
+            Function_EN_p -> Loop_Kind_EN = Judge.ModelTrack_Judge(PPNCDetection.results,Data_Path_p,Img_Store_p);  // 模型赛道决策
             Function_EN_p -> Loop_Kind_EN = Judge.TrackKind_Judge(Img_Store_p,Data_Path_p,Function_EN_p);  // 切换至赛道循环
         }
 
@@ -175,20 +174,18 @@ int main()
         while( Function_EN_p -> Loop_Kind_EN == MODEL_TRACK_LOOP)
         {   
             /* 
-                左右锥桶判定条件：AI只检测到一个或两个锥桶，若锥桶在图像左侧为左锥桶，以此类推
-                左右路障判定条件：与锥桶类似
-                左右车库判定条件：根据车库前获取的LABLE判定进左车库还是右车库
                 AI 赛道元素执行时不使用传统元素寻线等，只进行摄像头采集
             */
             switch(Data_Path_p -> Model_Zone_Kind)
             {
 
-                case Model_Bridge_Zone:{ break; }
-                case Model_Crosswalk_Zone:{ break; }
-                case Model_Danger_Zone:{ break; }
-                case Model_Rescue_Zone:{ break; }
-                case Model_Chase_Zone:{ break; }
+                case BRIDGE_ZONE:{ Bridge_Zone(Img_Store_p,Data_Path_p); break; }
+                case CROSSWALK_ZONE:{ Crosswalk_Zone(Img_Store_p,Data_Path_p); break; }
+                case DANGER_ZONE:{ break; }
+                case RESCURE_ZONE:{ break; }
+                case CHASE_ZONE:{ break; }
             }
+            Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
         }
     }
 
