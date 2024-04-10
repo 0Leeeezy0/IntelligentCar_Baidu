@@ -78,10 +78,14 @@ int main()
                     ImgProcess.ImgPrepare(Img_Store_p,Data_Path_p,Function_EN_p,Data_Path_p -> DilateErode_Factor[0],Data_Path_p -> DilateErode_Factor[1]); // 图像预处理
 
                     // 模型预测结果获取
-                    auto Run_Tensor = PPNCDetection.preprocess((Img_Store_p -> Img_Color),InputSize);
-                    PPNCDetection.run(*Run_Tensor); // 模型输入图像预处理
-                    PPNCDetection.render(); // 预测
-                    PPNCDetection.drawBox(Img_Store_p -> Img_Color); // 识别结果画框
+                    if(Function_EN_p -> ModelDetection_EN == true)
+                    {
+                        auto Run_Tensor = PPNCDetection.preprocess((Img_Store_p -> Img_Color),InputSize);
+                        PPNCDetection.run(*Run_Tensor); // 模型输入图像预处理
+                        PPNCDetection.render(); // 预测
+                        PPNCDetection.drawBox(Img_Store_p -> Img_Color); // 识别结果画框
+                    }
+                    
                     
                     ImgSideSearch(Img_Store_p,Data_Path_p);   // 边线八邻域寻线
 
@@ -114,7 +118,7 @@ int main()
         // 赛道状态机决策循环
         while( Function_EN_p -> Loop_Kind_EN == JUDGE_LOOP )
         {
-            Function_EN_p -> Loop_Kind_EN = Judge.ModelTrack_Judge(PPNCDetection.results,Data_Path_p,Img_Store_p);  // 模型赛道决策
+            Function_EN_p -> Loop_Kind_EN = Judge.ModelTrack_Judge(PPNCDetection.results,Data_Path_p,Img_Store_p,Function_EN_p);  // 模型赛道决策
             Function_EN_p -> Loop_Kind_EN = Judge.TrackKind_Judge(Img_Store_p,Data_Path_p,Function_EN_p);  // 切换至赛道循环
         }
 
@@ -156,7 +160,7 @@ int main()
             {
                 CircleTrack_Step_OUT(Img_Store_p,Data_Path_p);   // 出环打角
             }
-            Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
+            Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 切换至串口发送循环
         }
 
         // 十字赛道主循环
@@ -167,7 +171,7 @@ int main()
             ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
             Judge.ServoDirAngle_Judge(Data_Path_p); // 舵机角度计算
             Judge.MotorSpeed_Judge(Data_Path_p);    // 电机速度决策
-            Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
+            Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 切换至串口发送循环
         }
 
         // AI赛道主循环
@@ -178,14 +182,14 @@ int main()
             */
             switch(Data_Path_p -> Model_Zone_Kind)
             {
-
-                case BRIDGE_ZONE:{ Bridge_Zone(Img_Store_p,Data_Path_p); break; }
+                case BRIDGE_ZONE:{ Bridge_Zone(Img_Store_p,Data_Path_p); ImgPathSearch(Img_Store_p,Data_Path_p); Judge.ServoDirAngle_Judge(Data_Path_p); break; }
                 case CROSSWALK_ZONE:{ Crosswalk_Zone(Img_Store_p,Data_Path_p); break; }
                 case DANGER_ZONE:{ break; }
                 case RESCURE_ZONE:{ break; }
                 case CHASE_ZONE:{ break; }
             }
-            Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
+            ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
+            Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 切换至串口发送循环
         }
     }
 

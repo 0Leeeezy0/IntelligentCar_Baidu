@@ -96,7 +96,6 @@ void CircleTrack_Step_IN(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 // 圆环出环步骤：打角
 void CircleTrack_Step_OUT(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
-    static int Out_Time = 0;
     switch(Data_Path_p -> Track_Kind)
     {
         case L_CIRCLE_TRACK:

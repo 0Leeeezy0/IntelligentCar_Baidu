@@ -1,10 +1,11 @@
 {
-	"UART_EN" : true,
+	"UART_EN" : false,
 	"IMG_COMPRESS_EN" : true,
-	"CAMERA_EN" : 3,
+	"CAMERA_EN" : 0,
 	"VIDEO_SHOW_EN" : true,
 	"ACROSS_IDENTIFY_EN" : true,
 	"CIRCLE_IDENTIFY_EN" : true,
+	"MODEL_DETECTION_EN" : true,
 
 	"POINT_DISTANCE" : 20,
 	"MIN_INFLECTION_POINT_ANGLE" : 80,

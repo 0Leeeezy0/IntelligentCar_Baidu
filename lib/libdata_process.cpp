@@ -52,7 +52,7 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
                 Data_Path_p -> Previous_Circle_Kind = R_CIRCLE_TRACK;
             }
-            if(Data_Path_p -> Vector_Add_Unit_Dir[1] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
+            else if(Data_Path_p -> Vector_Add_Unit_Dir[1] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
             {
                 Loop_Kind = R_CIRCLE_TRACK_LOOP;
                 Data_Path_p -> Track_Kind = R_CIRCLE_TRACK;
@@ -63,7 +63,12 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
                 State_Circle_IN = Img_Store_p -> ImgNum;
             }   
             // 考虑十字姿态不好，误判为圆环的情况
-            if(Data_Path_p -> Vector_Add_Unit_Dir[1] == -1 && Data_Path_p -> Circle_Track_Step == INIT)  
+            else if(Data_Path_p -> Vector_Add_Unit_Dir[1] == -1 && Data_Path_p -> Circle_Track_Step == INIT)  
+            {
+                Loop_Kind = COMMON_TRACK_LOOP;
+                Data_Path_p -> Track_Kind = BEND_TRACK;
+            }
+            else
             {
                 Loop_Kind = COMMON_TRACK_LOOP;
                 Data_Path_p -> Track_Kind = BEND_TRACK;
@@ -81,7 +86,7 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
                 Data_Path_p -> Previous_Circle_Kind = L_CIRCLE_TRACK;
             }
-            if(Data_Path_p -> Vector_Add_Unit_Dir[0] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
+            else if(Data_Path_p -> Vector_Add_Unit_Dir[0] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
             {
                 Loop_Kind = L_CIRCLE_TRACK_LOOP;
                 Data_Path_p -> Track_Kind = L_CIRCLE_TRACK;
@@ -92,7 +97,12 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
                 State_Circle_IN = Img_Store_p -> ImgNum;
             }   
             // 考虑十字姿态不好，误判为圆环的情况
-            if(Data_Path_p -> Vector_Add_Unit_Dir[0] == -1 && Data_Path_p -> Circle_Track_Step == INIT)  
+            else if(Data_Path_p -> Vector_Add_Unit_Dir[0] == -1 && Data_Path_p -> Circle_Track_Step == INIT)  
+            {
+                Loop_Kind = COMMON_TRACK_LOOP;
+                Data_Path_p -> Track_Kind = BEND_TRACK;
+            }
+            else
             {
                 Loop_Kind = COMMON_TRACK_LOOP;
                 Data_Path_p -> Track_Kind = BEND_TRACK;
@@ -150,54 +160,60 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
     模型赛道决策
     本函数不集成至TrackKind_Judge_Vector中是为了在开发端能进行调试
 */
-LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_Path_p,Img_Store *Img_Store_p)
+LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_Path_p,Img_Store *Img_Store_p,Function_EN *Function_EN_p)
 {
-    LoopKind Loop_Kind = COMMON_TRACK_LOOP;
+    LoopKind Loop_Kind;
     static int BridgeTime = 0;
     static int CrosswalkTime = 0;
     // 获取模型结果
-    for(int i=0;i<results.size();i++)
+    if(Function_EN_p -> ModelDetection_EN == true)
     {
-        PredictResult result = results[i];
-    
-        if(result.label == "bomb"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = DANGER_ZONE; break; }
-        else if(result.label == "bridge"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE; BridgeTime = (Img_Store_p -> ImgNum); break; }
-        else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; CrosswalkTime = (Img_Store_p -> ImgNum);  break; }
-        // else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; }
-    }
-    // 在桥梁区域限定时间内将锁为模型赛道的桥梁区域
-    if((Img_Store_p -> ImgNum)-BridgeTime < Data_Path_p -> BridgeTime)
-    {
-        Loop_Kind = MODEL_TRACK_LOOP; 
-        Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE;
-    }
-    // 在斑马线区域限定时间内将锁为模型赛道的斑马线区域
-    if(Img_Store_p -> ImgNum <= 500)
-    {
-        // 发车
-        if((Img_Store_p -> ImgNum)-CrosswalkTime < 10)
+        for(int i=0;i<results.size();i++)
         {
-            Data_Path_p -> Model_Crosswalk_Zone_Step = START;
+            PredictResult result = results[i];
+        
+            if(result.label == "bomb"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = DANGER_ZONE; break; }
+            else if(result.label == "bridge"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE; BridgeTime = (Img_Store_p -> ImgNum); break; }
+            else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; CrosswalkTime = (Img_Store_p -> ImgNum);  break; }
+            else{ Loop_Kind = COMMON_TRACK_LOOP; break; }
+            // else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; }
         }
-        Loop_Kind = MODEL_TRACK_LOOP; 
-        Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
-    }
-    if(Img_Store_p -> ImgNum >= 1000)
-    {
-        // 停车
-        if((Img_Store_p -> ImgNum)-CrosswalkTime < Data_Path_p -> CrosswalkTime)
+        // 在桥梁区域限定时间内将锁为模型赛道的桥梁区域
+        if((Img_Store_p -> ImgNum)-BridgeTime < Data_Path_p -> BridgeTime)
         {
-            if((Img_Store_p -> ImgNum)-CrosswalkTime == 0)
+            Loop_Kind = MODEL_TRACK_LOOP; 
+            Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE;
+        }
+        // 在斑马线区域限定时间内将锁为模型赛道的斑马线区域
+        if(Img_Store_p -> ImgNum <= 500)
+        {
+            // 发车
+            if((Img_Store_p -> ImgNum)-CrosswalkTime < 5)
             {
-                Data_Path_p -> Model_Crosswalk_Zone_Step = STOP_PREPARE;
-            }
-            else
-            {
-                Data_Path_p -> Model_Crosswalk_Zone_Step = STOP;
+                Data_Path_p -> Model_Crosswalk_Zone_Step = START;
+                Loop_Kind = MODEL_TRACK_LOOP; 
+                Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
             }
         }
-        Loop_Kind = MODEL_TRACK_LOOP; 
-        Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
+        if(Img_Store_p -> ImgNum >= 1000)
+        {
+            // 停车
+            if((Img_Store_p -> ImgNum)-CrosswalkTime < Data_Path_p -> CrosswalkTime)
+            {
+                if((Img_Store_p -> ImgNum)-CrosswalkTime == 0)
+                {
+                    Data_Path_p -> Model_Crosswalk_Zone_Step = STOP_PREPARE;
+                    Loop_Kind = MODEL_TRACK_LOOP; 
+                    Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
+                }
+                else
+                {
+                    Data_Path_p -> Model_Crosswalk_Zone_Step = STOP;
+                    Loop_Kind = MODEL_TRACK_LOOP; 
+                    Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
+                }
+            }
+        }
     }
     return Loop_Kind;
 }
@@ -212,20 +228,7 @@ void Judge::ServoDirAngle_Judge(Data_Path *Data_Path_p)
     static int Count = 0; 
     static int Dir = 0;
     (Data_Path_p -> ServoAngle) = (Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][0]) - 160;
-    if(Data_Path_p -> Circle_Track_Step == OUT)
-    {
-        Count = 0;
-        switch(Data_Path_p -> Track_Kind)
-        {
-            case L_CIRCLE_TRACK:{ Dir = 1; break; }
-            case R_CIRCLE_TRACK:{ Dir = -1; break; }
-        }
-    }
-    Count++;
-    if(Count <= 10)
-    {
-        (Data_Path_p -> ServoAngle) = Dir*100;
-    }
+   
     // 计算舵机方向和角度
     if((Data_Path_p -> ServoAngle) < 0)
     {
@@ -497,6 +500,7 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     Function_EN_p -> VideoShow_EN = ConfigData.at("VIDEO_SHOW_EN"); // 获取图像显示使能参数
     Function_EN_p -> AcrossIdentify_EN = ConfigData.at("ACROSS_IDENTIFY_EN");   // 获取十字识别使能参数
     Function_EN_p -> CircleIdentify_EN = ConfigData.at("CIRCLE_IDENTIFY_EN");   // 获取圆环识别使能参数
+    Function_EN_p -> ModelDetection_EN = ConfigData.at("MODEL_DETECTION_EN");   // 获取模型推理使能参数
     Data_Path_p -> InflectionPointVectorDistance = ConfigData.at("POINT_DISTANCE");  // 获取元素拐点角度区
     Data_Path_p -> BendPointVectorDistance = ConfigData.at("POINT_DISTANCE");  // 获取边线弯点角度区
     Data_Path_p -> InflectionPointIdentifyAngle[0] = ConfigData.at("MIN_INFLECTION_POINT_ANGLE");  // 获取元素拐点角度区间

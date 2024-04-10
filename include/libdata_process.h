@@ -30,10 +30,11 @@ class Judge
             results 模型预测结果容器
             Data_Path_p 路径相关数据指针
             Img_Store_p 图像存储指针
+            Function_EN_p 函数使能指针
             @返回值说明
             返回赛道类型
         */
-        LoopKind ModelTrack_Judge(std::vector<PredictResult> results,Data_Path *Data_Path_p,Img_Store *Img_Store_p);
+        LoopKind ModelTrack_Judge(std::vector<PredictResult> results,Data_Path *Data_Path_p,Img_Store *Img_Store_p,Function_EN *Function_EN_p);
 
 
         /*

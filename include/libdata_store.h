@@ -177,6 +177,7 @@ typedef struct Function_EN
     bool VideoShow_EN;  // 图像显示使能
     bool AcrossIdentify_EN;    // 十字特征点识别使能
     bool CircleIdentify_EN;    // 圆环特征点识别使能
+    bool ModelDetection_EN;     // 模型推理使能
     bool Gyroscope_EN;    // 陀螺仪状态使能：当陀螺仪积分到一定角度时出环
     LoopKind Loop_Kind_EN;  // 循环类型使能：0.图像循环 1.普通赛道循环 2.圆环赛道循环 3.十字赛道循环 4.AI赛道循环 5.串口发送循环
 }Function_EN;
@@ -221,8 +222,8 @@ typedef struct Data_Path
     int MotorSpeed;    // 电机速度
 
     // 模型赛道参数
-    ModelZoneKind Model_Zone_Kind = CROSSWALK_ZONE;    // 模型赛道区域类型
-    CrosswalkZoneStep Model_Crosswalk_Zone_Step = START;    // 模型斑马线赛道步骤
+    ModelZoneKind Model_Zone_Kind;    // 模型赛道区域类型
+    CrosswalkZoneStep Model_Crosswalk_Zone_Step;    // 模型斑马线赛道步骤
     RescureZoneStep Model_Rescure_Zone_Step;    // 模型救援赛道步骤
     ChaseZoneStep Model_Chase_Zone_Step;    // 模型追逐区赛道步骤
     int BridgeTime = 0; // 进入桥梁区域的时间

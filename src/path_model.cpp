@@ -11,7 +11,6 @@ using namespace cv;
 void Bridge_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
     Data_Path_p -> MotorSpeed = Data_Path_p -> MotorSpeedInterval[1]+10;
-    ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
 }
 
 
@@ -35,7 +34,7 @@ void Crosswalk_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
     {
         case START:{ Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; Data_Path_p -> MotorSpeed = 40; break; }
         case STOP_PREPARE:{ Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; Data_Path_p -> MotorSpeed = 20; break; }
-        case STOP:{ Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; Data_Path_p -> MotorSpeed = 0; break; }
+        case STOP:{ Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; Data_Path_p -> MotorSpeed = 0; abort(); }
     }
 }
 
