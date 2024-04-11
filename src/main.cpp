@@ -34,12 +34,14 @@ int main()
 
     // 参数获取
     SYNC.ConfigData_SYNC(Data_Path_p,Function_EN_p);
+    JSON_FunctionConfigData JSON_FunctionConfigData = Function_EN_p -> JSON_FunctionConfigData_v[0];
+    JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
 
     //摄像头初始化
      VideoCapture Camera; // 定义相机
     
     // 相机类型设置
-    switch(Function_EN_p -> Camera_EN)
+    switch(JSON_FunctionConfigData.Camera_EN)
     {
         case DEMO_VIDEO:{ Camera.open("../img/sample.mp4"); break; }    // 演示视频
         case PC_CAMERA:{ Camera.open(0); break; }  // 开发端摄像头
@@ -58,7 +60,10 @@ int main()
     }
 
     // 模型初始化
-    PPNCDetection.init("../model");
+    if(JSON_FunctionConfigData.ModelDetection_EN == true)
+    {
+        PPNCDetection.init("../model");
+    }
     
     Function_EN_p -> Game_EN = true;
     Function_EN_p -> Loop_Kind_EN = UART_RECEIVE_LOOP;
@@ -74,16 +79,16 @@ int main()
                 case CAMERA_CATCH_LOOP:
                 {
                     Camera >> (Img_Store_p -> Img_Color);   // 将视频流转为图像流
-                    ImgProcess.ImgCompress((Img_Store_p -> Img_Color),(Function_EN_p -> ImgCompress_EN));   // 图像压缩：可在数据存储头文件中决定是否要进行图像压缩
-                    ImgProcess.ImgPrepare(Img_Store_p,Data_Path_p,Function_EN_p,Data_Path_p -> DilateErode_Factor[0],Data_Path_p -> DilateErode_Factor[1]); // 图像预处理
+                    ImgProcess.ImgCompress((Img_Store_p -> Img_Color),(JSON_FunctionConfigData.ImgCompress_EN));   // 图像压缩：可在数据存储头文件中决定是否要进行图像压缩
+                    ImgProcess.ImgPrepare(Img_Store_p,Data_Path_p,Function_EN_p,JSON_TrackConfigData.DilateErode_Factor[0],JSON_TrackConfigData.DilateErode_Factor[1]); // 图像预处理
 
                     // 模型预测结果获取
-                    if(Function_EN_p -> ModelDetection_EN == true)
+                    if(JSON_FunctionConfigData.ModelDetection_EN == true)
                     {
-                        auto Run_Tensor = PPNCDetection.preprocess((Img_Store_p -> Img_Color),InputSize);
-                        PPNCDetection.run(*Run_Tensor); // 模型输入图像预处理
-                        PPNCDetection.render(); // 预测
-                        PPNCDetection.drawBox(Img_Store_p -> Img_Color); // 识别结果画框
+                            auto Run_Tensor = PPNCDetection.preprocess((Img_Store_p -> Img_Color),InputSize);
+                            PPNCDetection.run(*Run_Tensor); // 模型输入图像预处理
+                            PPNCDetection.render(); // 预测
+                            PPNCDetection.drawBox(Img_Store_p -> Img_Color); // 识别结果画框
                     }
                     
                     
@@ -97,7 +102,7 @@ int main()
                 // 串口接收参数
                 case UART_RECEIVE_LOOP:
                 {
-                    Uart.UartReceive(UartReceiveProtocol_p , (Function_EN_p -> Uart_EN));   // 串口接收设置
+                    Uart.UartReceive(UartReceiveProtocol_p , JSON_FunctionConfigData.Uart_EN);   // 串口接收设置
                     SYNC.UartReceive_Change_To_Program_SYNC(UartReceiveProtocol_p , Data_Path_p , Function_EN_p); // 同步串口接收协议至程序数据
                     Function_EN_p -> Loop_Kind_EN = CAMERA_CATCH_LOOP;
                     break;
@@ -107,7 +112,7 @@ int main()
                 {
                     DataPrint(Data_Path_p,Function_EN_p);
                     SYNC.UartSend_Program_To_Change_SYNC(UartSendProtocol_p , Data_Path_p , Function_EN_p); // 同步程序数据至串口发送协议
-                    Uart.UartSend(UartSendProtocol_p , (Function_EN_p -> Uart_EN));
+                    Uart.UartSend(UartSendProtocol_p , JSON_FunctionConfigData.Uart_EN);
                     Function_EN_p -> Loop_Kind_EN = UART_RECEIVE_LOOP;
                     break;
                 }

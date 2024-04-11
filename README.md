@@ -43,7 +43,6 @@
 	"VIDEO_SHOW_EN" : 摄像头获取图像显示使能
 	"ACROSS_IDENTIFY_EN" : 十字赛道使能
 	"CIRCLE_IDENTIFY_EN" : 圆环赛道使能
-	"MODEL_DETECTION_EN" : 模型推理使能
 
 	"POINT_DISTANCE" : 向量法向量两点距离
 	"MIN_INFLECTION_POINT_ANGLE" : 最小拐点识别角度
@@ -61,7 +60,6 @@
 	"ERODE_FACTOR" : 图形学腐蚀系数
 
 	"BRIDGE_TIME" : 桥梁区域时间
-	"CROSSWALK_TIME" : 斑马线区域时间
 ```
 # 库接口(API)
 ## libdata_process 数据处理库

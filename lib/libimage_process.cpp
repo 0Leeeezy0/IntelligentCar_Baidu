@@ -124,6 +124,8 @@ void ImgProcess::ImgUnpivot(Mat Img,Mat& Img_Unpivot)
 */
 void ImgProcess::ImgSynthesis(Img_Store *Img_Store_p,Function_EN *Function_EN_p)
 {
+	JSON_FunctionConfigData JSON_FunctionConfigData = Function_EN_p -> JSON_FunctionConfigData_v[0];
+
 	int ImgAllWidth = (Img_Store_p -> Img_Color).cols;	//宽度
 	int ImgAllHeight = (Img_Store_p -> Img_Color).rows; //高度
 	Mat ImgAll = Mat(ImgAllHeight+170,ImgAllWidth*3+18,CV_8UC3,Scalar(0,0,0));	//显示全部画面的画布
@@ -144,7 +146,7 @@ void ImgProcess::ImgSynthesis(Img_Store *Img_Store_p,Function_EN *Function_EN_p)
 
     (Img_Store_p -> Img_All) = ImgAll;
 
-	if(Function_EN_p -> VideoShow_EN == true)
+	if(JSON_FunctionConfigData.VideoShow_EN == true)
 	{
 		imshow("CAMERA",(Img_Store_p -> Img_All));
 	}

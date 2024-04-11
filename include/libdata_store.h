@@ -138,6 +138,39 @@ typedef enum ModelDetectionElement
 }ModelDetectionElement;
 
 /*
+    JSON文件存储的工程功能设置参数
+*/
+typedef struct JSON_FunctionConfigData
+{
+    bool Uart_EN; // 串口使能
+    bool ImgCompress_EN;   // 图像压缩使能
+    CameraKind Camera_EN;   // 相机使能
+    bool VideoShow_EN;  // 图像显示使能
+    bool DataPrint_EN;  // 数据显示使能
+    bool AcrossIdentify_EN;    // 十字特征点识别使能
+    bool CircleIdentify_EN;    // 圆环特征点识别使能
+    bool ModelDetection_EN;     // 模型推理使能
+}JSON_FunctionConfigData;
+
+/*
+    JSON文件存储的赛道识别设置参数
+*/
+typedef struct JSON_TrackConfigData
+{
+    int TrackWidth = 0; // 赛道宽度
+    int InflectionPointIdentifyAngle[2] = {0};    // 元素拐点识别角度
+    int InflectionPointVectorDistance = 0;   // 边线元素拐点向量距离
+    int BendPointIdentifyAngle[2] = {0};    // 边线弯点识别角度
+    int BendPointVectorDistance = 0;   // 边线弯点向量距离
+    int MotorSpeedInterval[2] = {0};    // 电机速度区间
+    int DilateErode_Factor[2] = {0};    // 图形学膨胀腐蚀系数
+    float BendTrack_MotorSpeedFactor;   // 弯道电机速度占比
+    int CircleOutServoAngle = 0;    // 出环舵机角度
+    int BridgeTime = 0; // 进入桥梁区域的时间
+    int CrosswalkTime = 0;  // 进入斑马线区域的时间
+}JSON_TrackConfigData;
+
+/*
     图像存储
 */
 typedef struct Img_Store
@@ -158,26 +191,12 @@ typedef struct Img_Store
 }Img_Store;
 
 /*
-    标志位设置
-*/
-typedef struct Flag
-{
-    bool CameraInit;
-}Flag;
-
-/*
     函数使能
 */
 typedef struct Function_EN
 {
-    bool Uart_EN; // 串口使能
-    bool ImgCompress_EN;   // 图像压缩使能
-    CameraKind Camera_EN;   // 相机使能
+    std::vector<JSON_FunctionConfigData> JSON_FunctionConfigData_v;   // JSON文件存储的工程功能设置参数
     bool Game_EN;   // 比赛开始
-    bool VideoShow_EN;  // 图像显示使能
-    bool AcrossIdentify_EN;    // 十字特征点识别使能
-    bool CircleIdentify_EN;    // 圆环特征点识别使能
-    bool ModelDetection_EN;     // 模型推理使能
     bool Gyroscope_EN;    // 陀螺仪状态使能：当陀螺仪积分到一定角度时出环
     LoopKind Loop_Kind_EN;  // 循环类型使能：0.图像循环 1.普通赛道循环 2.圆环赛道循环 3.十字赛道循环 4.AI赛道循环 5.串口发送循环
 }Function_EN;
@@ -193,14 +212,8 @@ typedef struct Data_Path
     int Path_Search_End;   // 寻路径结束点
     int Side_Search_Start; // 寻边线起始点
     int Side_Search_End; // 寻边线结束点
-    int TrackWidth = 0; // 赛道宽度
-    int InflectionPointIdentifyAngle[2] = {0};    // 元素拐点识别角度
-    int InflectionPointVectorDistance = 0;   // 边线元素拐点向量距离
-    int BendPointIdentifyAngle[2] = {0};    // 边线弯点识别角度
-    int BendPointVectorDistance = 0;   // 边线弯点向量距离
-    int MotorSpeedInterval[2] = {0};    // 电机速度区间
-    int DilateErode_Factor[2] = {0};    // 图形学膨胀腐蚀系数
-    int CircleOutServoAngle = 0;    // 出环舵机角度
+
+    std::vector<JSON_TrackConfigData> JSON_TrackConfigData_v; // JSON文件存储的赛道识别设置参数
     
     // 赛道识别结果
     // 边线结果
@@ -222,12 +235,10 @@ typedef struct Data_Path
     int MotorSpeed;    // 电机速度
 
     // 模型赛道参数
-    ModelZoneKind Model_Zone_Kind;    // 模型赛道区域类型
+    ModelZoneKind Model_Zone_Kind = CROSSWALK_ZONE;    // 模型赛道区域类型
     CrosswalkZoneStep Model_Crosswalk_Zone_Step;    // 模型斑马线赛道步骤
     RescureZoneStep Model_Rescure_Zone_Step;    // 模型救援赛道步骤
     ChaseZoneStep Model_Chase_Zone_Step;    // 模型追逐区赛道步骤
-    int BridgeTime = 0; // 进入桥梁区域的时间
-    int CrosswalkTime = 0;  // 进入斑马线区域的时间
 }Data_Path;
 
 /*
