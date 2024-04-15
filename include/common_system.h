@@ -24,6 +24,8 @@
 #include <sys/time.h>
 #include <cstdlib>
 #include <memory>
+#include <pthread.h>
+#include <thread>
 #include <opencv2/opencv.hpp>
 #include "json.hpp"
 #include "detection.hpp"

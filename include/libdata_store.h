@@ -164,7 +164,8 @@ typedef struct JSON_TrackConfigData
     int BendPointVectorDistance = 0;   // 边线弯点向量距离
     int MotorSpeedInterval[2] = {0};    // 电机速度区间
     int DilateErode_Factor[2] = {0};    // 图形学膨胀腐蚀系数
-    float BendTrack_MotorSpeedFactor;   // 弯道电机速度占比
+    float BendTrack_MotorSpeedFactor_1;   // 弯道电机速度占比1
+    float BendTrack_MotorSpeedFactor_2;   // 弯道电机速度占比2
     int CircleOutServoAngle = 0;    // 出环舵机角度
     int BridgeTime = 0; // 进入桥梁区域的时间
     int CrosswalkTime = 0;  // 进入斑马线区域的时间
@@ -199,6 +200,7 @@ typedef struct Function_EN
     bool Game_EN;   // 比赛开始
     bool Gyroscope_EN;    // 陀螺仪状态使能：当陀螺仪积分到一定角度时出环
     LoopKind Loop_Kind_EN;  // 循环类型使能：0.图像循环 1.普通赛道循环 2.圆环赛道循环 3.十字赛道循环 4.AI赛道循环 5.串口发送循环
+    bool ThreadModelDetection_EN;  // 多线程模型推理使能：当模型推理线程结束后才会使能，若模型推理线程还在进行则不使能
 }Function_EN;
 
 /*

@@ -181,10 +181,24 @@ CMakeFiles/INCAR.RUN.dir/lib/libmodel_onnx.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/INCAR.RUN.dir/lib/libmodel_onnx.cpp.s"
 	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libmodel_onnx.cpp -o CMakeFiles/INCAR.RUN.dir/lib/libmodel_onnx.cpp.s
 
+CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o: CMakeFiles/INCAR.RUN.dir/flags.make
+CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o: /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libmodel_ppnc.cpp
+CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o: CMakeFiles/INCAR.RUN.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o"
+	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o -MF CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o.d -o CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libmodel_ppnc.cpp
+
+CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.i"
+	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libmodel_ppnc.cpp > CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.i
+
+CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.s"
+	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libmodel_ppnc.cpp -o CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.s
+
 CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o: CMakeFiles/INCAR.RUN.dir/flags.make
 CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o: /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libuart_wz.cpp
 CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o: CMakeFiles/INCAR.RUN.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o"
 	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o -MF CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o.d -o CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libuart_wz.cpp
 
 CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.i: cmake_force
@@ -198,7 +212,7 @@ CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.s: cmake_force
 CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o: CMakeFiles/INCAR.RUN.dir/flags.make
 CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o: /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libuart_eb.cpp
 CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o: CMakeFiles/INCAR.RUN.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o"
 	/usr/bin/g++-12 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o -MF CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o.d -o CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libuart_eb.cpp
 
 CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.i: cmake_force
@@ -219,6 +233,7 @@ INCAR_RUN_OBJECTS = \
 "CMakeFiles/INCAR.RUN.dir/lib/libimage_process.cpp.o" \
 "CMakeFiles/INCAR.RUN.dir/lib/libdata_process.cpp.o" \
 "CMakeFiles/INCAR.RUN.dir/lib/libmodel_onnx.cpp.o" \
+"CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o" \
 "CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o" \
 "CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o"
 
@@ -233,6 +248,7 @@ INCAR.RUN: CMakeFiles/INCAR.RUN.dir/src/path_model.cpp.o
 INCAR.RUN: CMakeFiles/INCAR.RUN.dir/lib/libimage_process.cpp.o
 INCAR.RUN: CMakeFiles/INCAR.RUN.dir/lib/libdata_process.cpp.o
 INCAR.RUN: CMakeFiles/INCAR.RUN.dir/lib/libmodel_onnx.cpp.o
+INCAR.RUN: CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o
 INCAR.RUN: CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o
 INCAR.RUN: CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o
 INCAR.RUN: CMakeFiles/INCAR.RUN.dir/build.make
@@ -254,7 +270,7 @@ INCAR.RUN: /usr/local/lib/libopencv_flann.so.4.9.0
 INCAR.RUN: /usr/local/lib/libopencv_imgproc.so.4.9.0
 INCAR.RUN: /usr/local/lib/libopencv_core.so.4.9.0
 INCAR.RUN: CMakeFiles/INCAR.RUN.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable INCAR.RUN"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX executable INCAR.RUN"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/INCAR.RUN.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

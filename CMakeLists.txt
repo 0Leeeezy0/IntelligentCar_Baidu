@@ -21,6 +21,10 @@ link_libraries(/usr/local/lib/onnx/libonnxruntime.so)
 link_directories(/usr/local/lib/ppnc)
 link_libraries(/usr/local/lib/ppnc/libppnc_runtime.so)
 
+#PTHREAD
+#加上这个寻找pthread库比较保险，否则得另外链接
+link_libraries(pthread)
+
 #开发端
 
 find_package(PkgConfig)
@@ -40,6 +44,7 @@ add_executable(${PROJECT_NAME}  ./src/main.cpp
                                 ./lib/libimage_process.cpp
                                 ./lib/libdata_process.cpp
                                 ./lib/libmodel_onnx.cpp
+                                ./lib/libmodel_ppnc.cpp
                                 ./lib/libuart_wz.cpp
                                 ./lib/libuart_eb.cpp)
 

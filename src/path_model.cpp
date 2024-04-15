@@ -33,9 +33,9 @@ void Crosswalk_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
     switch(Data_Path_p -> Model_Crosswalk_Zone_Step)
     {
-        case START:{ Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; Data_Path_p -> MotorSpeed = 40; break; }
-        case STOP_PREPARE:{ Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; Data_Path_p -> MotorSpeed = 20; break; }
-        case STOP:{ Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; Data_Path_p -> MotorSpeed = 0; break; }
+        case START:{  Data_Path_p -> MotorSpeed = 25; break; }
+        case STOP_PREPARE:{ Data_Path_p -> MotorSpeed = 20; break; }
+        case STOP:{ Data_Path_p -> MotorSpeed = 0; break; }
     }
 }
 

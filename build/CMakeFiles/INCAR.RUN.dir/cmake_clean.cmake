@@ -5,6 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/INCAR.RUN.dir/lib/libimage_process.cpp.o.d"
   "CMakeFiles/INCAR.RUN.dir/lib/libmodel_onnx.cpp.o"
   "CMakeFiles/INCAR.RUN.dir/lib/libmodel_onnx.cpp.o.d"
+  "CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o"
+  "CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o.d"
   "CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o"
   "CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o.d"
   "CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o"

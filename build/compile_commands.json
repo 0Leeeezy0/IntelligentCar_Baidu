@@ -41,6 +41,11 @@
 },
 {
   "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/build",
+  "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/./include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/./include/model -isystem /usr/local/include/opencv4 -g -o CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libmodel_ppnc.cpp",
+  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libmodel_ppnc.cpp"
+},
+{
+  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/build",
   "command": "/usr/bin/g++-12  -I/usr/local/include/onnx -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/./include -I/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/./include/model -isystem /usr/local/include/opencv4 -g -o CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libuart_wz.cpp",
   "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libuart_wz.cpp"
 },

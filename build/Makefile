@@ -201,6 +201,30 @@ lib/libmodel_onnx.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/INCAR.RUN.dir/build.make CMakeFiles/INCAR.RUN.dir/lib/libmodel_onnx.cpp.s
 .PHONY : lib/libmodel_onnx.cpp.s
 
+lib/libmodel_ppnc.o: lib/libmodel_ppnc.cpp.o
+.PHONY : lib/libmodel_ppnc.o
+
+# target to build an object file
+lib/libmodel_ppnc.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/INCAR.RUN.dir/build.make CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o
+.PHONY : lib/libmodel_ppnc.cpp.o
+
+lib/libmodel_ppnc.i: lib/libmodel_ppnc.cpp.i
+.PHONY : lib/libmodel_ppnc.i
+
+# target to preprocess a source file
+lib/libmodel_ppnc.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/INCAR.RUN.dir/build.make CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.i
+.PHONY : lib/libmodel_ppnc.cpp.i
+
+lib/libmodel_ppnc.s: lib/libmodel_ppnc.cpp.s
+.PHONY : lib/libmodel_ppnc.s
+
+# target to generate assembly for a file
+lib/libmodel_ppnc.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/INCAR.RUN.dir/build.make CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.s
+.PHONY : lib/libmodel_ppnc.cpp.s
+
 lib/libuart_eb.o: lib/libuart_eb.cpp.o
 .PHONY : lib/libuart_eb.o
 
@@ -387,6 +411,9 @@ help:
 	@echo "... lib/libmodel_onnx.o"
 	@echo "... lib/libmodel_onnx.i"
 	@echo "... lib/libmodel_onnx.s"
+	@echo "... lib/libmodel_ppnc.o"
+	@echo "... lib/libmodel_ppnc.i"
+	@echo "... lib/libmodel_ppnc.s"
 	@echo "... lib/libuart_eb.o"
 	@echo "... lib/libuart_eb.i"
 	@echo "... lib/libuart_eb.s"

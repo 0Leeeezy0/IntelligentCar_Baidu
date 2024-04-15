@@ -11,6 +11,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libdata_process.cpp" "CMakeFiles/INCAR.RUN.dir/lib/libdata_process.cpp.o" "gcc" "CMakeFiles/INCAR.RUN.dir/lib/libdata_process.cpp.o.d"
   "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libimage_process.cpp" "CMakeFiles/INCAR.RUN.dir/lib/libimage_process.cpp.o" "gcc" "CMakeFiles/INCAR.RUN.dir/lib/libimage_process.cpp.o.d"
   "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libmodel_onnx.cpp" "CMakeFiles/INCAR.RUN.dir/lib/libmodel_onnx.cpp.o" "gcc" "CMakeFiles/INCAR.RUN.dir/lib/libmodel_onnx.cpp.o.d"
+  "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libmodel_ppnc.cpp" "CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o" "gcc" "CMakeFiles/INCAR.RUN.dir/lib/libmodel_ppnc.cpp.o.d"
   "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libuart_eb.cpp" "CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o" "gcc" "CMakeFiles/INCAR.RUN.dir/lib/libuart_eb.cpp.o.d"
   "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/lib/libuart_wz.cpp" "CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o" "gcc" "CMakeFiles/INCAR.RUN.dir/lib/libuart_wz.cpp.o.d"
   "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/src/main.cpp" "CMakeFiles/INCAR.RUN.dir/src/main.cpp.o" "gcc" "CMakeFiles/INCAR.RUN.dir/src/main.cpp.o.d"

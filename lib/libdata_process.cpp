@@ -271,7 +271,14 @@ void Judge::MotorSpeed_Judge(Data_Path *Data_Path_p)
         }
         case BEND_TRACK:
         {
-            Data_Path_p -> MotorSpeed = (JSON_TrackConfigData.MotorSpeedInterval[0])+int(((JSON_TrackConfigData.MotorSpeedInterval[1])-(JSON_TrackConfigData.MotorSpeedInterval[0]))*JSON_TrackConfigData.BendTrack_MotorSpeedFactor);
+            if(Data_Path_p -> BendPointNum[0] <= 5 || Data_Path_p -> BendPointNum[1] <= 5)
+            {
+                Data_Path_p -> MotorSpeed = (JSON_TrackConfigData.MotorSpeedInterval[0])+int(((JSON_TrackConfigData.MotorSpeedInterval[1])-(JSON_TrackConfigData.MotorSpeedInterval[0]))*JSON_TrackConfigData.BendTrack_MotorSpeedFactor_1);
+            }
+            else
+            {
+                Data_Path_p -> MotorSpeed = (JSON_TrackConfigData.MotorSpeedInterval[0])+int(((JSON_TrackConfigData.MotorSpeedInterval[1])-(JSON_TrackConfigData.MotorSpeedInterval[0]))*JSON_TrackConfigData.BendTrack_MotorSpeedFactor_2); 
+            }
             break;
         }
         case L_CIRCLE_TRACK:
@@ -528,7 +535,8 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     JSON_TrackConfigData.TrackWidth = ConfigData.at("TRACK_WIDTH");   // 获取赛道宽度参数
     JSON_TrackConfigData.MotorSpeedInterval[0] = ConfigData.at("MIN_MOTOR_SPEED");  // 获取电机速度区间
     JSON_TrackConfigData.MotorSpeedInterval[1] = ConfigData.at("MAX_MOTOR_SPEED"); 
-    JSON_TrackConfigData.BendTrack_MotorSpeedFactor = ConfigData.at("BEND_TRACK_MOTOR_SPEED_FACTOR");   // 弯道电机速度占比
+    JSON_TrackConfigData.BendTrack_MotorSpeedFactor_1 = ConfigData.at("BEND_TRACK_MOTOR_SPEED_FACTOR_1");   // 弯道电机速度占比1
+    JSON_TrackConfigData.BendTrack_MotorSpeedFactor_2 = ConfigData.at("BEND_TRACK_MOTOR_SPEED_FACTOR_2");   // 弯道电机速度占比2
     JSON_TrackConfigData.CircleOutServoAngle = ConfigData.at("CIRCLE_OUT_SERVO_ANGLE");   // 出环打角
     JSON_TrackConfigData.DilateErode_Factor[0] = ConfigData.at("DILATE_FACTOR");  // 获取图形学膨胀系数
     JSON_TrackConfigData.DilateErode_Factor[1] = ConfigData.at("ERODE_FACTOR");  // 获取图形学腐蚀系数

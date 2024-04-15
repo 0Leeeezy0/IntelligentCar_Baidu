@@ -55,6 +55,7 @@
 	"MIN_MOTOR_SPEED" : 最小电机速度
 	"MAX_MOTOR_SPEED" : 最大电机速度
 	"CIRCLE_OUT_SERVO_ANGLE" : 出环舵机角度
+	"BEND_TRACK_MOTOR_SPEED_FACTOR" : 弯道电机速度占比
 
 	"DILATE_FACTOR" : 图形学膨胀系数
 	"ERODE_FACTOR" : 图形学腐蚀系数
