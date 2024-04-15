@@ -57,6 +57,9 @@ int main()
 
     // 模型初始化
     PPNC_ModelInit(PPNCDetection,Function_EN_p,JSON_FunctionConfigData.ModelDetection_EN);
+    // 开启ModelDetection模型推理线程
+    thread ModelDetection (ref(PPNC_ModelDetection_Thread),ref(PPNCDetection),Img_Store_p,Function_EN_p,ref(JSON_FunctionConfigData.ModelDetection_EN));
+    ModelDetection.detach();
     
     Function_EN_p -> Game_EN = true;
     Function_EN_p -> Loop_Kind_EN = UART_RECEIVE_LOOP;
@@ -75,12 +78,9 @@ int main()
                     ImgProcess.ImgCompress((Img_Store_p -> Img_Color),(JSON_FunctionConfigData.ImgCompress_EN));   // 图像压缩：可在数据存储头文件中决定是否要进行图像压缩
                     ImgProcess.ImgPrepare(Img_Store_p,Data_Path_p,Function_EN_p,JSON_TrackConfigData.DilateErode_Factor[0],JSON_TrackConfigData.DilateErode_Factor[1]); // 图像预处理
 
-                    // 模型预测结果获取
-                    PPNC_ModelTensorTrans(PPNCDetection,Img_Store_p -> Img_Color,JSON_FunctionConfigData.ModelDetection_EN);   // Mat转为Tensor张量
-                    if(Function_EN_p -> ThreadModelDetection_EN == true);   // 多线程进行模型推理    
+                    if(Function_EN_p -> ThreadModelDetection_EN == true);   // 多线程推理结束
                     {
-                        thread ModelDetection (ref(PPNC_ModelDetection_Thread),ref(PPNCDetection),Function_EN_p,Img_Store_p -> Img_Color,ref(JSON_FunctionConfigData.ModelDetection_EN));
-                        ModelDetection.detach();
+                        Function_EN_p -> ThreadModelDetection_EN = false;
                     }
                     
                     ImgSideSearch(Img_Store_p,Data_Path_p);   // 边线八邻域寻线
@@ -114,7 +114,7 @@ int main()
         // 赛道状态机决策循环
         while( Function_EN_p -> Loop_Kind_EN == JUDGE_LOOP )
         {
-            // Function_EN_p -> Loop_Kind_EN = Judge.ModelTrack_Judge(PPNCDetection.results,Data_Path_p,Img_Store_p,Function_EN_p);  // 模型赛道决策
+            Function_EN_p -> Loop_Kind_EN = Judge.ModelTrack_Judge(PPNCDetection.results,Data_Path_p,Img_Store_p,Function_EN_p);  // 模型赛道决策
             Function_EN_p -> Loop_Kind_EN = Judge.TrackKind_Judge(Img_Store_p,Data_Path_p,Function_EN_p);  // 切换至赛道循环
         }
 

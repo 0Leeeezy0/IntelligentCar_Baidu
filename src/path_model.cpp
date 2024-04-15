@@ -11,7 +11,7 @@ using namespace cv;
 void Bridge_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
-    Data_Path_p -> MotorSpeed = JSON_TrackConfigData.MotorSpeedInterval[1]+10;
+    Data_Path_p -> MotorSpeed = JSON_TrackConfigData.MotorSpeedInterval[1];
 }
 
 
