@@ -168,8 +168,11 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
     JSON_FunctionConfigData JSON_FunctionConfigData = Function_EN_p -> JSON_FunctionConfigData_v[0];
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
 
+    static int DangerTime = 0;
     static int BridgeTime = 0;
     static int CrosswalkTime = 0;
+
+    int Crosswalk_Y = 0;
     // 获取模型结果
     if(JSON_FunctionConfigData.ModelDetection_EN == true)
     {
@@ -177,11 +180,19 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
         {
             PredictResult result = results[i];
         
-            if(result.label == "bomb"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = DANGER_ZONE; break; }
+            if(result.label == "bomb"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = DANGER_ZONE; DangerTime = (Img_Store_p -> ImgNum); break; }
             else if(result.label == "bridge"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE; BridgeTime = (Img_Store_p -> ImgNum); break; }
-            else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; CrosswalkTime = (Img_Store_p -> ImgNum);  break; }
+            else if(result.label == "crosswalk" && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; CrosswalkTime = (Img_Store_p -> ImgNum); break; }
             else{ Loop_Kind = COMMON_TRACK_LOOP; break; }
             // else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; }
+        }
+
+        // 在危险区域限定时间内将锁为模型赛道的危险区域
+        if((Img_Store_p -> ImgNum)-DangerTime < JSON_TrackConfigData.DangerTime)
+        {
+            Loop_Kind = MODEL_TRACK_LOOP; 
+            Data_Path_p -> Model_Zone_Kind = DANGER_ZONE;
+            // while(Function_EN_p -> SerialControl_EN == false);  // 等待模型推理完成
         }
         // 在桥梁区域限定时间内将锁为模型赛道的桥梁区域
         if((Img_Store_p -> ImgNum)-BridgeTime < JSON_TrackConfigData.BridgeTime)
@@ -190,10 +201,11 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
             Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE;
         }
         // 在斑马线区域限定时间内将锁为模型赛道的斑马线区域
+        // 当斑马线在图像下方时才能判定为斑马线
         if(Img_Store_p -> ImgNum <= 500)
         {
             // 发车
-            if((Img_Store_p -> ImgNum)-CrosswalkTime < 10)
+            if((Img_Store_p -> ImgNum)-CrosswalkTime < 5)
             {
                 Data_Path_p -> Model_Crosswalk_Zone_Step = START;
                 Loop_Kind = MODEL_TRACK_LOOP; 
@@ -535,13 +547,17 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     JSON_TrackConfigData.TrackWidth = ConfigData.at("TRACK_WIDTH");   // 获取赛道宽度参数
     JSON_TrackConfigData.MotorSpeedInterval[0] = ConfigData.at("MIN_MOTOR_SPEED");  // 获取电机速度区间
     JSON_TrackConfigData.MotorSpeedInterval[1] = ConfigData.at("MAX_MOTOR_SPEED"); 
+    JSON_TrackConfigData.DangerZoneMotorSpeed = ConfigData.at("DANGER_ZONE_MOTOR_SPEED"); // 危险区电机速度
     JSON_TrackConfigData.BendTrack_MotorSpeedFactor_1 = ConfigData.at("BEND_TRACK_MOTOR_SPEED_FACTOR_1");   // 弯道电机速度占比1
     JSON_TrackConfigData.BendTrack_MotorSpeedFactor_2 = ConfigData.at("BEND_TRACK_MOTOR_SPEED_FACTOR_2");   // 弯道电机速度占比2
     JSON_TrackConfigData.CircleOutServoAngle = ConfigData.at("CIRCLE_OUT_SERVO_ANGLE");   // 出环打角
     JSON_TrackConfigData.DilateErode_Factor[0] = ConfigData.at("DILATE_FACTOR");  // 获取图形学膨胀系数
     JSON_TrackConfigData.DilateErode_Factor[1] = ConfigData.at("ERODE_FACTOR");  // 获取图形学腐蚀系数
+    JSON_TrackConfigData.DangerTime = ConfigData.at("DANGER_TIME");  // 获取进入危险区域的时间
     JSON_TrackConfigData.BridgeTime = ConfigData.at("BRIDGE_TIME");   // 获取进入桥梁区域的时间
     JSON_TrackConfigData.CrosswalkTime = ConfigData.at("CROSSWALK_TIME");   // 获取进入斑马线区域的时间
+    JSON_TrackConfigData.Crosswalk_Y = ConfigData.at("CROSSWALK_IDENTIFY_Y");   // 获取斑马线识别纵坐标阈值
+    JSON_TrackConfigData.ConeRadius = ConfigData.at("CONE_RADIUS"); // 锥桶避障半径
 
     Function_EN_p -> JSON_FunctionConfigData_v.push_back(JSON_FunctionConfigData);
     Data_Path_p -> JSON_TrackConfigData_v.push_back(JSON_TrackConfigData);

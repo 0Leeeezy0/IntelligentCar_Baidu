@@ -34,7 +34,7 @@ int main()
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
 
     //摄像头初始化
-     VideoCapture Camera; // 定义相机
+    VideoCapture Camera; // 定义相机
     
     // 相机类型设置
     switch(JSON_FunctionConfigData.Camera_EN)
@@ -58,7 +58,7 @@ int main()
     // 模型初始化
     PPNC_ModelInit(PPNCDetection,Function_EN_p,JSON_FunctionConfigData.ModelDetection_EN);
     // 开启ModelDetection模型推理线程
-    thread ModelDetection (ref(PPNC_ModelDetection_Thread),ref(PPNCDetection),Img_Store_p,Function_EN_p,ref(JSON_FunctionConfigData.ModelDetection_EN));
+    thread ModelDetection (PPNC_ModelDetection_Thread,ref(PPNCDetection),Img_Store_p,Function_EN_p,ref(JSON_FunctionConfigData.ModelDetection_EN));
     ModelDetection.detach();
     
     Function_EN_p -> Game_EN = true;
@@ -75,14 +75,10 @@ int main()
                 case CAMERA_CATCH_LOOP:
                 {
                     Camera >> (Img_Store_p -> Img_Color);   // 将视频流转为图像流
-                    ImgProcess.ImgCompress((Img_Store_p -> Img_Color),(JSON_FunctionConfigData.ImgCompress_EN));   // 图像压缩：可在数据存储头文件中决定是否要进行图像压缩
+                    ImgProcess.ImgRealFPS(Img_Store_p,true);
+                    ImgProcess.ImgCompress(Img_Store_p -> Img_Color,JSON_FunctionConfigData.ImgCompress_EN);
                     ImgProcess.ImgPrepare(Img_Store_p,Data_Path_p,Function_EN_p,JSON_TrackConfigData.DilateErode_Factor[0],JSON_TrackConfigData.DilateErode_Factor[1]); // 图像预处理
 
-                    if(Function_EN_p -> ThreadModelDetection_EN == true);   // 多线程推理结束
-                    {
-                        Function_EN_p -> ThreadModelDetection_EN = false;
-                    }
-                    
                     ImgSideSearch(Img_Store_p,Data_Path_p);   // 边线八邻域寻线
 
                     Img_Store_p -> ImgNum++;
@@ -101,9 +97,12 @@ int main()
                 // 串口发送
                 case UART_SEND_LOOP:
                 {
+                    ImgProcess.ImgRealFPS(Img_Store_p,false);
+                    ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
                     DataPrint(Data_Path_p,Function_EN_p);
                     SYNC.UartSend_Program_To_Change_SYNC(UartSendProtocol_p , Data_Path_p , Function_EN_p); // 同步程序数据至串口发送协议
                     Uart.UartSend(UartSendProtocol_p , JSON_FunctionConfigData.Uart_EN);
+
                     Function_EN_p -> Loop_Kind_EN = UART_RECEIVE_LOOP;
                     break;
                 }
@@ -116,6 +115,12 @@ int main()
         {
             Function_EN_p -> Loop_Kind_EN = Judge.ModelTrack_Judge(PPNCDetection.results,Data_Path_p,Img_Store_p,Function_EN_p);  // 模型赛道决策
             Function_EN_p -> Loop_Kind_EN = Judge.TrackKind_Judge(Img_Store_p,Data_Path_p,Function_EN_p);  // 切换至赛道循环
+
+            // 继续进行多线程推理
+            if(Function_EN_p -> ThreadModelDetection_EN == true);   
+            {
+                Function_EN_p -> ThreadModelDetection_EN = false;
+            }
         }
 
         // 普通赛道主循环
@@ -126,7 +131,6 @@ int main()
                 CircleTrack_Step_IN_Prepare_Stright(Img_Store_p,Data_Path_p);   // 准备入环补线
             }
             ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
-            ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
             Judge.ServoDirAngle_Judge(Data_Path_p); // 舵机角度计算
             Judge.MotorSpeed_Judge(Data_Path_p);    // 电机速度决策
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 前换至串口发送循环
@@ -149,7 +153,6 @@ int main()
                 }
             }
             ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
-            ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
             Judge.ServoDirAngle_Judge(Data_Path_p); // 舵机角度计算
             Judge.MotorSpeed_Judge(Data_Path_p);    // 电机速度决策
             if(Data_Path_p -> Circle_Track_Step == OUT)
@@ -164,7 +167,6 @@ int main()
         {
             AcrossTrack(Img_Store_p,Data_Path_p);   // 十字赛道补线
             ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
-            ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
             Judge.ServoDirAngle_Judge(Data_Path_p); // 舵机角度计算
             Judge.MotorSpeed_Judge(Data_Path_p);    // 电机速度决策
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 切换至串口发送循环
@@ -178,13 +180,12 @@ int main()
             */
             switch(Data_Path_p -> Model_Zone_Kind)
             {
-                case BRIDGE_ZONE:{ Bridge_Zone(Img_Store_p,Data_Path_p); ImgPathSearch(Img_Store_p,Data_Path_p); Judge.ServoDirAngle_Judge(Data_Path_p); break; }
-                case CROSSWALK_ZONE:{ Crosswalk_Zone(Img_Store_p,Data_Path_p); ImgPathSearch(Img_Store_p,Data_Path_p); Judge.ServoDirAngle_Judge(Data_Path_p); break; }
-                case DANGER_ZONE:{ break; }
+                case BRIDGE_ZONE:{ Bridge_Zone(Img_Store_p,Data_Path_p); break; }
+                case CROSSWALK_ZONE:{ Crosswalk_Zone(Img_Store_p,Data_Path_p); break; }
+                case DANGER_ZONE:{ Danger_Zone(Img_Store_p,Data_Path_p,JSON_TrackConfigData.DangerZoneMotorSpeed,JSON_TrackConfigData.ConeRadius); break; }
                 case RESCURE_ZONE:{ break; }
                 case CHASE_ZONE:{ break; }
             }
-            ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 切换至串口发送循环
         }
     }

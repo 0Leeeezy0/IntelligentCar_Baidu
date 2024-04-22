@@ -14,18 +14,19 @@ using namespace cv;
 void ImgProcess::ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p,int Dilate_Factor,int Erode_Factor)
 {
     (Img_Store_p -> Img_Track) = (Img_Store_p -> Img_Color).clone();
-	cvtColor((Img_Store_p -> Img_Color) , (Img_Store_p -> Img_Gray) , COLOR_BGR2GRAY);  //彩色图像灰度化
-	blur((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_Gray) , Size(18,18) , Point(-1,-1));	//均值滤波	
+	cvtColor((Img_Store_p -> Img_Color) , (Img_Store_p -> Img_Gray) , COLOR_BGR2GRAY);  // 彩色图像灰度化
+	blur((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_Gray) , Size(18,18) , Point(-1,-1));	// 均值滤波	
 	threshold((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_OTSU) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
 	ImgProcess::ImgSobel((Img_Store_p -> Img_OTSU));	//Sobel算子处理
 	threshold((Img_Store_p -> Img_OTSU) , (Img_Store_p -> Img_OTSU) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
-	
-	// ImgUnpivot(Img_Store_p -> Img_Color,Img_Store_p -> Img_Color_Unpivot);
-	// cvtColor((Img_Store_p -> Img_Color_Unpivot) , (Img_Store_p -> Img_Gray_Unpivot) , COLOR_BGR2GRAY);  //彩色图像灰度化
-	// // blur((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_Gray) , Size(18,18) , Point(-1,-1));	//均值滤波	
-	// threshold((Img_Store_p -> Img_Gray_Unpivot) , (Img_Store_p -> Img_OTSU_Unpivot) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
-	// ImgProcess::ImgSobel((Img_Store_p -> Img_OTSU_Unpivot));	//Sobel算子处理
-	// threshold((Img_Store_p -> Img_OTSU_Unpivot) , (Img_Store_p -> Img_OTSU_Unpivot) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
+
+	Img_Store_p -> Img_Color_R_OTSU = ImgProcess::ImgChannel(Img_Store_p -> Img_Color,R_Channel);	// 提取红色通道
+	Img_Store_p -> Img_Color_G_OTSU = ImgProcess::ImgChannel(Img_Store_p -> Img_Color,G_Channel);	// 提取绿色通道
+	Img_Store_p -> Img_Color_B_OTSU = ImgProcess::ImgChannel(Img_Store_p -> Img_Color,B_Channel);	// 提取蓝色通道
+
+	cvtColor((Img_Store_p -> Img_Color_R_OTSU) , (Img_Store_p -> Img_Color_R_OTSU) , COLOR_BGR2GRAY);  // 彩色图像灰度化
+	cvtColor((Img_Store_p -> Img_Color_G_OTSU) , (Img_Store_p -> Img_Color_R_OTSU) , COLOR_BGR2GRAY);  // 彩色图像灰度化
+	cvtColor((Img_Store_p -> Img_Color_B_OTSU) , (Img_Store_p -> Img_Color_R_OTSU) , COLOR_BGR2GRAY);  // 彩色图像灰度化
 
 	// ImgProcess::ImgSharpen((Img_Store_p -> Img_OTSU),5);
 	for(int i = 0;i <= Dilate_Factor;i++)
@@ -339,4 +340,50 @@ void ImgProcess::ImgReferenceLine(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 	line((Img_Store_p -> Img_Track),Point(0,239-(Data_Path_p -> Side_Search_Start)),Point(319,239-(Data_Path_p -> Side_Search_Start)),Scalar(255,0,255),1);	// 寻边线起始线
 	line((Img_Store_p -> Img_Track),Point(0,239-(Data_Path_p -> Side_Search_End)),Point(319,239-(Data_Path_p -> Side_Search_End)),Scalar(255,0,255),1);	// 寻边线结束线
 	line((Img_Store_p -> Img_Track),Point(160,239-(Data_Path_p -> Path_Search_Start)),Point(160,239-(Data_Path_p -> Path_Search_End)),Scalar(0,0,255),1);	// 中心竖线
+}
+
+
+/*
+	ImgRealFPS说明
+	实时图像帧数显示
+*/
+void ImgProcess::ImgRealFPS(Img_Store *Img_Store_p,bool StartEndFlag)
+{
+	struct timeval tv;
+	static auto StartTime = 0;
+	static auto EndTime = 0;
+	static auto DeltaTime = 0;
+	int FPS;
+
+	switch(StartEndFlag)
+	{
+		case true:{ gettimeofday(&tv,NULL); StartTime = tv.tv_usec; break; }
+		case false:{ gettimeofday(&tv,NULL); EndTime = tv.tv_usec; DeltaTime = EndTime-StartTime; FPS = (1000000/DeltaTime); break; }
+	}
+	if(StartEndFlag == false)
+	{
+		putText((Img_Store_p -> Img_Color),to_string(FPS),Point(280,30),FONT_HERSHEY_COMPLEX,1,(255,0,255),1);
+	}
+}
+
+
+/*
+	ImgChannel说明
+	图像通道提取
+*/
+Mat ImgProcess::ImgChannel(Mat Img,RGB_Channel RGB_Channel)
+{
+	vector<Mat> Channel;
+	Mat RGB_Img;
+	split(Img,Channel);
+	switch(RGB_Channel)
+	{
+		case R_Channel:{ Channel[0] = Scalar(0); Channel[1] = Scalar(0); break;}
+		case G_Channel:{ Channel[0] = Scalar(0); Channel[2] = Scalar(0); break;}
+		case B_Channel:{ Channel[1] = Scalar(0); Channel[2] = Scalar(0); break;}
+	}
+
+	merge(Channel,RGB_Img);
+
+	return RGB_Img;
 }

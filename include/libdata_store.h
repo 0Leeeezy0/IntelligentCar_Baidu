@@ -27,6 +27,16 @@ typedef enum CameraKind
 }CameraKind;
 
 /*
+    图像通道
+*/
+typedef enum RGB_Channel
+{
+    R_Channel = 0,  // 红色通道
+    G_Channel = 1,  // 绿色通道
+    B_Channel = 2   // 蓝色通道
+}RGB_Channel;
+
+/*
     主函数循环类型(状态机)
 */
 typedef enum LoopKind
@@ -166,9 +176,13 @@ typedef struct JSON_TrackConfigData
     int DilateErode_Factor[2] = {0};    // 图形学膨胀腐蚀系数
     float BendTrack_MotorSpeedFactor_1;   // 弯道电机速度占比1
     float BendTrack_MotorSpeedFactor_2;   // 弯道电机速度占比2
+    int DangerZoneMotorSpeed = 0;   // 危险区域电机速度
     int CircleOutServoAngle = 0;    // 出环舵机角度
+    int DangerTime = 0; // 进入危险区域的时间
     int BridgeTime = 0; // 进入桥梁区域的时间
     int CrosswalkTime = 0;  // 进入斑马线区域的时间
+    int Crosswalk_Y = 0;    // 斑马线识别纵坐标阈值
+    int ConeRadius = 0; // 锥桶避障区域半径
 }JSON_TrackConfigData;
 
 /*
@@ -182,6 +196,9 @@ typedef struct Img_Store
     cv::Mat Img_Gray_Unpivot; 
     cv::Mat Img_OTSU;     // 使用
     cv::Mat Img_OTSU_Unpivot;   // 使用
+    cv::Mat Img_Color_R_OTSU;  
+    cv::Mat Img_Color_G_OTSU;
+    cv::Mat Img_Color_B_OTSU;  
     cv::Mat Img_Track;    // 使用
     cv::Mat Img_Track_Unpivot; 
     cv::Mat Img_Text;   // 使用
@@ -201,6 +218,7 @@ typedef struct Function_EN
     bool Gyroscope_EN;    // 陀螺仪状态使能：当陀螺仪积分到一定角度时出环
     LoopKind Loop_Kind_EN;  // 循环类型使能：0.图像循环 1.普通赛道循环 2.圆环赛道循环 3.十字赛道循环 4.AI赛道循环 5.串口发送循环
     bool ThreadModelDetection_EN;  // 多线程模型推理使能：当模型推理线程结束后才会使能，若模型推理线程还在进行则不使能
+    bool SerialControl_EN;  // 串行控制使能
 }Function_EN;
 
 /*
@@ -267,6 +285,7 @@ typedef struct UartSendProtocol
     unsigned char Data_2;
     unsigned char Data_3;
     unsigned char Data_4;
+    unsigned char Data_5;
 
     //串口帧尾
     unsigned char CRC16 = 0XA2;    // 0xA2
@@ -290,6 +309,8 @@ typedef struct UartReceiveProtocol
     int Path_Search_End;    // 寻路径结束点
     int Side_Search_Start; // 寻边线起始点
     int Side_Search_End; // 寻边线结束点
+    RescureZoneStep Model_Rescure_Zone_Step;    // 模型救援赛道步骤
+    ChaseZoneStep Model_Chase_Zone_Step;    // 模型追逐区赛道步骤
     int Gyroscope_EN;   // 陀螺仪状态
     int Game_EN;    // 比赛开始
 
@@ -301,6 +322,8 @@ typedef struct UartReceiveProtocol
     unsigned char Data_5;
     unsigned char Data_6;
     unsigned char Data_7;
+    unsigned char Data_8;
+    unsigned char Data_9;
 
     //串口帧尾
     unsigned char CRC16;    // 0XA2
