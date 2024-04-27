@@ -97,7 +97,7 @@ void CircleTrack_Step_IN(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 }
 
 
-// 圆环出环步骤：打角
+// 圆环出环步骤：补线
 void CircleTrack_Step_OUT(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];

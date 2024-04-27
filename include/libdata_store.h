@@ -21,9 +21,8 @@
 typedef enum CameraKind
 {
     DEMO_VIDEO = 0, // 演示视频
-    PC_CAMERA = 1,  // 开发端摄像头
-    USB_PC_CAMERA = 2,  // 开发端外接摄像头
-    USB_EB_CAMERA = 3   // EB端摄像头
+    VIDEO_0 = 1,  // USB摄像头1
+    VIDEO_1 = 2,  // USB摄像头2
 }CameraKind;
 
 /*
@@ -178,11 +177,15 @@ typedef struct JSON_TrackConfigData
     float BendTrack_MotorSpeedFactor_2;   // 弯道电机速度占比2
     int DangerZoneMotorSpeed = 0;   // 危险区域电机速度
     int CircleOutServoAngle = 0;    // 出环舵机角度
+    int Circle_IN_PREPARE_Time = 0;    // 准备入环限定时间
     int DangerTime = 0; // 进入危险区域的时间
     int BridgeTime = 0; // 进入桥梁区域的时间
     int CrosswalkTime = 0;  // 进入斑马线区域的时间
     int Crosswalk_Y = 0;    // 斑马线识别纵坐标阈值
-    int ConeRadius = 0; // 锥桶避障区域半径
+    int DangerZone_Cone_Radius = 0; // 危险区域锥桶避障补线半径
+    int DangerZone_Block_Radius = 0; // 危险区域路障避障补线半径
+    int DangerZoneForward = 0;  // 危险区域前瞻值
+    int BridgeZoneForward = 0; // 桥梁区域前瞻值
 }JSON_TrackConfigData;
 
 /*
@@ -190,15 +193,13 @@ typedef struct JSON_TrackConfigData
 */
 typedef struct Img_Store
 {
+    cv::Mat Img_Capture;    // 使用
     cv::Mat Img_Color;  // 使用
     cv::Mat Img_Color_Unpivot;
     cv::Mat Img_Gray;     // 使用
     cv::Mat Img_Gray_Unpivot; 
     cv::Mat Img_OTSU;     // 使用
-    cv::Mat Img_OTSU_Unpivot;   // 使用
-    cv::Mat Img_Color_R_OTSU;  
-    cv::Mat Img_Color_G_OTSU;
-    cv::Mat Img_Color_B_OTSU;  
+    cv::Mat Img_OTSU_Unpivot;   // 使用 
     cv::Mat Img_Track;    // 使用
     cv::Mat Img_Track_Unpivot; 
     cv::Mat Img_Text;   // 使用
@@ -218,7 +219,6 @@ typedef struct Function_EN
     bool Gyroscope_EN;    // 陀螺仪状态使能：当陀螺仪积分到一定角度时出环
     LoopKind Loop_Kind_EN;  // 循环类型使能：0.图像循环 1.普通赛道循环 2.圆环赛道循环 3.十字赛道循环 4.AI赛道循环 5.串口发送循环
     bool ThreadModelDetection_EN;  // 多线程模型推理使能：当模型推理线程结束后才会使能，若模型推理线程还在进行则不使能
-    bool SerialControl_EN;  // 串行控制使能
 }Function_EN;
 
 /*

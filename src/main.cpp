@@ -33,27 +33,12 @@ int main()
     JSON_FunctionConfigData JSON_FunctionConfigData = Function_EN_p -> JSON_FunctionConfigData_v[0];
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
 
-    //摄像头初始化
+    // 摄像头初始化
     VideoCapture Camera; // 定义相机
-    
-    // 相机类型设置
-    switch(JSON_FunctionConfigData.Camera_EN)
-    {
-        case DEMO_VIDEO:{ Camera.open("../img/sample.mp4"); break; }    // 演示视频
-        case PC_CAMERA:{ Camera.open(0); break; }  // 开发端摄像头
-        case USB_PC_CAMERA:{ Camera.open(2); break; }  // 开发端外接摄像头
-        case USB_EB_CAMERA:{ Camera.open(0); break; }  // EB端外接摄像头
-    }
-    
-    if (!Camera.isOpened())
-    {
-        cout << "<---------------------相机初始化失败--------------------->" << endl;
-        abort();
-    }
-    else
-    {
-        cout << "<---------------------相机初始化成功--------------------->" << endl;
-    }
+    CameraInit(Camera,JSON_FunctionConfigData.Camera_EN);
+    // 开启摄像头图像获取线程
+    thread CameraImgCapture (CameraImgGetThread,ref(Camera),Img_Store_p);
+    CameraImgCapture.detach();
 
     // 模型初始化
     PPNC_ModelInit(PPNCDetection,Function_EN_p,JSON_FunctionConfigData.ModelDetection_EN);
@@ -74,10 +59,10 @@ int main()
                 // 图像获取
                 case CAMERA_CATCH_LOOP:
                 {
-                    Camera >> (Img_Store_p -> Img_Color);   // 将视频流转为图像流
+                    Img_Store_p -> Img_Color = (Img_Store_p -> Img_Capture).clone();
                     ImgProcess.ImgRealFPS(Img_Store_p,true);
                     ImgProcess.ImgCompress(Img_Store_p -> Img_Color,JSON_FunctionConfigData.ImgCompress_EN);
-                    ImgProcess.ImgPrepare(Img_Store_p,Data_Path_p,Function_EN_p,JSON_TrackConfigData.DilateErode_Factor[0],JSON_TrackConfigData.DilateErode_Factor[1]); // 图像预处理
+                    ImgProcess.ImgPrepare(Img_Store_p,Data_Path_p,Function_EN_p); // 图像预处理
 
                     ImgSideSearch(Img_Store_p,Data_Path_p);   // 边线八邻域寻线
 
@@ -182,7 +167,7 @@ int main()
             {
                 case BRIDGE_ZONE:{ Bridge_Zone(Img_Store_p,Data_Path_p); break; }
                 case CROSSWALK_ZONE:{ Crosswalk_Zone(Img_Store_p,Data_Path_p); break; }
-                case DANGER_ZONE:{ Danger_Zone(Img_Store_p,Data_Path_p,JSON_TrackConfigData.DangerZoneMotorSpeed,JSON_TrackConfigData.ConeRadius); break; }
+                case DANGER_ZONE:{ Danger_Zone(PPNCDetection,Img_Store_p,Data_Path_p,Function_EN_p); break; }
                 case RESCURE_ZONE:{ break; }
                 case CHASE_ZONE:{ break; }
             }

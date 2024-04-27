@@ -51,7 +51,7 @@ void CircleTrack_Step_OUT_Stright(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 
 
 // 危险区域
-void Danger_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p,int DangerZoneMotorSpeed,int ConeRadius);
+void Danger_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p);
 // 桥梁区域
 void Bridge_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
 // 斑马线区域

@@ -5,14 +5,58 @@ using namespace std;
 using namespace cv;
 
 /*
+	CameraInit说明
+	摄像头初始化
+*/
+void CameraInit(VideoCapture& Camera,CameraKind Camera_EN)
+{
+	// 相机类型设置
+    switch(Camera_EN)
+    {
+        case DEMO_VIDEO:{ Camera.open("../img/sample.mp4",CAP_V4L2); break; }    // 演示视频
+        case VIDEO_0:{ Camera.open("/dev/video0",CAP_V4L2); break; }  // 摄像头video0
+        case VIDEO_1:{ Camera.open("/dev/video1",CAP_V4L2); break; }  // 摄像头video1
+    }
+
+    Camera.set(CV_CAP_PROP_FRAME_WIDTH, 320); //帧宽
+    Camera.set(CV_CAP_PROP_FRAME_HEIGHT, 240);//帧高
+    Camera.set(CV_CAP_PROP_FOURCC, CV_FOURCC('M', 'J', 'P', 'G'));  // 视频流格式
+    Camera.set(CV_CAP_PROP_FPS, 120);    // 帧率
+
+	if (!Camera.isOpened())
+    {
+        cout << "<---------------------相机初始化失败--------------------->" << endl;
+        abort();
+    }
+    else
+    {
+        cout << "<---------------------相机初始化成功--------------------->" << endl;
+    }
+}
+
+
+/*
+	摄像头获取图像线程
+*/
+void CameraImgGetThread(VideoCapture& Camera,Img_Store *Img_Store_p)
+{
+	while(1)
+	{
+		Camera >> (Img_Store_p -> Img_Capture);   // 将视频流转为图像流
+	}
+}
+
+
+/*
 	ImgPrepare说明
 	图像预处理
 	先二值化使赛道边缘更为清晰
 	然后用sobel算子检测边缘
 	最后再次二值化
 */
-void ImgProcess::ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p,int Dilate_Factor,int Erode_Factor)
+void ImgProcess::ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p)
 {
+	JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
     (Img_Store_p -> Img_Track) = (Img_Store_p -> Img_Color).clone();
 	cvtColor((Img_Store_p -> Img_Color) , (Img_Store_p -> Img_Gray) , COLOR_BGR2GRAY);  // 彩色图像灰度化
 	blur((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_Gray) , Size(18,18) , Point(-1,-1));	// 均值滤波	
@@ -20,20 +64,12 @@ void ImgProcess::ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Functi
 	ImgProcess::ImgSobel((Img_Store_p -> Img_OTSU));	//Sobel算子处理
 	threshold((Img_Store_p -> Img_OTSU) , (Img_Store_p -> Img_OTSU) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
 
-	Img_Store_p -> Img_Color_R_OTSU = ImgProcess::ImgChannel(Img_Store_p -> Img_Color,R_Channel);	// 提取红色通道
-	Img_Store_p -> Img_Color_G_OTSU = ImgProcess::ImgChannel(Img_Store_p -> Img_Color,G_Channel);	// 提取绿色通道
-	Img_Store_p -> Img_Color_B_OTSU = ImgProcess::ImgChannel(Img_Store_p -> Img_Color,B_Channel);	// 提取蓝色通道
-
-	cvtColor((Img_Store_p -> Img_Color_R_OTSU) , (Img_Store_p -> Img_Color_R_OTSU) , COLOR_BGR2GRAY);  // 彩色图像灰度化
-	cvtColor((Img_Store_p -> Img_Color_G_OTSU) , (Img_Store_p -> Img_Color_R_OTSU) , COLOR_BGR2GRAY);  // 彩色图像灰度化
-	cvtColor((Img_Store_p -> Img_Color_B_OTSU) , (Img_Store_p -> Img_Color_R_OTSU) , COLOR_BGR2GRAY);  // 彩色图像灰度化
-
 	// ImgProcess::ImgSharpen((Img_Store_p -> Img_OTSU),5);
-	for(int i = 0;i <= Dilate_Factor;i++)
+	for(int i = 0;i <= JSON_TrackConfigData.DilateErode_Factor[0];i++)
 	{
 		dilate((Img_Store_p -> Img_OTSU),(Img_Store_p -> Img_OTSU),(Img_Store_p -> Dilate_Kernel));
 	}
-	for(int i = 0;i <= Erode_Factor;i++)
+	for(int i = 0;i <= JSON_TrackConfigData.DilateErode_Factor[0];i++)
 	{
 		erode((Img_Store_p -> Img_OTSU),(Img_Store_p -> Img_OTSU),(Img_Store_p -> Erode_Kernel));
 	}

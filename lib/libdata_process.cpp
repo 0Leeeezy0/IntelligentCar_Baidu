@@ -21,8 +21,12 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
 
     static int State = 0;   // 状态记录
     static int State_Across = 0;
+    static int State_Circle_IN_PREPARE = 0; // 准备入环时间
     static int State_Circle_IN = 0;    // 入环时间
+    static int State_Circle_OUT_PREPARE = 0;    // 准备出环时间
     static int State_Circle_OUT = 0;    // 出环时间
+
+    State = Img_Store_p -> ImgNum;
 
     if(Function_EN_p -> Loop_Kind_EN != MODEL_TRACK_LOOP)
     {
@@ -30,22 +34,28 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
         Judge::BendPointSearch(Img_Store_p,Data_Path_p);
 
         // 若左右边线都有拐点则为十字
-        if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] >= 1) && JSON_FunctionConfigData.AcrossIdentify_EN == true)
+        if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] >= 1) && JSON_FunctionConfigData.AcrossIdentify_EN == true && (Data_Path_p -> Circle_Track_Step != OUT_PREPARE || Data_Path_p -> Circle_Track_Step != OUT))
         {
-            // Record = Img_Store_p -> ImgNum;
-            State = Img_Store_p -> ImgNum;
             State_Across = Img_Store_p -> ImgNum;
-
             Loop_Kind = ACROSS_TRACK_LOOP;
             Data_Path_p -> Track_Kind = ACROSS_TRACK;
             Data_Path_p -> Circle_Track_Step = INIT;
+
+            // 防止左右边线均寻找到同一个拐点导致误判为十字
+            if(abs((Data_Path_p -> InflectionPointCoordinate[0][0])-(Data_Path_p -> InflectionPointCoordinate[0][2])) <= 30)
+            {
+                switch(Data_Path_p -> Previous_Circle_Kind)
+                {
+                    case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                    case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                }
+            }
         }
         // 若左右边线只有一边有拐点和弯点  
         //且当前图像序号和十字中存储的图像序号有间隔才为左右圆环
-        else if((Data_Path_p -> InflectionPointNum[0] == 0) && (Data_Path_p -> InflectionPointNum[1] >= 1) && (Data_Path_p -> BendPointNum[0] == 0) && (Data_Path_p -> BendPointNum[1] >= 1) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
+        else if((Data_Path_p -> InflectionPointNum[0] == 0) && (Data_Path_p -> InflectionPointNum[1] >= 1) && (Data_Path_p -> BendPointNum[0] <= 4) && (Data_Path_p -> BendPointNum[1] >= 1) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
         {
-            State = Img_Store_p -> ImgNum;
-
+            // 在出环后经过固定帧数才能再次准备进环
             if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE || (Data_Path_p -> Circle_Track_Step) == IN) && Data_Path_p -> Vector_Add_Unit_Dir[1] == 1 && State-State_Circle_OUT >= 30)
             {
                 Loop_Kind = R_CIRCLE_TRACK_LOOP;
@@ -53,6 +63,8 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
 
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
                 Data_Path_p -> Previous_Circle_Kind = R_CIRCLE_TRACK;
+
+                State_Circle_IN_PREPARE = Img_Store_p -> ImgNum;
             }
             else if(Data_Path_p -> Vector_Add_Unit_Dir[1] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
             {
@@ -76,10 +88,9 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
                 Data_Path_p -> Track_Kind = BEND_TRACK;
             }
         }
-        else if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] == 0) && (Data_Path_p -> BendPointNum[0] >= 1) && (Data_Path_p -> BendPointNum[1] == 0) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
+        else if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] == 0) && (Data_Path_p -> BendPointNum[0] >= 1) && (Data_Path_p -> BendPointNum[1] <= 4) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
         {
-            State = Img_Store_p -> ImgNum;
-
+            // 在出环后经过固定帧数才能再次准备进环
             if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE || (Data_Path_p -> Circle_Track_Step) == IN) && Data_Path_p -> Vector_Add_Unit_Dir[0] == 1 && State-State_Circle_OUT >= 30)
             {
                 Loop_Kind = L_CIRCLE_TRACK_LOOP;
@@ -87,6 +98,8 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
 
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
                 Data_Path_p -> Previous_Circle_Kind = L_CIRCLE_TRACK;
+
+                State_Circle_IN_PREPARE = Img_Store_p -> ImgNum;
             }
             else if(Data_Path_p -> Vector_Add_Unit_Dir[0] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
             {
@@ -110,8 +123,10 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
                 Data_Path_p -> Track_Kind = BEND_TRACK;
             }
         }
+        // 出环判断：若当前圆环步骤为准备出环或出环状态则在下位机陀螺仪积分达到目标值的时间区间内进行出环操作
         else if((Data_Path_p -> Circle_Track_Step == OUT_PREPARE || Data_Path_p -> Circle_Track_Step == OUT) && Function_EN_p -> Gyroscope_EN == true)
         {
+            // 读取准备入环时存储的圆环类型
             switch(Data_Path_p -> Previous_Circle_Kind)
             {
                 case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; break; }
@@ -122,8 +137,6 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
         }
         else
         {
-            State = Img_Store_p -> ImgNum;
-
             Loop_Kind = COMMON_TRACK_LOOP;
             // 判定是弯道还是直道
             if((Data_Path_p -> BendPointNum[0] >= 1) || (Data_Path_p -> BendPointNum[1] >= 1))
@@ -134,11 +147,23 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
             {
                 Data_Path_p -> Track_Kind = STRIGHT_TRACK;
             }
+
             // 判定圆环步骤
             // 进入圆环后固定帧数进入准备出环步骤
             if(State - State_Circle_IN >= 10 && Data_Path_p -> Circle_Track_Step == IN)
             {
                 Data_Path_p -> Circle_Track_Step = OUT_PREPARE;
+                State_Circle_OUT_PREPARE = Img_Store_p -> ImgNum;
+                // 若在固定帧数内未进入出环步骤则进入占位
+                if(State - State_Circle_OUT_PREPARE >= 200)
+                {
+                    Data_Path_p -> Circle_Track_Step = INIT;   
+                }
+            }
+            // 若误判为准备入环则在固定帧数之后进入占位：防止在弯道十字等位置误判导致一直补线从而影响寻线
+            if(State - State_Circle_IN_PREPARE >= JSON_TrackConfigData.Circle_IN_PREPARE_Time && Data_Path_p -> Circle_Track_Step == IN_PREPARE)
+            {
+                Data_Path_p -> Circle_Track_Step = INIT;
             }
             // 出环后进入占位
             if((Data_Path_p -> Circle_Track_Step) == OUT)
@@ -180,8 +205,8 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
         {
             PredictResult result = results[i];
         
-            if(result.label == "bomb"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = DANGER_ZONE; DangerTime = (Img_Store_p -> ImgNum); break; }
-            else if(result.label == "bridge"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE; BridgeTime = (Img_Store_p -> ImgNum); break; }
+            if(result.label == "bomb" && result.x >= 160){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = DANGER_ZONE; DangerTime = (Img_Store_p -> ImgNum); break; }
+            else if(result.label == "bridge" && result.x >= 160){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE; BridgeTime = (Img_Store_p -> ImgNum); break; }
             else if(result.label == "crosswalk" && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; CrosswalkTime = (Img_Store_p -> ImgNum); break; }
             else{ Loop_Kind = COMMON_TRACK_LOOP; break; }
             // else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; }
@@ -192,10 +217,10 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
         {
             Loop_Kind = MODEL_TRACK_LOOP; 
             Data_Path_p -> Model_Zone_Kind = DANGER_ZONE;
-            // while(Function_EN_p -> SerialControl_EN == false);  // 等待模型推理完成
+            
         }
-        // 在桥梁区域限定时间内将锁为模型赛道的桥梁区域
-        if((Img_Store_p -> ImgNum)-BridgeTime < JSON_TrackConfigData.BridgeTime)
+        // 在桥梁区域限定时间内将锁为模型赛道的桥梁区域且若检测到危险区后就不能进入桥梁区域，直到危险区域结束
+        if((Img_Store_p -> ImgNum)-BridgeTime < JSON_TrackConfigData.BridgeTime && (Img_Store_p -> ImgNum)-DangerTime > JSON_TrackConfigData.DangerTime)
         {
             Loop_Kind = MODEL_TRACK_LOOP; 
             Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE;
@@ -267,14 +292,23 @@ void Judge::MotorSpeed_Judge(Data_Path *Data_Path_p)
 {
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
 
+    /*
+        由于圆环步骤和赛道类型是独立的，因此会出现如下情况
+        1、直道但是圆环步骤不为占位，如准备入环到入环的阶段
+        2、弯道但是圆环步骤不为占位，同上
+        为防止速度过快时的拐点识别率下降，因此引入直道弯道时也要考虑圆环步骤防止误判
+    */
     switch(Data_Path_p -> Track_Kind)
     {
+        // 直道速度决策
         case STRIGHT_TRACK:
         {
-            if(Data_Path_p -> ServoAngle > 30 || Data_Path_p -> Circle_Track_Step == IN_PREPARE)
+            // 直道、准备入环直道、入环直道速度决策
+            if(Data_Path_p -> ServoAngle > 30 || Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN)
             {
                 Data_Path_p -> MotorSpeed = JSON_TrackConfigData.MotorSpeedInterval[0];
             }
+            // 真正的直道的速度决策
             else
             {
                 Data_Path_p -> MotorSpeed = JSON_TrackConfigData.MotorSpeedInterval[1];
@@ -283,13 +317,23 @@ void Judge::MotorSpeed_Judge(Data_Path *Data_Path_p)
         }
         case BEND_TRACK:
         {
-            if(Data_Path_p -> BendPointNum[0] <= 5 || Data_Path_p -> BendPointNum[1] <= 5)
+            // 小弯道速度决策
+            if(Data_Path_p -> BendPointNum[0] <= 10 || Data_Path_p -> BendPointNum[1] <= 10)
             {
                 Data_Path_p -> MotorSpeed = (JSON_TrackConfigData.MotorSpeedInterval[0])+int(((JSON_TrackConfigData.MotorSpeedInterval[1])-(JSON_TrackConfigData.MotorSpeedInterval[0]))*JSON_TrackConfigData.BendTrack_MotorSpeedFactor_1);
+                if(Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN)
+                {
+                    Data_Path_p -> MotorSpeed =  (JSON_TrackConfigData.MotorSpeedInterval[0])+int(((JSON_TrackConfigData.MotorSpeedInterval[1])-(JSON_TrackConfigData.MotorSpeedInterval[0]))*JSON_TrackConfigData.BendTrack_MotorSpeedFactor_2);
+                }
             }
+            // 大弯道速度决策
             else
             {
                 Data_Path_p -> MotorSpeed = (JSON_TrackConfigData.MotorSpeedInterval[0])+int(((JSON_TrackConfigData.MotorSpeedInterval[1])-(JSON_TrackConfigData.MotorSpeedInterval[0]))*JSON_TrackConfigData.BendTrack_MotorSpeedFactor_2); 
+                if(Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN)
+                {
+                    Data_Path_p -> MotorSpeed =  (JSON_TrackConfigData.MotorSpeedInterval[0])+int(((JSON_TrackConfigData.MotorSpeedInterval[1])-(JSON_TrackConfigData.MotorSpeedInterval[0]))*JSON_TrackConfigData.BendTrack_MotorSpeedFactor_2);
+                }
             }
             break;
         }
@@ -330,7 +374,7 @@ void Judge::InflectionPointSearch(Img_Store* Img_Store_p,Data_Path *Data_Path_p)
     double Vector_Module[4] = {0};   // 左右中断点向量的模
     double AngleVector[2] = {0}; // 左右中断点向量夹角(角度制)
     // 寻拐点范围
-    // 左边线断点
+    // 左边线拐点
     for(i = (JSON_TrackConfigData.InflectionPointVectorDistance);i <= (Data_Path_p -> NumSearch[0])-(JSON_TrackConfigData.InflectionPointVectorDistance);)
     {
         // 左边线第一个向量
@@ -369,7 +413,7 @@ void Judge::InflectionPointSearch(Img_Store* Img_Store_p,Data_Path *Data_Path_p)
         }
         i++;
     }
-    // 右边线断点
+    // 右边线拐点
     for(j = (JSON_TrackConfigData.InflectionPointVectorDistance);j <= (Data_Path_p -> NumSearch[1])-(JSON_TrackConfigData.InflectionPointVectorDistance);)
     {
         // 右边线第一个向量
@@ -551,16 +595,22 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     JSON_TrackConfigData.BendTrack_MotorSpeedFactor_1 = ConfigData.at("BEND_TRACK_MOTOR_SPEED_FACTOR_1");   // 弯道电机速度占比1
     JSON_TrackConfigData.BendTrack_MotorSpeedFactor_2 = ConfigData.at("BEND_TRACK_MOTOR_SPEED_FACTOR_2");   // 弯道电机速度占比2
     JSON_TrackConfigData.CircleOutServoAngle = ConfigData.at("CIRCLE_OUT_SERVO_ANGLE");   // 出环打角
+    JSON_TrackConfigData.Circle_IN_PREPARE_Time = ConfigData.at("CIRCLE_IN_PREPARE_TIME");  // 准备入环限定时间
     JSON_TrackConfigData.DilateErode_Factor[0] = ConfigData.at("DILATE_FACTOR");  // 获取图形学膨胀系数
     JSON_TrackConfigData.DilateErode_Factor[1] = ConfigData.at("ERODE_FACTOR");  // 获取图形学腐蚀系数
     JSON_TrackConfigData.DangerTime = ConfigData.at("DANGER_TIME");  // 获取进入危险区域的时间
     JSON_TrackConfigData.BridgeTime = ConfigData.at("BRIDGE_TIME");   // 获取进入桥梁区域的时间
     JSON_TrackConfigData.CrosswalkTime = ConfigData.at("CROSSWALK_TIME");   // 获取进入斑马线区域的时间
     JSON_TrackConfigData.Crosswalk_Y = ConfigData.at("CROSSWALK_IDENTIFY_Y");   // 获取斑马线识别纵坐标阈值
-    JSON_TrackConfigData.ConeRadius = ConfigData.at("CONE_RADIUS"); // 锥桶避障半径
+    JSON_TrackConfigData.DangerZone_Cone_Radius = ConfigData.at("DANGER_ZONE_CONE_RADIUS");   // 危险区域锥桶补线圆圈半径
+    JSON_TrackConfigData.DangerZone_Block_Radius = ConfigData.at("DANGER_ZONE_BLOCK_RADIUS");   // 危险区域路障补线圆圈半径
+    JSON_TrackConfigData.DangerZoneForward = ConfigData.at("DANGER_ZONE_FORWARD");  // 危险区域前瞻值获取
+    JSON_TrackConfigData.BridgeZoneForward = ConfigData.at("BRIDGE_ZONE_FORWARD");  // 桥梁区域前瞻值获取
 
     Function_EN_p -> JSON_FunctionConfigData_v.push_back(JSON_FunctionConfigData);
     Data_Path_p -> JSON_TrackConfigData_v.push_back(JSON_TrackConfigData);
+
+    cout << "<---------------------JSON参数获取成功--------------------->" << endl;
 }
 
 

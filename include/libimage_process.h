@@ -4,6 +4,25 @@
 #ifndef _LIBIMAGE_PROCESS_H_
 #define _LIBIMAGE_PROCESS_H_
 
+/*
+    CameraInit说明
+    摄像头初始化
+    @参数说明
+    Camera 传入VideoCapture类
+    Camera_EN 相机使能
+*/
+void CameraInit(cv::VideoCapture& Camera,CameraKind Camera_EN);
+
+
+/*
+    摄像头图像采集(多线程)
+    @参数说明
+    Camera 传入VideoCapture类
+    Img_Store_p 图像存储结构体指针
+*/
+void CameraImgGetThread(cv::VideoCapture& Camera,Img_Store *Img_Store_p);
+
+
 class ImgProcess
 {
     public:
@@ -13,10 +32,8 @@ class ImgProcess
             @参数说明
             Img_Store_p 图像存储指针
             Data_Path_p 路径相关数据指针
-            Dilate_Factor 边线图形学膨胀系数
-            Erode_Factor 边线图形学腐蚀系数
         */
-        void ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p,int Dilate_Factor,int Erode_Factor);
+        void ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p);
 
 
         /*
@@ -157,8 +174,7 @@ class ImgProcess
             Img 传入需提取通道的图像
             RGB_Channel 传入需提取的通道
         */
-        Mat ImgProcess::ImgChannel(Mat Img,RGB_Channel RGB_Channel);
+        cv::Mat ImgChannel(cv::Mat Img,RGB_Channel RGB_Channel);
 };
-
 
 #endif
