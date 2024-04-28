@@ -144,8 +144,8 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
             // 以准备入环阶段确定的圆环类型作为出环阶段的圆环类型
             switch(Data_Path_p -> Previous_Circle_Kind)
             {
-                case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
-                case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = OUT; break; }
+                case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = OUT; break; }
             }
 
             // 记录出环时间
