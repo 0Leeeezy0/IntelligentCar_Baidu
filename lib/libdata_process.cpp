@@ -33,8 +33,9 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
         Judge::InflectionPointSearch(Img_Store_p,Data_Path_p);
         Judge::BendPointSearch(Img_Store_p,Data_Path_p);
 
+        // 十字判断
         // 若左右边线都有拐点则为十字
-        if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] >= 1) && JSON_FunctionConfigData.AcrossIdentify_EN == true && (Data_Path_p -> Circle_Track_Step != OUT_PREPARE || Data_Path_p -> Circle_Track_Step != OUT))
+        if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] >= 1) && JSON_FunctionConfigData.AcrossIdentify_EN == true && Function_EN_p -> Gyroscope_EN == false && (Data_Path_p -> Circle_Track_Step != OUT_PREPARE || Data_Path_p -> Circle_Track_Step != OUT))
         {
             State_Across = Img_Store_p -> ImgNum;
             Loop_Kind = ACROSS_TRACK_LOOP;
@@ -51,6 +52,7 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
                 }
             }
         }
+        // 圆环判断
         // 若左右边线只有一边有拐点和弯点  
         //且当前图像序号和十字中存储的图像序号有间隔才为左右圆环
         else if((Data_Path_p -> InflectionPointNum[0] == 0) && (Data_Path_p -> InflectionPointNum[1] >= 1) && (Data_Path_p -> BendPointNum[0] <= 4) && (Data_Path_p -> BendPointNum[1] >= 1) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
@@ -64,16 +66,21 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
                 Data_Path_p -> Previous_Circle_Kind = R_CIRCLE_TRACK;
 
+                // 记录准备进环时间
                 State_Circle_IN_PREPARE = Img_Store_p -> ImgNum;
             }
             else if(Data_Path_p -> Vector_Add_Unit_Dir[1] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
             {
-                Loop_Kind = R_CIRCLE_TRACK_LOOP;
-                Data_Path_p -> Track_Kind = R_CIRCLE_TRACK;
-
                 Data_Path_p -> Circle_Track_Step = IN;
-                Data_Path_p -> Previous_Circle_Kind = R_CIRCLE_TRACK;
 
+                // 以准备入环阶段确定的圆环类型作为入环阶段的圆环类型
+                switch(Data_Path_p -> Previous_Circle_Kind)
+                {
+                    case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                    case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                }
+
+                // 记录进环时间
                 State_Circle_IN = Img_Store_p -> ImgNum;
             }   
             // 考虑十字姿态不好，误判为圆环的情况
@@ -99,16 +106,21 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
                 Data_Path_p -> Circle_Track_Step = IN_PREPARE;
                 Data_Path_p -> Previous_Circle_Kind = L_CIRCLE_TRACK;
 
+                // 记录准备进环时间
                 State_Circle_IN_PREPARE = Img_Store_p -> ImgNum;
             }
             else if(Data_Path_p -> Vector_Add_Unit_Dir[0] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
             {
-                Loop_Kind = L_CIRCLE_TRACK_LOOP;
-                Data_Path_p -> Track_Kind = L_CIRCLE_TRACK;
-
                 Data_Path_p -> Circle_Track_Step = IN;
-                Data_Path_p -> Previous_Circle_Kind = L_CIRCLE_TRACK;
+
+                // 以准备入环阶段确定的圆环类型作为入环阶段的圆环类型
+                switch(Data_Path_p -> Previous_Circle_Kind)
+                {
+                    case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                    case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                }
                 
+                // 记录进环时间
                 State_Circle_IN = Img_Store_p -> ImgNum;
             }   
             // 考虑十字姿态不好，误判为圆环的情况
@@ -123,18 +135,23 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
                 Data_Path_p -> Track_Kind = BEND_TRACK;
             }
         }
-        // 出环判断：若当前圆环步骤为准备出环或出环状态则在下位机陀螺仪积分达到目标值的时间区间内进行出环操作
+        // 出环判断
+        // 若当前圆环步骤为准备出环或出环状态则在下位机陀螺仪积分达到目标值的时间区间内进行出环操作
         else if((Data_Path_p -> Circle_Track_Step == OUT_PREPARE || Data_Path_p -> Circle_Track_Step == OUT) && Function_EN_p -> Gyroscope_EN == true)
         {
-            // 读取准备入环时存储的圆环类型
+            Data_Path_p -> Circle_Track_Step = OUT;
+
+            // 以准备入环阶段确定的圆环类型作为出环阶段的圆环类型
             switch(Data_Path_p -> Previous_Circle_Kind)
             {
-                case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; break; }
-                case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; break; }
+                case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
             }
-            Data_Path_p -> Track_Kind = Data_Path_p -> Previous_Circle_Kind;
-            Data_Path_p -> Circle_Track_Step = OUT;
+
+            // 记录出环时间
+            State_Circle_OUT = Img_Store_p -> ImgNum;
         }
+        // 普通赛道判断
         else
         {
             Loop_Kind = COMMON_TRACK_LOOP;
@@ -154,11 +171,6 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
             {
                 Data_Path_p -> Circle_Track_Step = OUT_PREPARE;
                 State_Circle_OUT_PREPARE = Img_Store_p -> ImgNum;
-                // 若在固定帧数内未进入出环步骤则进入占位
-                if(State - State_Circle_OUT_PREPARE >= 200)
-                {
-                    Data_Path_p -> Circle_Track_Step = INIT;   
-                }
             }
             // 若误判为准备入环则在固定帧数之后进入占位：防止在弯道十字等位置误判导致一直补线从而影响寻线
             if(State - State_Circle_IN_PREPARE >= JSON_TrackConfigData.Circle_IN_PREPARE_Time && Data_Path_p -> Circle_Track_Step == IN_PREPARE)
@@ -169,10 +181,10 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
             if((Data_Path_p -> Circle_Track_Step) == OUT)
             {
                 Data_Path_p -> Circle_Track_Step = INIT;
-                State_Circle_OUT = Img_Store_p -> ImgNum;
             }
         }
     }
+    // 模型赛道判断
     else 
     {
         Loop_Kind = MODEL_TRACK_LOOP;
@@ -304,7 +316,7 @@ void Judge::MotorSpeed_Judge(Data_Path *Data_Path_p)
         case STRIGHT_TRACK:
         {
             // 直道、准备入环直道、入环直道速度决策
-            if(Data_Path_p -> ServoAngle > 30 || Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN)
+            if(Data_Path_p -> ServoAngle > 30 || Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN || Data_Path_p -> Circle_Track_Step == OUT)
             {
                 Data_Path_p -> MotorSpeed = JSON_TrackConfigData.MotorSpeedInterval[0];
             }
