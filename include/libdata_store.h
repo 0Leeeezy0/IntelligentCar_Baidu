@@ -84,17 +84,15 @@ typedef enum CircleTrackStep
 */
 typedef enum RescureZoneStep
 {
-    L_GARAGE_IN_PREPARE = 0,   // 准备入左车库
-    L_GARAGE_IN = 1,   // 入左车库
-    L_GARAGE_OUT = 3,   // 出左车库
-    R_GARAGE_IN_PREPARE = 4,   // 准备入右车库
-    R_GARAGE_IN = 5,   // 入右车库
-    R_GARAGE_OUT = 6,   // 出右车库
+    L_GARAGE_IN = 0,   // 准备入左车库
+    L_GARAGE_OUT = 1,   // 出左车库
+    R_GARAGE_IN = 2,   // 入右车库
+    R_GARAGE_OUT = 3,   // 出右车库
 }RescureZoneStep;
 
 
 /*
-    模型斑马线赛道车库步骤
+    模型斑马线赛道步骤
 */
 typedef enum CrosswalkZoneStep
 {
@@ -176,6 +174,7 @@ typedef struct JSON_TrackConfigData
     float BendTrack_MotorSpeedFactor_1;   // 弯道电机速度占比1
     float BendTrack_MotorSpeedFactor_2;   // 弯道电机速度占比2
     int DangerZoneMotorSpeed = 0;   // 危险区域电机速度
+    int RescueZoneMotorSpeed = 0;   // 救援区域电机速度
     int CircleOutServoAngle = 0;    // 出环舵机角度
     int Circle_IN_PREPARE_Time = 0;    // 准备入环限定时间
     int DangerTime = 0; // 进入危险区域的时间

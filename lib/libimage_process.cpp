@@ -18,10 +18,10 @@ void CameraInit(VideoCapture& Camera,CameraKind Camera_EN)
         case VIDEO_1:{ Camera.open("/dev/video1",CAP_V4L2); break; }  // 摄像头video1
     }
 
-    Camera.set(CV_CAP_PROP_FRAME_WIDTH, 320); //帧宽
-    Camera.set(CV_CAP_PROP_FRAME_HEIGHT, 240);//帧高
-    Camera.set(CV_CAP_PROP_FOURCC, CV_FOURCC('M', 'J', 'P', 'G'));  // 视频流格式
-    Camera.set(CV_CAP_PROP_FPS, 120);    // 帧率
+    Camera.set(CAP_PROP_FRAME_WIDTH, 320); //帧宽
+    Camera.set(CAP_PROP_FRAME_HEIGHT, 240);//帧高
+    Camera.set(CAP_PROP_FOURCC, VideoWriter::fourcc('M', 'J', 'P', 'G'));  // 视频流格式
+    Camera.set(CAP_PROP_FPS, 120);    // 帧率
 
 	if (!Camera.isOpened())
     {
@@ -59,7 +59,7 @@ void ImgProcess::ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Functi
 	JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
     (Img_Store_p -> Img_Track) = (Img_Store_p -> Img_Color).clone();
 	cvtColor((Img_Store_p -> Img_Color) , (Img_Store_p -> Img_Gray) , COLOR_BGR2GRAY);  // 彩色图像灰度化
-	blur((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_Gray) , Size(18,18) , Point(-1,-1));	// 均值滤波	
+	// blur((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_Gray) , Size(18,18) , Point(-1,-1));	// 均值滤波	
 	threshold((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_OTSU) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
 	ImgProcess::ImgSobel((Img_Store_p -> Img_OTSU));	//Sobel算子处理
 	threshold((Img_Store_p -> Img_OTSU) , (Img_Store_p -> Img_OTSU) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化

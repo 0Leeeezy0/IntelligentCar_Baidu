@@ -71,6 +71,7 @@
 	"MIN_MOTOR_SPEED" : 最小点击速度
 	"MAX_MOTOR_SPEED" :最大电机速度
 	"DANGER_ZONE_MOTOR_SPEED" : 危险区域电机速度
+	"RESCUE_ZONE_MOTOR_SPEED" : 救援区域电机速度
 	"BEND_TRACK_MOTOR_SPEED_FACTOR_1" : 弯道电机速度比例1：小弯道或准备入弯的电机速度比例
 	"BEND_TRACK_MOTOR_SPEED_FACTOR_2" : 弯道电机速度比例2：大弯道电机速度比例
 	"CIRCLE_OUT_SERVO_ANGLE" : 圆环出环舵机角度：该参数与下位机的陀螺仪目标角度和陀螺仪延时清零角度共同决定了圆环出环的姿态

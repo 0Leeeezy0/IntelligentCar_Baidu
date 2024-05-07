@@ -55,7 +55,7 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
         // 圆环判断
         // 若左右边线只有一边有拐点和弯点  
         //且当前图像序号和十字中存储的图像序号有间隔才为左右圆环
-        else if((Data_Path_p -> InflectionPointNum[0] == 0) && (Data_Path_p -> InflectionPointNum[1] >= 1) && (Data_Path_p -> BendPointNum[0] <= 4) && (Data_Path_p -> BendPointNum[1] >= 1) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
+        else if((Data_Path_p -> InflectionPointNum[0] == 0) && (Data_Path_p -> InflectionPointNum[1] >= 1) && (Data_Path_p -> BendPointNum[0] <= 2) && (Data_Path_p -> BendPointNum[1] >= 1) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
         {
             // 在出环后经过固定帧数才能再次准备进环
             if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE || (Data_Path_p -> Circle_Track_Step) == IN) && Data_Path_p -> Vector_Add_Unit_Dir[1] == 1 && State-State_Circle_OUT >= 30)
@@ -95,10 +95,10 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
                 Data_Path_p -> Track_Kind = BEND_TRACK;
             }
         }
-        else if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] == 0) && (Data_Path_p -> BendPointNum[0] >= 1) && (Data_Path_p -> BendPointNum[1] <= 4) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
+        else if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] == 0) && (Data_Path_p -> BendPointNum[0] >= 1) && (Data_Path_p -> BendPointNum[1] <= 2) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
         {
             // 在出环后经过固定帧数才能再次准备进环
-            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE || (Data_Path_p -> Circle_Track_Step) == IN) && Data_Path_p -> Vector_Add_Unit_Dir[0] == 1 && State-State_Circle_OUT >= 30)
+            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE || (Data_Path_p -> Circle_Track_Step) == IN) && Data_Path_p -> Vector_Add_Unit_Dir[0] == 1 && State-State_Circle_OUT >= 60)
             {
                 Loop_Kind = L_CIRCLE_TRACK_LOOP;
                 Data_Path_p -> Track_Kind = L_CIRCLE_TRACK;
@@ -218,8 +218,23 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
             PredictResult result = results[i];
         
             if(result.label == "bomb" && result.x >= 160){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = DANGER_ZONE; DangerTime = (Img_Store_p -> ImgNum); break; }
-            else if(result.label == "bridge" && result.x >= 160){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE; BridgeTime = (Img_Store_p -> ImgNum); break; }
+            else if(result.label == "bridge" && result.x >= 160){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE; BridgeTime = (Img_Store_p -> ImgNum); 
+                // 防止车速过快时的动态模糊造成的桥梁区域和危险区域误判
+                // 若检测到桥梁区域且检测到锥桶或路障
+                for(int j = 0;j < results.size();j++)
+                {
+                    PredictResult resulterror = results[j];
+                    if(resulterror.label == "cone" || resulterror.label == "block")
+                    {
+                        Data_Path_p -> Model_Zone_Kind = DANGER_ZONE;
+                        DangerTime = (Img_Store_p -> ImgNum);
+                    }
+                }
+                break;
+            }
             else if(result.label == "crosswalk" && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; CrosswalkTime = (Img_Store_p -> ImgNum); break; }
+            else if((result.label == "evil" || result.label == "thief") && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCURE_ZONE; break; }
+            else if((result.label == "patient" || result.label == "tumble") && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCURE_ZONE; break; }
             else{ Loop_Kind = COMMON_TRACK_LOOP; break; }
             // else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; }
         }
@@ -236,6 +251,17 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
         {
             Loop_Kind = MODEL_TRACK_LOOP; 
             Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE;
+            // 防止车速过快时的动态模糊造成的桥梁区域和危险区域误判
+            // 若检测到桥梁区域且检测到锥桶或路障
+            for(int i = 0;i < results.size();i++)
+            {
+                PredictResult resulterror = results[i];
+                if(resulterror.label == "cone" || resulterror.label == "block")
+                {
+                    Data_Path_p -> Model_Zone_Kind = DANGER_ZONE;
+                    DangerTime = (Img_Store_p -> ImgNum);
+                }
+            }
         }
         // 在斑马线区域限定时间内将锁为模型赛道的斑马线区域
         // 当斑马线在图像下方时才能判定为斑马线
@@ -254,7 +280,7 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
             // 停车
             if((Img_Store_p -> ImgNum)-CrosswalkTime < JSON_TrackConfigData.CrosswalkTime)
             {
-                if((Img_Store_p -> ImgNum)-CrosswalkTime <= 10)
+                if((Img_Store_p -> ImgNum)-CrosswalkTime <= 30)
                 {
                     Data_Path_p -> Model_Crosswalk_Zone_Step = STOP_PREPARE;
                     Loop_Kind = MODEL_TRACK_LOOP; 
@@ -603,7 +629,8 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     JSON_TrackConfigData.TrackWidth = ConfigData.at("TRACK_WIDTH");   // 获取赛道宽度参数
     JSON_TrackConfigData.MotorSpeedInterval[0] = ConfigData.at("MIN_MOTOR_SPEED");  // 获取电机速度区间
     JSON_TrackConfigData.MotorSpeedInterval[1] = ConfigData.at("MAX_MOTOR_SPEED"); 
-    JSON_TrackConfigData.DangerZoneMotorSpeed = ConfigData.at("DANGER_ZONE_MOTOR_SPEED"); // 危险区电机速度
+    JSON_TrackConfigData.DangerZoneMotorSpeed = ConfigData.at("DANGER_ZONE_MOTOR_SPEED");   // 危险区域电机速度
+    JSON_TrackConfigData.RescueZoneMotorSpeed = ConfigData.at("RESCUE_ZONE_MOTOR_SPEED");   // 救援区域电机速度 
     JSON_TrackConfigData.BendTrack_MotorSpeedFactor_1 = ConfigData.at("BEND_TRACK_MOTOR_SPEED_FACTOR_1");   // 弯道电机速度占比1
     JSON_TrackConfigData.BendTrack_MotorSpeedFactor_2 = ConfigData.at("BEND_TRACK_MOTOR_SPEED_FACTOR_2");   // 弯道电机速度占比2
     JSON_TrackConfigData.CircleOutServoAngle = ConfigData.at("CIRCLE_OUT_SERVO_ANGLE");   // 出环打角
@@ -792,10 +819,8 @@ void DataPrint(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
                     cout << "救援区域 " << endl; 
                     switch(Data_Path_p -> Model_Rescure_Zone_Step)
                     {
-                        case L_GARAGE_IN_PREPARE:{cout << "准备进入左车库" << endl; break;}
                         case L_GARAGE_IN:{cout << "进入左车库" << endl; break;}
                         case L_GARAGE_OUT:{cout << "出左车库" << endl; break;}
-                        case R_GARAGE_IN_PREPARE:{cout << "准备进入右车库" << endl; break;}
                         case R_GARAGE_IN:{cout << "进入右车库" << endl; break;}
                         case R_GARAGE_OUT:{cout << "出右车库" << endl; break;}
                     }
