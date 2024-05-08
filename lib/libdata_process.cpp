@@ -58,7 +58,7 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
         else if((Data_Path_p -> InflectionPointNum[0] == 0) && (Data_Path_p -> InflectionPointNum[1] >= 1) && (Data_Path_p -> BendPointNum[0] <= 2) && (Data_Path_p -> BendPointNum[1] >= 1) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
         {
             // 在出环后经过固定帧数才能再次准备进环
-            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE || (Data_Path_p -> Circle_Track_Step) == IN) && Data_Path_p -> Vector_Add_Unit_Dir[1] == 1 && State-State_Circle_OUT >= 30)
+            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE || (Data_Path_p -> Circle_Track_Step) == IN) && Data_Path_p -> Vector_Add_Unit_Dir[1] == 1)
             {
                 Loop_Kind = R_CIRCLE_TRACK_LOOP;
                 Data_Path_p -> Track_Kind = R_CIRCLE_TRACK;
@@ -98,7 +98,7 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
         else if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] == 0) && (Data_Path_p -> BendPointNum[0] >= 1) && (Data_Path_p -> BendPointNum[1] <= 2) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
         {
             // 在出环后经过固定帧数才能再次准备进环
-            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE || (Data_Path_p -> Circle_Track_Step) == IN) && Data_Path_p -> Vector_Add_Unit_Dir[0] == 1 && State-State_Circle_OUT >= 60)
+            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE || (Data_Path_p -> Circle_Track_Step) == IN) && Data_Path_p -> Vector_Add_Unit_Dir[0] == 1)
             {
                 Loop_Kind = L_CIRCLE_TRACK_LOOP;
                 Data_Path_p -> Track_Kind = L_CIRCLE_TRACK;
@@ -177,8 +177,14 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
             {
                 Data_Path_p -> Circle_Track_Step = INIT;
             }
-            // 出环后进入占位
+            // 出环后进入出环转直线
             if((Data_Path_p -> Circle_Track_Step) == OUT)
+            {
+                Data_Path_p -> Circle_Track_Step = OUT_2_STRIGHT;
+                State_Circle_OUT = Img_Store_p -> ImgNum;
+            }
+            // 经过固定帧数后出环转直线进入占位从而可以进行准备下一次的圆环
+            if((Data_Path_p -> Circle_Track_Step) == OUT_2_STRIGHT && State-State_Circle_OUT >= 60)
             {
                 Data_Path_p -> Circle_Track_Step = INIT;
             }

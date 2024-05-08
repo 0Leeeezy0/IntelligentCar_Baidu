@@ -75,7 +75,8 @@ typedef enum CircleTrackStep
     IN = 1, // 入环
     OUT_PREPARE = 2,     // 准备出环
     OUT = 3,    // 出环
-    INIT = 4,   // 占位
+    OUT_2_STRIGHT = 4,  // 出环转直道
+    INIT = 5,   // 占位
 }CircleTrackStep;
 
 

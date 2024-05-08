@@ -115,6 +115,10 @@ int main()
             {
                 CircleTrack_Step_IN_Prepare_Stright(Img_Store_p,Data_Path_p);   // 准备入环补线
             }
+            if(Data_Path_p -> Circle_Track_Step == OUT_2_STRIGHT)
+            {
+                Circle2CommonTrack(Img_Store_p,Data_Path_p);    // 出环转直线补线
+            }
             ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
             Judge.ServoDirAngle_Judge(Data_Path_p); // 舵机角度计算
             Judge.MotorSpeed_Judge(Data_Path_p);    // 电机速度决策
