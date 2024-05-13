@@ -8,7 +8,7 @@ using namespace cv;
 	CameraInit说明
 	摄像头初始化
 */
-void CameraInit(VideoCapture& Camera,CameraKind Camera_EN)
+void CameraInit(VideoCapture& Camera,CameraKind Camera_EN,int FPS)
 {
 	// 相机类型设置
     switch(Camera_EN)
@@ -21,7 +21,8 @@ void CameraInit(VideoCapture& Camera,CameraKind Camera_EN)
     Camera.set(CAP_PROP_FRAME_WIDTH, 320); //帧宽
     Camera.set(CAP_PROP_FRAME_HEIGHT, 240);//帧高
     Camera.set(CAP_PROP_FOURCC, VideoWriter::fourcc('M', 'J', 'P', 'G'));  // 视频流格式
-    Camera.set(CAP_PROP_FPS, 120);    // 帧率
+    Camera.set(CAP_PROP_FPS, FPS);    // 帧率
+	Camera.set(CAP_PROP_EXPOSURE, -14);	// 曝光度
 
 	if (!Camera.isOpened())
     {
@@ -38,11 +39,11 @@ void CameraInit(VideoCapture& Camera,CameraKind Camera_EN)
 /*
 	摄像头获取图像线程
 */
-void CameraImgGetThread(VideoCapture& Camera,Img_Store *Img_Store_p)
+void CameraImgGetThread(VideoCapture& Camera,Mat& Img)
 {
 	while(1)
 	{
-		Camera >> (Img_Store_p -> Img_Capture);   // 将视频流转为图像流
+		Camera >> Img;   // 将视频流转为图像流
 	}
 }
 

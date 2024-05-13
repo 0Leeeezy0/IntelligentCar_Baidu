@@ -85,10 +85,12 @@ typedef enum CircleTrackStep
 */
 typedef enum RescureZoneStep
 {
-    L_GARAGE_IN = 0,   // 准备入左车库
-    L_GARAGE_OUT = 1,   // 出左车库
-    R_GARAGE_IN = 2,   // 入右车库
-    R_GARAGE_OUT = 3,   // 出右车库
+    L_GARAGE_IN_PREPARE = 0, // 准备进入左车库
+    L_GARAGE_IN = 1,   // 进入左车库
+    L_GARAGE_OUT = 2,   // 出左车库
+    R_GARAGE_IN_PREPARE = 3, // 准备进入右车库
+    R_GARAGE_IN = 4,   // 进入右车库
+    R_GARAGE_OUT = 5,   // 出右车库
 }RescureZoneStep;
 
 
@@ -170,16 +172,16 @@ typedef struct JSON_TrackConfigData
     int InflectionPointVectorDistance = 0;   // 边线元素拐点向量距离
     int BendPointIdentifyAngle[2] = {0};    // 边线弯点识别角度
     int BendPointVectorDistance = 0;   // 边线弯点向量距离
-    int MotorSpeedInterval[2] = {0};    // 电机速度区间
+    int CommonMotorSpeed[5] = {0};    // 电机速度：0.直道 1.小角度弯道 2.大角度弯道 3.十字赛道 4.圆环赛道
     int DilateErode_Factor[2] = {0};    // 图形学膨胀腐蚀系数
-    float BendTrack_MotorSpeedFactor_1;   // 弯道电机速度占比1
-    float BendTrack_MotorSpeedFactor_2;   // 弯道电机速度占比2
+    int BridgeZoneMotorSpeed = 0;   // 桥梁区域电机速度
     int DangerZoneMotorSpeed = 0;   // 危险区域电机速度
     int RescueZoneMotorSpeed = 0;   // 救援区域电机速度
-    int CircleOutServoAngle = 0;    // 出环舵机角度
+    int CrosswalkZoneMotorSpeed[2] = {0};    // 斑马线区域电机速度：0.发车 1.准备停车
     int Circle_IN_PREPARE_Time = 0;    // 准备入环限定时间
     int DangerTime = 0; // 进入危险区域的时间
     int BridgeTime = 0; // 进入桥梁区域的时间
+    int RescueTime = 0; // 救援区进入车库前准备时间上限
     int CrosswalkTime = 0;  // 进入斑马线区域的时间
     int Crosswalk_Y = 0;    // 斑马线识别纵坐标阈值
     int DangerZone_Cone_Radius = 0; // 危险区域锥桶避障补线半径
@@ -257,7 +259,7 @@ typedef struct Data_Path
     // 模型赛道参数
     ModelZoneKind Model_Zone_Kind = CROSSWALK_ZONE;    // 模型赛道区域类型
     CrosswalkZoneStep Model_Crosswalk_Zone_Step;    // 模型斑马线赛道步骤
-    RescureZoneStep Model_Rescure_Zone_Step;    // 模型救援赛道步骤
+    RescureZoneStep Model_Rescure_Zone_Step = L_GARAGE_IN_PREPARE;    // 模型救援赛道步骤
     ChaseZoneStep Model_Chase_Zone_Step;    // 模型追逐区赛道步骤
 }Data_Path;
 

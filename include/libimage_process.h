@@ -10,8 +10,9 @@
     @参数说明
     Camera 传入VideoCapture类
     Camera_EN 相机使能
+    FPS 摄像头帧率
 */
-void CameraInit(cv::VideoCapture& Camera,CameraKind Camera_EN);
+void CameraInit(cv::VideoCapture& Camera,CameraKind Camera_EN,int FPS);
 
 
 /*
@@ -20,7 +21,7 @@ void CameraInit(cv::VideoCapture& Camera,CameraKind Camera_EN);
     Camera 传入VideoCapture类
     Img_Store_p 图像存储结构体指针
 */
-void CameraImgGetThread(cv::VideoCapture& Camera,Img_Store *Img_Store_p);
+void CameraImgGetThread(cv::VideoCapture& Camera,cv::Mat& Img);
 
 
 class ImgProcess

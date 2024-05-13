@@ -214,6 +214,7 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
     static int DangerTime = 0;
     static int BridgeTime = 0;
     static int CrosswalkTime = 0;
+    static int RescueTime = 0;
 
     int Crosswalk_Y = 0;
     // 获取模型结果
@@ -240,7 +241,8 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
             }
             else if(result.label == "crosswalk" && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; CrosswalkTime = (Img_Store_p -> ImgNum); break; }
             else if((result.label == "evil" || result.label == "thief") && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCURE_ZONE; break; }
-            else if((result.label == "patient" || result.label == "tumble") && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCURE_ZONE; break; }
+            else if((result.label == "patient" || result.label == "tumble") && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCURE_ZONE; Data_Path_p -> Model_Rescure_Zone_Step = L_GARAGE_IN_PREPARE; RescueTime = (Img_Store_p -> ImgNum); break; }
+            else if((result.label == "evil" || result.label == "thief") && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCURE_ZONE; Data_Path_p -> Model_Rescure_Zone_Step = R_GARAGE_IN_PREPARE; RescueTime = (Img_Store_p -> ImgNum); break; }
             else{ Loop_Kind = COMMON_TRACK_LOOP; break; }
             // else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; }
         }
@@ -251,6 +253,12 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
             Loop_Kind = MODEL_TRACK_LOOP; 
             Data_Path_p -> Model_Zone_Kind = DANGER_ZONE;
             
+        }
+        // 在救援区域限定时间内将锁为模型赛道的救援区域
+        if((Img_Store_p -> ImgNum)-RescueTime < JSON_TrackConfigData.RescueTime)
+        {
+            Loop_Kind = MODEL_TRACK_LOOP; 
+            Data_Path_p -> Model_Zone_Kind = RESCURE_ZONE;
         }
         // 在桥梁区域限定时间内将锁为模型赛道的桥梁区域且若检测到危险区后就不能进入桥梁区域，直到危险区域结束
         if((Img_Store_p -> ImgNum)-BridgeTime < JSON_TrackConfigData.BridgeTime && (Img_Store_p -> ImgNum)-DangerTime > JSON_TrackConfigData.DangerTime)
@@ -350,12 +358,12 @@ void Judge::MotorSpeed_Judge(Data_Path *Data_Path_p)
             // 直道、准备入环直道、入环直道速度决策
             if(Data_Path_p -> ServoAngle > 30 || Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN || Data_Path_p -> Circle_Track_Step == OUT)
             {
-                Data_Path_p -> MotorSpeed = JSON_TrackConfigData.MotorSpeedInterval[0];
+                Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CommonMotorSpeed[4];
             }
             // 真正的直道的速度决策
             else
             {
-                Data_Path_p -> MotorSpeed = JSON_TrackConfigData.MotorSpeedInterval[1];
+                Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CommonMotorSpeed[0];
             }
             break;
         }
@@ -364,36 +372,36 @@ void Judge::MotorSpeed_Judge(Data_Path *Data_Path_p)
             // 小弯道速度决策
             if(Data_Path_p -> BendPointNum[0] <= 10 || Data_Path_p -> BendPointNum[1] <= 10)
             {
-                Data_Path_p -> MotorSpeed = (JSON_TrackConfigData.MotorSpeedInterval[0])+int(((JSON_TrackConfigData.MotorSpeedInterval[1])-(JSON_TrackConfigData.MotorSpeedInterval[0]))*JSON_TrackConfigData.BendTrack_MotorSpeedFactor_1);
+                Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CommonMotorSpeed[1];
                 if(Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN)
                 {
-                    Data_Path_p -> MotorSpeed =  (JSON_TrackConfigData.MotorSpeedInterval[0])+int(((JSON_TrackConfigData.MotorSpeedInterval[1])-(JSON_TrackConfigData.MotorSpeedInterval[0]))*JSON_TrackConfigData.BendTrack_MotorSpeedFactor_2);
+                    Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CommonMotorSpeed[4];
                 }
             }
             // 大弯道速度决策
             else
             {
-                Data_Path_p -> MotorSpeed = (JSON_TrackConfigData.MotorSpeedInterval[0])+int(((JSON_TrackConfigData.MotorSpeedInterval[1])-(JSON_TrackConfigData.MotorSpeedInterval[0]))*JSON_TrackConfigData.BendTrack_MotorSpeedFactor_2); 
+                Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CommonMotorSpeed[2];
                 if(Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN)
                 {
-                    Data_Path_p -> MotorSpeed =  (JSON_TrackConfigData.MotorSpeedInterval[0])+int(((JSON_TrackConfigData.MotorSpeedInterval[1])-(JSON_TrackConfigData.MotorSpeedInterval[0]))*JSON_TrackConfigData.BendTrack_MotorSpeedFactor_2);
+                    Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CommonMotorSpeed[4];
                 }
             }
             break;
         }
         case L_CIRCLE_TRACK:
         {
-            Data_Path_p -> MotorSpeed = JSON_TrackConfigData.MotorSpeedInterval[0];
+            Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CommonMotorSpeed[4];
             break;
         }
         case R_CIRCLE_TRACK:
         {
-            Data_Path_p -> MotorSpeed = JSON_TrackConfigData.MotorSpeedInterval[0];
+            Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CommonMotorSpeed[4];
             break;
         }
         case ACROSS_TRACK:
         {
-            Data_Path_p -> MotorSpeed = JSON_TrackConfigData.MotorSpeedInterval[0];
+            Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CommonMotorSpeed[3];
             break;
         }
     }
@@ -625,7 +633,6 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     JSON_FunctionConfigData.AcrossIdentify_EN = ConfigData.at("ACROSS_IDENTIFY_EN");   // 获取十字识别使能参数
     JSON_FunctionConfigData.CircleIdentify_EN = ConfigData.at("CIRCLE_IDENTIFY_EN");   // 获取圆环识别使能参数
     JSON_FunctionConfigData.ModelDetection_EN = ConfigData.at("MODEL_DETECTION_EN");   // 获取模型推理使能参数
-
     JSON_TrackConfigData.InflectionPointVectorDistance = ConfigData.at("POINT_DISTANCE");  // 获取元素拐点角度区
     JSON_TrackConfigData.BendPointVectorDistance = ConfigData.at("POINT_DISTANCE");  // 获取边线弯点角度区
     JSON_TrackConfigData.InflectionPointIdentifyAngle[0] = ConfigData.at("MIN_INFLECTION_POINT_ANGLE");  // 获取元素拐点角度区间
@@ -633,18 +640,22 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     JSON_TrackConfigData.BendPointIdentifyAngle[0] = ConfigData.at("MIN_BEND_POINT_ANGLE");  // 获取边线弯点角度区间
     JSON_TrackConfigData.BendPointIdentifyAngle[1] = ConfigData.at("MAX_BEND_POINT_ANGLE"); 
     JSON_TrackConfigData.TrackWidth = ConfigData.at("TRACK_WIDTH");   // 获取赛道宽度参数
-    JSON_TrackConfigData.MotorSpeedInterval[0] = ConfigData.at("MIN_MOTOR_SPEED");  // 获取电机速度区间
-    JSON_TrackConfigData.MotorSpeedInterval[1] = ConfigData.at("MAX_MOTOR_SPEED"); 
+    JSON_TrackConfigData.CommonMotorSpeed[0] = ConfigData.at("STRIGHT_TRACK_MOTOR_SPEED");  // 获取直道电机速度
+    JSON_TrackConfigData.CommonMotorSpeed[1] = ConfigData.at("LITTLE_ANGLE_BEND_TRACK_MOTOR_SPEED"); // 小角度弯道电机速度
+    JSON_TrackConfigData.CommonMotorSpeed[2] = ConfigData.at("BIG_ANGLE_BEND_TRACK_MOTOR_SPEED"); // 大角度弯道电机速度
+    JSON_TrackConfigData.CommonMotorSpeed[3] = ConfigData.at("ACROSS_TRACK_MOTOR_SPEED"); // 十字赛道道电机速度
+    JSON_TrackConfigData.CommonMotorSpeed[4] = ConfigData.at("CIRCLE_TRACK_MOTOR_SPEED"); // 圆环赛道道电机速度
+    JSON_TrackConfigData.BridgeZoneMotorSpeed = ConfigData.at("BRIDGE_ZONE_MOTOR_SPEED"); // 桥梁区域电机速度
     JSON_TrackConfigData.DangerZoneMotorSpeed = ConfigData.at("DANGER_ZONE_MOTOR_SPEED");   // 危险区域电机速度
     JSON_TrackConfigData.RescueZoneMotorSpeed = ConfigData.at("RESCUE_ZONE_MOTOR_SPEED");   // 救援区域电机速度 
-    JSON_TrackConfigData.BendTrack_MotorSpeedFactor_1 = ConfigData.at("BEND_TRACK_MOTOR_SPEED_FACTOR_1");   // 弯道电机速度占比1
-    JSON_TrackConfigData.BendTrack_MotorSpeedFactor_2 = ConfigData.at("BEND_TRACK_MOTOR_SPEED_FACTOR_2");   // 弯道电机速度占比2
-    JSON_TrackConfigData.CircleOutServoAngle = ConfigData.at("CIRCLE_OUT_SERVO_ANGLE");   // 出环打角
+    JSON_TrackConfigData.CrosswalkZoneMotorSpeed[0] = ConfigData.at("CROSSWALK_ZONE_MOTOR_SPEED_START"); // 斑马线区域发车电机速度
+    JSON_TrackConfigData.CrosswalkZoneMotorSpeed[1] = ConfigData.at("CROSSWALK_ZONE_MOTOR_SPEED_STOP_PREPARE"); // 斑马线区域准备停车电机速度
     JSON_TrackConfigData.Circle_IN_PREPARE_Time = ConfigData.at("CIRCLE_IN_PREPARE_TIME");  // 准备入环限定时间
     JSON_TrackConfigData.DilateErode_Factor[0] = ConfigData.at("DILATE_FACTOR");  // 获取图形学膨胀系数
     JSON_TrackConfigData.DilateErode_Factor[1] = ConfigData.at("ERODE_FACTOR");  // 获取图形学腐蚀系数
     JSON_TrackConfigData.DangerTime = ConfigData.at("DANGER_TIME");  // 获取进入危险区域的时间
     JSON_TrackConfigData.BridgeTime = ConfigData.at("BRIDGE_TIME");   // 获取进入桥梁区域的时间
+    JSON_TrackConfigData.RescueTime = ConfigData.at("RESCUE_TIME"); // 获取救援区进入车库前准备时间上限
     JSON_TrackConfigData.CrosswalkTime = ConfigData.at("CROSSWALK_TIME");   // 获取进入斑马线区域的时间
     JSON_TrackConfigData.Crosswalk_Y = ConfigData.at("CROSSWALK_IDENTIFY_Y");   // 获取斑马线识别纵坐标阈值
     JSON_TrackConfigData.DangerZone_Cone_Radius = ConfigData.at("DANGER_ZONE_CONE_RADIUS");   // 危险区域锥桶补线圆圈半径
@@ -768,8 +779,8 @@ void DataPrint(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
         cout << " 比赛状态：";
         switch(Function_EN_p -> Game_EN)
         {
-            case true:{ cout << "开始" << endl; break;}
-            case false:{ cout << "结束" << endl; break;}
+            case true:{ cout << "开始" << endl; break; }
+            case false:{ cout << "结束" << endl; break; }
         }
         cout << "<-------------------------------------------------->" << endl;
         cout << endl;
@@ -789,55 +800,61 @@ void DataPrint(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
             case BEND_TRACK:{ cout << "弯赛道" << endl; break; }
             case R_CIRCLE_TRACK:
             { 
-                cout << "右圆环赛道  "; 
+                cout << "右圆环赛道："; 
                 switch(Data_Path_p -> Circle_Track_Step)
                 {
-                    case IN_PREPARE:{cout << "准备入环" << endl; break;}
-                    case IN:{cout << "入环" << endl; break;}
-                    case OUT_PREPARE:{cout << "准备出环" << endl; break;}
-                    case OUT:{cout << "出环" << endl; break;}
-                    case INIT:{cout << "初始化" << endl; break;}
+                    case IN_PREPARE:{ cout << "准备入环" << endl; break; }
+                    case IN:{ cout << "入环" << endl; break; }
+                    case OUT_PREPARE:{ cout << "准备出环" << endl; break; }
+                    case OUT:{ cout << "出环" << endl; break; }
+                    case INIT:{ cout << "初始化" << endl; break; }
                 }
                 break;
             }
             case L_CIRCLE_TRACK:
             { 
-                cout << "左圆环赛道  "; 
+                cout << "左圆环赛道："; 
                 switch(Data_Path_p -> Circle_Track_Step)
                 {
-                    case IN_PREPARE:{cout << "准备入环" << endl; break; }
-                    case IN:{cout << "入环" << endl; break; }
-                    case OUT_PREPARE:{cout << "准备出环" << endl; break; }
-                    case OUT:{cout << "出环" << endl; break; }
-                    case INIT:{cout << "初始化" << endl; break; }
+                    case IN_PREPARE:{ cout << "准备入环" << endl; break; }
+                    case IN:{ cout << "入环" << endl; break; }
+                    case OUT_PREPARE:{ cout << "准备出环" << endl; break; }
+                    case OUT:{ cout << "出环" << endl; break; }
+                    case INIT:{ cout << "初始化" << endl; break; }
                 }
                 break;
             }
             case ACROSS_TRACK:{ cout << "十字赛道" << endl; break; }
-            case MODEL_TRACK:{ cout << "模型赛道 " << endl; break; }
-            switch(Data_Path_p -> Model_Zone_Kind)
-            {
-                case BRIDGE_ZONE:{ cout << "桥梁区域" << endl; break; }
-                case CROSSWALK_ZONE:{ cout << "斑马线区域" << endl; break; }
-                case DANGER_ZONE:{ cout << "危险区域 " << endl; break; } 
-                case RESCURE_ZONE:
+            case MODEL_TRACK:
+            { 
+                cout << "模型赛道："; 
+                switch(Data_Path_p -> Model_Zone_Kind)
                 {
-                    cout << "救援区域 " << endl; 
-                    switch(Data_Path_p -> Model_Rescure_Zone_Step)
+                    case BRIDGE_ZONE:{ cout << "桥梁区域" << endl; break; }
+                    case CROSSWALK_ZONE:{ cout << "斑马线区域" << endl; break; }
+                    case DANGER_ZONE:{ cout << "危险区域" << endl; break; } 
+                    case RESCURE_ZONE:
                     {
-                        case L_GARAGE_IN:{cout << "进入左车库" << endl; break;}
-                        case L_GARAGE_OUT:{cout << "出左车库" << endl; break;}
-                        case R_GARAGE_IN:{cout << "进入右车库" << endl; break;}
-                        case R_GARAGE_OUT:{cout << "出右车库" << endl; break;}
+                        cout << "救援区域："; 
+                        switch(Data_Path_p -> Model_Rescure_Zone_Step)
+                        {
+                            case L_GARAGE_IN_PREPARE:{ cout << "准备进入左车库" << endl; break; }
+                            case L_GARAGE_IN:{ cout << "进入左车库" << endl; break; }
+                            case L_GARAGE_OUT:{ cout << "出左车库" << endl; break; }
+                            case R_GARAGE_IN_PREPARE:{ cout << "准备进入右车库" << endl; break; }
+                            case R_GARAGE_IN:{ cout << "进入右车库" << endl; break; }
+                            case R_GARAGE_OUT:{ cout << "出右车库" << endl; break; }
+                        }
+                        break;
                     }
-                    break;
-                }
-                case CHASE_ZONE:
-                {
-                    cout << "追逐区域 " << endl; 
-                    switch(Data_Path_p -> Model_Chase_Zone_Step)
+                    case CHASE_ZONE:
                     {
+                        cout << "追逐区域 " << endl; 
+                        switch(Data_Path_p -> Model_Chase_Zone_Step)
+                        {
 
+                        }
+                        break;
                     }
                     break;
                 }

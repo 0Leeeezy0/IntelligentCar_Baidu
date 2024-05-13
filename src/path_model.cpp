@@ -13,7 +13,7 @@ void Bridge_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
     Judge Judge;
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
     Data_Path_p -> Forward = JSON_TrackConfigData.BridgeZoneForward;
-    Data_Path_p -> MotorSpeed = JSON_TrackConfigData.MotorSpeedInterval[1];
+    Data_Path_p -> MotorSpeed = JSON_TrackConfigData.BridgeZoneMotorSpeed;
     ImgPathSearch(Img_Store_p,Data_Path_p);
     Judge.ServoDirAngle_Judge(Data_Path_p);
 }
@@ -66,8 +66,8 @@ void Crosswalk_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
     switch(Data_Path_p -> Model_Crosswalk_Zone_Step)
     {
-        case START:{ Data_Path_p -> MotorSpeed = JSON_TrackConfigData.MotorSpeedInterval[1]; Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; break; }
-        case STOP_PREPARE:{ Data_Path_p -> MotorSpeed = JSON_TrackConfigData.MotorSpeedInterval[0]; Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; break; }
+        case START:{ Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CrosswalkZoneMotorSpeed[0]; Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; break; }
+        case STOP_PREPARE:{ Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CrosswalkZoneMotorSpeed[1]; Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; break; }
         case STOP:{ Data_Path_p -> MotorSpeed = 0; Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; break; }
     }
 }
@@ -82,6 +82,8 @@ void Rescue_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
     Judge Judge;
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
 
+    int coneNum = 0;
+
     Data_Path_p -> Forward = JSON_TrackConfigData.DangerZoneForward;
 
     while(Function_EN_p -> ThreadModelDetection_EN == false);  // 等待模型推理完成
@@ -94,10 +96,19 @@ void Rescue_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
         if(result.label == "cone")
         {
             // 锥桶数量获取
-            circle((Img_Store_p -> Img_OTSU),Point(result.x+int(result.width/2),result.y+int(result.height/2)),JSON_TrackConfigData.DangerZone_Cone_Radius,Scalar(255),3);	
+            coneNum++;
         }
     }
-    
+
+    if(coneNum >= 6)
+    {
+        switch(Data_Path_p -> Model_Rescure_Zone_Step)
+        {
+            case L_GARAGE_IN_PREPARE:{ Data_Path_p -> Model_Rescure_Zone_Step = L_GARAGE_IN; break; }
+            case R_GARAGE_IN_PREPARE:{ Data_Path_p -> Model_Rescure_Zone_Step = R_GARAGE_IN; break; }
+        }
+    }
+
     ImgPathSearch(Img_Store_p,Data_Path_p);
     Judge.ServoDirAngle_Judge(Data_Path_p);
     Data_Path_p -> MotorSpeed = JSON_TrackConfigData.RescueZoneMotorSpeed;

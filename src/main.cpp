@@ -35,9 +35,9 @@ int main()
 
     // 摄像头初始化
     VideoCapture Camera; // 定义相机
-    CameraInit(Camera,JSON_FunctionConfigData.Camera_EN);
+    CameraInit(Camera,JSON_FunctionConfigData.Camera_EN,120);
     // 开启摄像头图像获取线程
-    thread CameraImgCapture (CameraImgGetThread,ref(Camera),Img_Store_p);
+    thread CameraImgCapture (CameraImgGetThread,ref(Camera),ref(Img_Store_p -> Img_Capture));
     CameraImgCapture.detach();
 
     // 模型初始化
@@ -140,14 +140,15 @@ int main()
                     CircleTrack_Step_IN(Img_Store_p,Data_Path_p);   // 入环补线
                     break;
                 }
+                case OUT:
+                {
+                    CircleTrack_Step_OUT(Img_Store_p,Data_Path_p);   // 出环补线
+                    break;
+                }
             }
             ImgPathSearch(Img_Store_p,Data_Path_p); // 赛道路径线寻线
             Judge.ServoDirAngle_Judge(Data_Path_p); // 舵机角度计算
             Judge.MotorSpeed_Judge(Data_Path_p);    // 电机速度决策
-            if(Data_Path_p -> Circle_Track_Step == OUT)
-            {
-                CircleTrack_Step_OUT(Img_Store_p,Data_Path_p);   // 出环打角
-            }
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 切换至串口发送循环
         }
 
