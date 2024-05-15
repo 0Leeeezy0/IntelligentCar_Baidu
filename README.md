@@ -67,6 +67,7 @@
 	"MAX_BEND_POINT_ANGLE" : 最大弯点角度
 
 	"TRACK_WIDTH" : 路径结束线上的赛道宽度
+	"CIRCLE_OUT_WIDTH" : 圆环出环补线终点与中线距离
 
 	"STRIGHT_TRACK_MOTOR_SPEED" : 直线赛道速度
 	"LITTLE_ANGLE_BEND_TRACK_MOTOR_SPEED" : 小角度弯道电机速度

@@ -164,6 +164,7 @@ typedef struct JSON_FunctionConfigData
 typedef struct JSON_TrackConfigData
 {
     int TrackWidth = 0; // 赛道宽度
+    int CircleOutWidth = 0; // 圆环出环补线终点与中线距离
     int InflectionPointIdentifyAngle[2] = {0};    // 元素拐点识别角度
     int InflectionPointVectorDistance = 0;   // 边线元素拐点向量距离
     int BendPointIdentifyAngle[2] = {0};    // 边线弯点识别角度
