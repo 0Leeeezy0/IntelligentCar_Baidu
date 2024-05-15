@@ -64,7 +64,7 @@ void Crosswalk_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
     Judge Judge;
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
-    switch(Data_Path_p -> Model_Crosswalk_Zone_Step)
+    switch(Data_Path_p -> Crosswalk_Zone_Step)
     {
         case START:{ Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CrosswalkZoneMotorSpeed[0]; Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; break; }
         case STOP_PREPARE:{ Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CrosswalkZoneMotorSpeed[1]; Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; break; }
@@ -100,12 +100,13 @@ void Rescue_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
         }
     }
 
-    if(coneNum >= 6)
+    // 若检测到的锥桶数量超过阈值，则将控制权转移
+    if(coneNum >= JSON_TrackConfigData.RescueZoneConeNum)
     {
-        switch(Data_Path_p -> Model_Rescure_Zone_Step)
+        switch(Data_Path_p -> Rescue_Zone_Garage_Dir)
         {
-            case L_GARAGE_IN_PREPARE:{ Data_Path_p -> Model_Rescure_Zone_Step = L_GARAGE_IN; break; }
-            case R_GARAGE_IN_PREPARE:{ Data_Path_p -> Model_Rescure_Zone_Step = R_GARAGE_IN; break; }
+            case LEFT_GARAGE:{ Function_EN_p -> Control_EN = true; break; }
+            case RIGHT_GARAGE:{ Function_EN_p -> Control_EN = true; break; }
         }
     }
 

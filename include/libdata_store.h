@@ -81,17 +81,13 @@ typedef enum CircleTrackStep
 
 
 /*
-    模型救援赛道车库步骤
+    模型救援赛道车库方向
 */
-typedef enum RescureZoneStep
+typedef enum RescueZoneGarageDir
 {
-    L_GARAGE_IN_PREPARE = 0, // 准备进入左车库
-    L_GARAGE_IN = 1,   // 进入左车库
-    L_GARAGE_OUT = 2,   // 出左车库
-    R_GARAGE_IN_PREPARE = 3, // 准备进入右车库
-    R_GARAGE_IN = 4,   // 进入右车库
-    R_GARAGE_OUT = 5,   // 出右车库
-}RescureZoneStep;
+    LEFT_GARAGE = 0,   // 左车库
+    RIGHT_GARAGE = 1,  // 右车库
+}RescueZoneGarageDir;
 
 
 /*
@@ -106,12 +102,12 @@ typedef enum CrosswalkZoneStep
 
 
 /*
-    模型追逐区赛道步骤
+    模型追逐区赛道车辆类型
 */
-typedef enum ChaseZoneStep
+typedef enum ChaseZoneCarKind
 {
 
-}ChaseZoneStep;
+}ChaseZoneCarKind;
 
 
 /*
@@ -122,7 +118,7 @@ typedef enum ModelZoneKind
     BRIDGE_ZONE = 0,  // 桥梁区,对应bridge
     CROSSWALK_ZONE = 1,   // 斑马线区,对应crosswalk
     DANGER_ZONE = 2,  // 危险区,对应bomb
-    RESCURE_ZONE = 3,  // 救援区,对应patient,tumble,evil,thief
+    RESCUE_ZONE = 3,  // 救援区,对应patient,tumble,evil,thief
     CHASE_ZONE = 4,   // 追逐区,对应spy
 }ModelZoneKind;
 
@@ -183,7 +179,11 @@ typedef struct JSON_TrackConfigData
     int BridgeTime = 0; // 进入桥梁区域的时间
     int RescueTime = 0; // 救援区进入车库前准备时间上限
     int CrosswalkTime = 0;  // 进入斑马线区域的时间
+    int RescueZoneConeNum = 0;  // 救援区域锥桶数量阈值
     int Crosswalk_Y = 0;    // 斑马线识别纵坐标阈值
+    int Bomb_Y = 0; // 爆炸物识别纵坐标阈值
+    int Bridge_Y = 0;   // 桥识别纵坐标阈值
+    int Rescue_Y = 0;   // 救援区域标识牌纵坐标阈值
     int DangerZone_Cone_Radius = 0; // 危险区域锥桶避障补线半径
     int DangerZone_Block_Radius = 0; // 危险区域路障避障补线半径
     int DangerZoneForward = 0;  // 危险区域前瞻值
@@ -221,6 +221,7 @@ typedef struct Function_EN
     bool Gyroscope_EN;    // 陀螺仪状态使能：当陀螺仪积分到一定角度时出环
     LoopKind Loop_Kind_EN;  // 循环类型使能：0.图像循环 1.普通赛道循环 2.圆环赛道循环 3.十字赛道循环 4.AI赛道循环 5.串口发送循环
     bool ThreadModelDetection_EN;  // 多线程模型推理使能：当模型推理线程结束后才会使能，若模型推理线程还在进行则不使能
+    bool Control_EN = false; // 控制权转移使能
 }Function_EN;
 
 /*
@@ -258,9 +259,9 @@ typedef struct Data_Path
 
     // 模型赛道参数
     ModelZoneKind Model_Zone_Kind = CROSSWALK_ZONE;    // 模型赛道区域类型
-    CrosswalkZoneStep Model_Crosswalk_Zone_Step;    // 模型斑马线赛道步骤
-    RescureZoneStep Model_Rescure_Zone_Step = L_GARAGE_IN_PREPARE;    // 模型救援赛道步骤
-    ChaseZoneStep Model_Chase_Zone_Step;    // 模型追逐区赛道步骤
+    CrosswalkZoneStep Crosswalk_Zone_Step = START;    // 模型斑马线赛道步骤
+    RescueZoneGarageDir Rescue_Zone_Garage_Dir = LEFT_GARAGE;    // 模型救援赛道车库方向
+    ChaseZoneCarKind Chase_Zone_CarKind;    // 模型追逐区赛道步骤
 }Data_Path;
 
 /*
@@ -279,8 +280,9 @@ typedef struct UartSendProtocol
     int ServoAngle;    // 舵机角度
     int MotorSpeed;    // 电机速度
     int Track_Kind;  // 赛道类型
-    RescureZoneStep Model_Rescure_Zone_Step;    // 模型救援赛道步骤
-    ChaseZoneStep Model_Chase_Zone_Step;    // 模型追逐区赛道步骤
+    int Control_EN;    // 控制权转移使能
+    RescueZoneGarageDir Rescue_Zone_Garage_Dir;    // 救援区域车库方向
+    ChaseZoneCarKind Chase_Zone_Car_Kind;  // 追逐区域车辆类型
 
     // 串口数据位
     unsigned char Data_1;
@@ -288,6 +290,8 @@ typedef struct UartSendProtocol
     unsigned char Data_3;
     unsigned char Data_4;
     unsigned char Data_5;
+    unsigned char Data_6;
+    unsigned char Data_7;
 
     //串口帧尾
     unsigned char CRC16 = 0XA2;    // 0xA2
@@ -311,8 +315,7 @@ typedef struct UartReceiveProtocol
     int Path_Search_End;    // 寻路径结束点
     int Side_Search_Start; // 寻边线起始点
     int Side_Search_End; // 寻边线结束点
-    RescureZoneStep Model_Rescure_Zone_Step;    // 模型救援赛道步骤
-    ChaseZoneStep Model_Chase_Zone_Step;    // 模型追逐区赛道步骤
+    int Control_EN;    // 控制权转移使能
     int Gyroscope_EN;   // 陀螺仪状态
     int Game_EN;    // 比赛开始
 

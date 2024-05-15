@@ -196,6 +196,12 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
         Loop_Kind = MODEL_TRACK_LOOP;
         Data_Path_p -> Track_Kind = MODEL_TRACK;
     }
+    // 模型赛道控制权转移后则直接进入串口接收循环
+    if(Function_EN_p -> Control_EN == true)
+    {
+        Loop_Kind = UART_RECEIVE_LOOP;
+    }
+    
     return Loop_Kind;
 }
 
@@ -224,91 +230,86 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
         {
             PredictResult result = results[i];
         
-            if(result.label == "bomb" && result.x >= 160){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = DANGER_ZONE; DangerTime = (Img_Store_p -> ImgNum); break; }
-            else if(result.label == "bridge" && result.x >= 160){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE; BridgeTime = (Img_Store_p -> ImgNum); 
+            if(result.label == "bomb" && result.x >= 140 && result.y >= JSON_TrackConfigData.Bomb_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = DANGER_ZONE; DangerTime = (Img_Store_p -> ImgNum); break; }
+            else if(result.label == "bridge" && result.x >= 140 && result.y >= JSON_TrackConfigData.Bridge_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE; BridgeTime = (Img_Store_p -> ImgNum); 
                 // 防止车速过快时的动态模糊造成的桥梁区域和危险区域误判
                 // 若检测到桥梁区域且检测到锥桶或路障
-                for(int j = 0;j < results.size();j++)
-                {
-                    PredictResult resulterror = results[j];
-                    if(resulterror.label == "cone" || resulterror.label == "block")
-                    {
-                        Data_Path_p -> Model_Zone_Kind = DANGER_ZONE;
-                        DangerTime = (Img_Store_p -> ImgNum);
-                    }
-                }
+                // for(int j = 0;j < results.size();j++)
+                // {
+                //     PredictResult resulterror = results[j];
+                //     if(resulterror.label == "cone" || resulterror.label == "block")
+                //     {
+                //         Data_Path_p -> Model_Zone_Kind = DANGER_ZONE;
+                //         DangerTime = (Img_Store_p -> ImgNum);
+                //     }
+                // }
                 break;
             }
             else if(result.label == "crosswalk" && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; CrosswalkTime = (Img_Store_p -> ImgNum); break; }
-            else if((result.label == "evil" || result.label == "thief") && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCURE_ZONE; break; }
-            else if((result.label == "patient" || result.label == "tumble") && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCURE_ZONE; Data_Path_p -> Model_Rescure_Zone_Step = L_GARAGE_IN_PREPARE; RescueTime = (Img_Store_p -> ImgNum); break; }
-            else if((result.label == "evil" || result.label == "thief") && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCURE_ZONE; Data_Path_p -> Model_Rescure_Zone_Step = R_GARAGE_IN_PREPARE; RescueTime = (Img_Store_p -> ImgNum); break; }
+            else if((result.label == "patient" || result.label == "tumble") && result.x >= 140 && result.y >= JSON_TrackConfigData.Rescue_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCUE_ZONE; Data_Path_p -> Rescue_Zone_Garage_Dir = LEFT_GARAGE; RescueTime = (Img_Store_p -> ImgNum); break; }
+            else if((result.label == "evil" || result.label == "thief") && result.x >= 140 && result.y >= JSON_TrackConfigData.Rescue_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCUE_ZONE; Data_Path_p -> Rescue_Zone_Garage_Dir = RIGHT_GARAGE; RescueTime = (Img_Store_p -> ImgNum); break; }
             else{ Loop_Kind = COMMON_TRACK_LOOP; break; }
             // else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; }
         }
 
+        // 在救援区域限定时间内将锁为模型赛道的救援区域
+        if((Img_Store_p -> ImgNum)-RescueTime < JSON_TrackConfigData.RescueTime)
+        {
+            Loop_Kind = MODEL_TRACK_LOOP; 
+            Data_Path_p -> Model_Zone_Kind = RESCUE_ZONE;
+        }
         // 在危险区域限定时间内将锁为模型赛道的危险区域
-        if((Img_Store_p -> ImgNum)-DangerTime < JSON_TrackConfigData.DangerTime)
+        else if((Img_Store_p -> ImgNum)-DangerTime < JSON_TrackConfigData.DangerTime)
         {
             Loop_Kind = MODEL_TRACK_LOOP; 
             Data_Path_p -> Model_Zone_Kind = DANGER_ZONE;
             
         }
-        // 在救援区域限定时间内将锁为模型赛道的救援区域
-        if((Img_Store_p -> ImgNum)-RescueTime < JSON_TrackConfigData.RescueTime)
-        {
-            Loop_Kind = MODEL_TRACK_LOOP; 
-            Data_Path_p -> Model_Zone_Kind = RESCURE_ZONE;
-        }
         // 在桥梁区域限定时间内将锁为模型赛道的桥梁区域且若检测到危险区后就不能进入桥梁区域，直到危险区域结束
-        if((Img_Store_p -> ImgNum)-BridgeTime < JSON_TrackConfigData.BridgeTime && (Img_Store_p -> ImgNum)-DangerTime > JSON_TrackConfigData.DangerTime)
+        else if((Img_Store_p -> ImgNum)-BridgeTime < JSON_TrackConfigData.BridgeTime && (Img_Store_p -> ImgNum)-DangerTime > JSON_TrackConfigData.DangerTime)
         {
             Loop_Kind = MODEL_TRACK_LOOP; 
             Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE;
-            // 防止车速过快时的动态模糊造成的桥梁区域和危险区域误判
-            // 若检测到桥梁区域且检测到锥桶或路障
-            for(int i = 0;i < results.size();i++)
-            {
-                PredictResult resulterror = results[i];
-                if(resulterror.label == "cone" || resulterror.label == "block")
-                {
-                    Data_Path_p -> Model_Zone_Kind = DANGER_ZONE;
-                    DangerTime = (Img_Store_p -> ImgNum);
-                }
-            }
         }
         // 在斑马线区域限定时间内将锁为模型赛道的斑马线区域
         // 当斑马线在图像下方时才能判定为斑马线
-        if(Img_Store_p -> ImgNum <= 500)
+        else if(Img_Store_p -> ImgNum <= 500)
         {
             // 发车
             if((Img_Store_p -> ImgNum)-CrosswalkTime < 5)
             {
-                Data_Path_p -> Model_Crosswalk_Zone_Step = START;
+                Data_Path_p -> Crosswalk_Zone_Step = START;
                 Loop_Kind = MODEL_TRACK_LOOP; 
                 Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
             }
         }
-        if(Img_Store_p -> ImgNum >= 1000)
+        else if(Img_Store_p -> ImgNum >= 1000)
         {
             // 停车
             if((Img_Store_p -> ImgNum)-CrosswalkTime < JSON_TrackConfigData.CrosswalkTime)
             {
-                if((Img_Store_p -> ImgNum)-CrosswalkTime <= 30)
+                if((Img_Store_p -> ImgNum)-CrosswalkTime <= 20)
                 {
-                    Data_Path_p -> Model_Crosswalk_Zone_Step = STOP_PREPARE;
+                    Data_Path_p -> Crosswalk_Zone_Step = STOP_PREPARE;
                     Loop_Kind = MODEL_TRACK_LOOP; 
                     Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
                 }
                 else
                 {
-                    Data_Path_p -> Model_Crosswalk_Zone_Step = STOP;
+                    Data_Path_p -> Crosswalk_Zone_Step = STOP;
                     Loop_Kind = MODEL_TRACK_LOOP; 
                     Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
                 }
             }
         }
     }
+
+    // 模型赛道控制权转移后则直接进入串口接收循环
+    if(Function_EN_p -> Control_EN == true)
+    {
+        Loop_Kind = UART_RECEIVE_LOOP;
+    }
+
     return Loop_Kind;
 }
 
@@ -657,7 +658,11 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     JSON_TrackConfigData.BridgeTime = ConfigData.at("BRIDGE_TIME");   // 获取进入桥梁区域的时间
     JSON_TrackConfigData.RescueTime = ConfigData.at("RESCUE_TIME"); // 获取救援区进入车库前准备时间上限
     JSON_TrackConfigData.CrosswalkTime = ConfigData.at("CROSSWALK_TIME");   // 获取进入斑马线区域的时间
+    JSON_TrackConfigData.RescueZoneConeNum = ConfigData.at("RESCUE_ZONE_CONE_NUM"); // 获取救援区域锥桶数量阈值
     JSON_TrackConfigData.Crosswalk_Y = ConfigData.at("CROSSWALK_IDENTIFY_Y");   // 获取斑马线识别纵坐标阈值
+    JSON_TrackConfigData.Bomb_Y = ConfigData.at("BOMB_IDENTIFY_Y");   // 获取爆炸物识别纵坐标阈值
+    JSON_TrackConfigData.Bridge_Y = ConfigData.at("BRIDGE_IDENTIFY_Y");   // 获取桥识别纵坐标阈值
+    JSON_TrackConfigData.Rescue_Y = ConfigData.at("RESCUE_IDENTIFY_Y");   // 获取救援区域标识牌识别纵坐标阈值
     JSON_TrackConfigData.DangerZone_Cone_Radius = ConfigData.at("DANGER_ZONE_CONE_RADIUS");   // 危险区域锥桶补线圆圈半径
     JSON_TrackConfigData.DangerZone_Block_Radius = ConfigData.at("DANGER_ZONE_BLOCK_RADIUS");   // 危险区域路障补线圆圈半径
     JSON_TrackConfigData.DangerZoneForward = ConfigData.at("DANGER_ZONE_FORWARD");  // 危险区域前瞻值获取
@@ -682,8 +687,9 @@ void SYNC::UartReceive_Bit_To_Change_SYNC(UartReceiveProtocol *UartReceiveProtoc
     UartReceiveProtocol_p -> Path_Search_End = UartReceiveProtocol_p -> Data_3;
     UartReceiveProtocol_p -> Side_Search_Start = UartReceiveProtocol_p -> Data_4;
     UartReceiveProtocol_p -> Side_Search_End = UartReceiveProtocol_p -> Data_5;
-    UartReceiveProtocol_p -> Gyroscope_EN = UartReceiveProtocol_p ->Data_6;
-    UartReceiveProtocol_p -> Game_EN = UartReceiveProtocol_p -> Data_7;
+    UartReceiveProtocol_p -> Control_EN = UartReceiveProtocol_p ->Data_6;
+    UartReceiveProtocol_p -> Gyroscope_EN = UartReceiveProtocol_p ->Data_7;
+    UartReceiveProtocol_p -> Game_EN = UartReceiveProtocol_p -> Data_8;
 }
 
 
@@ -699,6 +705,8 @@ void SYNC::UartSend_Change_To_Bit_SYNC(UartSendProtocol *UartSendProtocol_p)
     UartSendProtocol_p -> Data_2 = UartSendProtocol_p -> ServoAngle;
     UartSendProtocol_p -> Data_3 = UartSendProtocol_p -> MotorSpeed;
     UartSendProtocol_p -> Data_4 = UartSendProtocol_p -> Track_Kind;
+    UartSendProtocol_p -> Data_5 = UartSendProtocol_p -> Control_EN;
+    UartSendProtocol_p -> Data_6 = UartSendProtocol_p -> Rescue_Zone_Garage_Dir;
 }
 
 
@@ -710,6 +718,7 @@ void SYNC::UartSend_Change_To_Bit_SYNC(UartSendProtocol *UartSendProtocol_p)
     ServoAngle
     MotorSpeed
     Track_Kind
+    Model_Control_EN
 */
 void SYNC::UartSend_Program_To_Change_SYNC(UartSendProtocol *UartSendProtocol_p , Data_Path *Data_Path_p , Function_EN *Function_EN_p)
 {
@@ -718,6 +727,8 @@ void SYNC::UartSend_Program_To_Change_SYNC(UartSendProtocol *UartSendProtocol_p 
     UartSendProtocol_p -> ServoAngle = Data_Path_p -> ServoAngle;
     UartSendProtocol_p -> MotorSpeed = Data_Path_p -> MotorSpeed;
     UartSendProtocol_p -> Track_Kind = (int)Data_Path_p -> Track_Kind;
+    UartSendProtocol_p -> Control_EN = (int)Function_EN_p -> Control_EN;
+    UartSendProtocol_p -> Rescue_Zone_Garage_Dir = Data_Path_p -> Rescue_Zone_Garage_Dir;
 }
 
 
@@ -730,6 +741,8 @@ void SYNC::UartSend_Program_To_Change_SYNC(UartSendProtocol *UartSendProtocol_p 
     Path_Search_End
     Side_Search_Start
     Side_Search_End
+    Gyroscope_EN
+    Model_Track_Control
     Game_EN
 */
 void SYNC::UartReceive_Change_To_Program_SYNC(UartReceiveProtocol *UartReceiveProtocol_p , Data_Path *Data_Path_p , Function_EN *Function_EN_p)
@@ -740,6 +753,7 @@ void SYNC::UartReceive_Change_To_Program_SYNC(UartReceiveProtocol *UartReceivePr
     Data_Path_p -> Path_Search_End = UartReceiveProtocol_p -> Path_Search_End;
     Data_Path_p -> Side_Search_Start = UartReceiveProtocol_p -> Side_Search_Start;
     Data_Path_p -> Side_Search_End = UartReceiveProtocol_p -> Side_Search_End;
+    Function_EN_p -> Control_EN = (bool)UartReceiveProtocol_p -> Control_EN;
     Function_EN_p -> Gyroscope_EN = UartReceiveProtocol_p -> Gyroscope_EN;
     Function_EN_p -> Game_EN = (bool)UartReceiveProtocol_p -> Game_EN;
 }
@@ -833,24 +847,20 @@ void DataPrint(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
                     case BRIDGE_ZONE:{ cout << "桥梁区域" << endl; break; }
                     case CROSSWALK_ZONE:{ cout << "斑马线区域" << endl; break; }
                     case DANGER_ZONE:{ cout << "危险区域" << endl; break; } 
-                    case RESCURE_ZONE:
+                    case RESCUE_ZONE:
                     {
                         cout << "救援区域："; 
-                        switch(Data_Path_p -> Model_Rescure_Zone_Step)
+                        switch(Data_Path_p -> Rescue_Zone_Garage_Dir)
                         {
-                            case L_GARAGE_IN_PREPARE:{ cout << "准备进入左车库" << endl; break; }
-                            case L_GARAGE_IN:{ cout << "进入左车库" << endl; break; }
-                            case L_GARAGE_OUT:{ cout << "出左车库" << endl; break; }
-                            case R_GARAGE_IN_PREPARE:{ cout << "准备进入右车库" << endl; break; }
-                            case R_GARAGE_IN:{ cout << "进入右车库" << endl; break; }
-                            case R_GARAGE_OUT:{ cout << "出右车库" << endl; break; }
+                            case LEFT_GARAGE:{ cout << "左车库：" << endl; break; }
+                            case RIGHT_GARAGE:{ cout << "右车库：" << endl; break; }
                         }
                         break;
                     }
                     case CHASE_ZONE:
                     {
                         cout << "追逐区域 " << endl; 
-                        switch(Data_Path_p -> Model_Chase_Zone_Step)
+                        switch(Data_Path_p -> Chase_Zone_CarKind)
                         {
 
                         }
@@ -859,6 +869,12 @@ void DataPrint(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
                     break;
                 }
             }
+        }
+        cout <<  "控制使能：";
+        switch(Function_EN_p -> Control_EN)
+        {
+            case true:{ cout << "下位机控制" << endl; break; }
+            case false:{ cout << "上位机控制" << endl; break; }
         }
         cout << "<-------------------------------------------------->" << endl;
     }

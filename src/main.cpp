@@ -173,7 +173,7 @@ int main()
                 case BRIDGE_ZONE:{ Bridge_Zone(Img_Store_p,Data_Path_p); break; }
                 case CROSSWALK_ZONE:{ Crosswalk_Zone(Img_Store_p,Data_Path_p); break; }
                 case DANGER_ZONE:{ Danger_Zone(PPNCDetection,Img_Store_p,Data_Path_p,Function_EN_p); break; }
-                case RESCURE_ZONE:{ Rescue_Zone(PPNCDetection,Img_Store_p,Data_Path_p,Function_EN_p); break; }
+                case RESCUE_ZONE:{ Rescue_Zone(PPNCDetection,Img_Store_p,Data_Path_p,Function_EN_p); break; }
                 case CHASE_ZONE:{ break; }
             }
             Function_EN_p -> Loop_Kind_EN = UART_SEND_LOOP; // 切换至串口发送循环

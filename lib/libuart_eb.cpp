@@ -30,6 +30,8 @@ void Uart::UartSend(UartSendProtocol *UartSendProtocol_p,bool UartEN)
 		EB.send(&(UartSendProtocol_p -> Data_2),1);
 		EB.send(&(UartSendProtocol_p -> Data_3),1);
 		EB.send(&(UartSendProtocol_p -> Data_4),1);
+		EB.send(&(UartSendProtocol_p -> Data_5),1);
+		EB.send(&(UartSendProtocol_p -> Data_6),1);
 		//发送校验位
 		EB.send(&(UartSendProtocol_p -> CRC16),1);
 	}
@@ -61,7 +63,7 @@ void Uart::UartReceive(UartReceiveProtocol *UartReceiveProtocol_p,bool UartEN)
 			cout << "<---------------------串口开启失败--------------------->";
 			abort();
 		}
-		while(UartReceiveCount <= 8)
+		while(UartReceiveCount <= 9)
 		{
 			switch(UartReceiveCount)
 			{
@@ -95,8 +97,9 @@ void Uart::UartReceive(UartReceiveProtocol *UartReceiveProtocol_p,bool UartEN)
 				case 6:{ while(EB.receive(&UartBuff,1) == 0); UartReceiveProtocol_p -> Data_5 = UartBuff; SYNC.UartReceive_Bit_To_Change_SYNC(UartReceiveProtocol_p); UartReceiveCount++; break; }
 				case 7:{ while(EB.receive(&UartBuff,1) == 0); UartReceiveProtocol_p -> Data_6 = UartBuff; SYNC.UartReceive_Bit_To_Change_SYNC(UartReceiveProtocol_p); UartReceiveCount++; break; }
 				case 8:{ while(EB.receive(&UartBuff,1) == 0); UartReceiveProtocol_p -> Data_7 = UartBuff; SYNC.UartReceive_Bit_To_Change_SYNC(UartReceiveProtocol_p); UartReceiveCount++; break; }
+				case 9:{ while(EB.receive(&UartBuff,1) == 0); UartReceiveProtocol_p -> Data_8 = UartBuff; SYNC.UartReceive_Bit_To_Change_SYNC(UartReceiveProtocol_p); UartReceiveCount++; break; }
 				//校验位校验
-				case 9:
+				case 10:
 				{ 
 					while(EB.receive(&UartBuff,1) == 0);
 					if(UartBuff == 0xA2)

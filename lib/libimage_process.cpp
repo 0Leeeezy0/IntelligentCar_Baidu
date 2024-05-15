@@ -22,7 +22,7 @@ void CameraInit(VideoCapture& Camera,CameraKind Camera_EN,int FPS)
     Camera.set(CAP_PROP_FRAME_HEIGHT, 240);//帧高
     Camera.set(CAP_PROP_FOURCC, VideoWriter::fourcc('M', 'J', 'P', 'G'));  // 视频流格式
     Camera.set(CAP_PROP_FPS, FPS);    // 帧率
-	Camera.set(CAP_PROP_EXPOSURE, -14);	// 曝光度
+	// Camera.set(CAP_PROP_EXPOSURE, -14);	// 曝光度
 
 	if (!Camera.isOpened())
     {
@@ -132,6 +132,8 @@ void ImgProcess::ImgSharpen(Mat &Img,int blursize = 5)
 	GaussianBlur(Img,Img_Gauss,Size(blursize,blursize),3,3);
 	addWeighted(Img,2,Img_Gauss,-1,0,Img);
 }
+
+
 /*
 	ImgUnpivot说明
 	逆透视
@@ -166,7 +168,7 @@ void ImgProcess::ImgSynthesis(Img_Store *Img_Store_p,Function_EN *Function_EN_p)
 
 	int ImgAllWidth = (Img_Store_p -> Img_Color).cols;	//宽度
 	int ImgAllHeight = (Img_Store_p -> Img_Color).rows; //高度
-	Mat ImgAll = Mat(ImgAllHeight+170,ImgAllWidth*3+18,CV_8UC3,Scalar(0,0,0));	//显示全部画面的画布
+	Mat ImgAll = Mat(ImgAllHeight+210,ImgAllWidth*3+18,CV_8UC3,Scalar(0,0,0));	//显示全部画面的画布
 
 	//统一图像的类型为8UC3
 	cvtColor((Img_Store_p -> Img_OTSU) , (Img_Store_p -> Img_OTSU) ,COLOR_GRAY2RGB);
@@ -180,7 +182,7 @@ void ImgProcess::ImgSynthesis(Img_Store *Img_Store_p,Function_EN *Function_EN_p)
 	(Img_Store_p -> Img_Color).copyTo(ImgAll(Rect(0,0,ImgAllWidth,ImgAllHeight))); 
 	(Img_Store_p -> Img_Track).copyTo(ImgAll(Rect(ImgAllWidth+6,0,ImgAllWidth,ImgAllHeight)));  
 	(Img_Store_p -> Img_OTSU).copyTo(ImgAll(Rect(ImgAllWidth*2+12,0,ImgAllWidth,ImgAllHeight))); 
-	(Img_Store_p -> Img_Text).copyTo(ImgAll(Rect(ImgAllWidth+6,ImgAllHeight+6,ImgAllWidth,160))); 
+	(Img_Store_p -> Img_Text).copyTo(ImgAll(Rect(ImgAllWidth+6,ImgAllHeight+6,ImgAllWidth,200))); 
 
     (Img_Store_p -> Img_All) = ImgAll;
 
@@ -243,17 +245,19 @@ void ImgProcess::ImgCompress(Mat& Img,bool ImgCompress_EN)
 void ImgProcess::ImgText(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p)
 {
 	int ImgWidth = (Img_Store_p -> Img_Color).cols;	// 宽度
-	(Img_Store_p -> Img_Text) = Mat(160,ImgWidth,CV_8UC3,Scalar(0,0,0));	// 显示文字画布
+	(Img_Store_p -> Img_Text) = Mat(200,ImgWidth,CV_8UC3,Scalar(0,0,0));	// 显示文字画布
 
 	string TextTrackKind[6] = {"STRIGHT_TRACK","BEND_TRACK","R_CIRCLE_TRACK","L_CIRCLE_TRACK","ACROSS_TRACK","MODEL_TRACK"};
 	string TextCircleTrackStep[5] = {"IN_PREPARE","IN","OUT_PREPARE","OUT","INIT"};
 	string TextGyroscope[2] = {"FALSE","TRUE"};
-	string TextModelTrackKind[5] = {"BRIDGE_ZONE","CROSSWALK_ZONE","DANGER_ZONE","RESCURE_ZONE","CHASE_ZONE"};
+	string TextModelTrackKind[5] = {"BRIDGE_ZONE","CROSSWALK_ZONE","DANGER_ZONE","RESCUE_ZONE","CHASE_ZONE"};
+	string TextControl[2] = {"FALSE","TRUE"};
 
 	putText((Img_Store_p -> Img_Text),TextTrackKind[int(Data_Path_p -> Track_Kind)],Point(5,25),FONT_HERSHEY_COMPLEX,1,(255),2);
 	putText((Img_Store_p -> Img_Text),TextCircleTrackStep[int(Data_Path_p -> Circle_Track_Step)],Point(5,65),FONT_HERSHEY_COMPLEX,1,(255),2);
 	putText((Img_Store_p -> Img_Text),TextGyroscope[int(Function_EN_p -> Gyroscope_EN)],Point(5,105),FONT_HERSHEY_COMPLEX,1,(255),2);
 	putText((Img_Store_p -> Img_Text),TextModelTrackKind[int(Data_Path_p -> Model_Zone_Kind)],Point(5,145),FONT_HERSHEY_COMPLEX,1,(255),2);
+	putText((Img_Store_p -> Img_Text),TextControl[int(Function_EN_p -> Control_EN)],Point(5,185),FONT_HERSHEY_COMPLEX,1,(255),2);
 }
 
 

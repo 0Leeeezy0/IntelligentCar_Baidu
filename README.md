@@ -68,13 +68,16 @@
 
 	"TRACK_WIDTH" : 路径结束线上的赛道宽度
 
-	"MIN_MOTOR_SPEED" : 最小点击速度
-	"MAX_MOTOR_SPEED" :最大电机速度
+	"STRIGHT_TRACK_MOTOR_SPEED" : 直线赛道速度
+	"LITTLE_ANGLE_BEND_TRACK_MOTOR_SPEED" : 小角度弯道电机速度
+	"BIG_ANGLE_BEND_TRACK_MOTOR_SPEED" : 大角度弯道电机速度
+	"ACROSS_TRACK_MOTOR_SPEED" : 十字赛道电机速度
+	"CIRCLE_TRACK_MOTOR_SPEED" : 圆环赛道电机速度
+	"BRIDGE_ZONE_MOTOR_SPEED" : 桥区域电机速度
 	"DANGER_ZONE_MOTOR_SPEED" : 危险区域电机速度
-	"RESCUE_ZONE_MOTOR_SPEED" : 救援区域电机速度
-	"BEND_TRACK_MOTOR_SPEED_FACTOR_1" : 弯道电机速度比例1：小弯道或准备入弯的电机速度比例
-	"BEND_TRACK_MOTOR_SPEED_FACTOR_2" : 弯道电机速度比例2：大弯道电机速度比例
-	"CIRCLE_OUT_SERVO_ANGLE" : 圆环出环舵机角度：该参数与下位机的陀螺仪目标角度和陀螺仪延时清零角度共同决定了圆环出环的姿态
+	"RESCUE_ZONE_MOTOR_SPEED" : 危险区域电机速度
+	"CROSSWALK_ZONE_MOTOR_SPEED_START" : 斑马线区域出发电机速度
+	"CROSSWALK_ZONE_MOTOR_SPEED_STOP_PREPARE" : 斑马线区域准备停车电机速度
 	"CIRCLE_IN_PREPARE_TIME" : 圆环准备入环误判后自动进入占位时间间隔
 
 	"DILATE_FACTOR" : 形态学膨胀系数
@@ -82,8 +85,13 @@
 
 	"DANGER_TIME" : 危险区域时间
 	"BRIDGE_TIME" : 桥梁区域时间
+	"RESCUE_TIME" : 救援区域判断入库时机的时间阈值
 	"CROSSWALK_TIME" : 斑马线区域时间
 	"CROSSWALK_IDENTIFY_Y" : 斑马线区域识别的纵坐标：在该纵坐标之下才能执行斑马线区域操作
+	"BOMB_IDENTIFY_Y" : 爆炸物区域识别的纵坐标：在该纵坐标之下才能执行危险区域操作
+	"BRIDGE_IDENTIFY_Y" : 桥区域识别的纵坐标：在该纵坐标之下才能执行桥区域操作
+	"RESCUE_IDENTIFY_Y" : 救援区域标识牌识别的纵坐标：在该纵坐标之下才能执行救援区域操作
+	"RESCUE_ZONE_CONE_NUM" : 救援区域进入车库的锥桶数量阈值
 	"DANGER_ZONE_CONE_RADIUS" : 危险区域锥桶半径
 	"DANGER_ZONE_BLOCK_RADIUS" : 危险区域路障半径
 	"DANGER_ZONE_FORWARD" : 危险区域前瞻值
@@ -152,7 +160,7 @@
 
 2.入环补线
 
-3.出环打角(未来可能会替换成出环补线)
+3.出环补线
 ```
 4. 模型赛道
 ```
