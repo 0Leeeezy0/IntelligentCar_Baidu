@@ -28,178 +28,181 @@ LoopKind Judge::TrackKind_Judge(Img_Store* Img_Store_p,Data_Path *Data_Path_p,Fu
 
     State = Img_Store_p -> ImgNum;
 
-    if(Function_EN_p -> Loop_Kind_EN != MODEL_TRACK_LOOP)
+    if(Function_EN_p -> Control_EN == false)
     {
-        Judge::InflectionPointSearch(Img_Store_p,Data_Path_p);
-        Judge::BendPointSearch(Img_Store_p,Data_Path_p);
-
-        // 十字判断
-        // 若左右边线都有拐点则为十字
-        if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] >= 1) && JSON_FunctionConfigData.AcrossIdentify_EN == true && Function_EN_p -> Gyroscope_EN == false && (Data_Path_p -> Circle_Track_Step != OUT_PREPARE || Data_Path_p -> Circle_Track_Step != OUT))
+        if(Function_EN_p -> Loop_Kind_EN != MODEL_TRACK_LOOP)
         {
-            State_Across = Img_Store_p -> ImgNum;
-            Loop_Kind = ACROSS_TRACK_LOOP;
-            Data_Path_p -> Track_Kind = ACROSS_TRACK;
-            Data_Path_p -> Circle_Track_Step = INIT;
+            Judge::InflectionPointSearch(Img_Store_p,Data_Path_p);
+            Judge::BendPointSearch(Img_Store_p,Data_Path_p);
 
-            // 防止左右边线均寻找到同一个拐点导致误判为十字
-            if(abs((Data_Path_p -> InflectionPointCoordinate[0][0])-(Data_Path_p -> InflectionPointCoordinate[0][2])) <= 30)
+            // 十字判断
+            // 若左右边线都有拐点则为十字
+            if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] >= 1) && JSON_FunctionConfigData.AcrossIdentify_EN == true && Function_EN_p -> Gyroscope_EN == false && (Data_Path_p -> Circle_Track_Step != OUT_PREPARE || Data_Path_p -> Circle_Track_Step != OUT))
             {
-                switch(Data_Path_p -> Previous_Circle_Kind)
-                {
-                    case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
-                    case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
-                }
-            }
-        }
-        // 圆环判断
-        // 若左右边线只有一边有拐点和弯点  
-        //且当前图像序号和十字中存储的图像序号有间隔才为左右圆环
-        else if((Data_Path_p -> InflectionPointNum[0] == 0) && (Data_Path_p -> InflectionPointNum[1] >= 1) && (Data_Path_p -> BendPointNum[0] <= 2) && (Data_Path_p -> BendPointNum[1] >= 1) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
-        {
-            // 在出环后经过固定帧数才能再次准备进环
-            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE || (Data_Path_p -> Circle_Track_Step) == IN) && Data_Path_p -> Vector_Add_Unit_Dir[1] == 1)
-            {
-                Loop_Kind = R_CIRCLE_TRACK_LOOP;
-                Data_Path_p -> Track_Kind = R_CIRCLE_TRACK;
-
-                Data_Path_p -> Circle_Track_Step = IN_PREPARE;
-                Data_Path_p -> Previous_Circle_Kind = R_CIRCLE_TRACK;
-
-                // 记录准备进环时间
-                State_Circle_IN_PREPARE = Img_Store_p -> ImgNum;
-            }
-            else if(Data_Path_p -> Vector_Add_Unit_Dir[1] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
-            {
-                Data_Path_p -> Circle_Track_Step = IN;
-
-                // 以准备入环阶段确定的圆环类型作为入环阶段的圆环类型
-                switch(Data_Path_p -> Previous_Circle_Kind)
-                {
-                    case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
-                    case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
-                }
-
-                // 记录进环时间
-                State_Circle_IN = Img_Store_p -> ImgNum;
-            }   
-            // 考虑十字姿态不好，误判为圆环的情况
-            else if(Data_Path_p -> Vector_Add_Unit_Dir[1] == -1 && Data_Path_p -> Circle_Track_Step == INIT)  
-            {
-                Loop_Kind = COMMON_TRACK_LOOP;
-                Data_Path_p -> Track_Kind = BEND_TRACK;
-            }
-            else
-            {
-                Loop_Kind = COMMON_TRACK_LOOP;
-                Data_Path_p -> Track_Kind = BEND_TRACK;
-            }
-        }
-        else if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] == 0) && (Data_Path_p -> BendPointNum[0] >= 1) && (Data_Path_p -> BendPointNum[1] <= 2) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
-        {
-            // 在出环后经过固定帧数才能再次准备进环
-            if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE || (Data_Path_p -> Circle_Track_Step) == IN) && Data_Path_p -> Vector_Add_Unit_Dir[0] == 1)
-            {
-                Loop_Kind = L_CIRCLE_TRACK_LOOP;
-                Data_Path_p -> Track_Kind = L_CIRCLE_TRACK;
-
-                Data_Path_p -> Circle_Track_Step = IN_PREPARE;
-                Data_Path_p -> Previous_Circle_Kind = L_CIRCLE_TRACK;
-
-                // 记录准备进环时间
-                State_Circle_IN_PREPARE = Img_Store_p -> ImgNum;
-            }
-            else if(Data_Path_p -> Vector_Add_Unit_Dir[0] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
-            {
-                Data_Path_p -> Circle_Track_Step = IN;
-
-                // 以准备入环阶段确定的圆环类型作为入环阶段的圆环类型
-                switch(Data_Path_p -> Previous_Circle_Kind)
-                {
-                    case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
-                    case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
-                }
-                
-                // 记录进环时间
-                State_Circle_IN = Img_Store_p -> ImgNum;
-            }   
-            // 考虑十字姿态不好，误判为圆环的情况
-            else if(Data_Path_p -> Vector_Add_Unit_Dir[0] == -1 && Data_Path_p -> Circle_Track_Step == INIT)  
-            {
-                Loop_Kind = COMMON_TRACK_LOOP;
-                Data_Path_p -> Track_Kind = BEND_TRACK;
-            }
-            else
-            {
-                Loop_Kind = COMMON_TRACK_LOOP;
-                Data_Path_p -> Track_Kind = BEND_TRACK;
-            }
-        }
-        // 出环判断
-        // 若当前圆环步骤为准备出环或出环状态则在下位机陀螺仪积分达到目标值的时间区间内进行出环操作
-        else if((Data_Path_p -> Circle_Track_Step == OUT_PREPARE || Data_Path_p -> Circle_Track_Step == OUT) && Function_EN_p -> Gyroscope_EN == true)
-        {
-            Data_Path_p -> Circle_Track_Step = OUT;
-
-            // 以准备入环阶段确定的圆环类型作为出环阶段的圆环类型
-            switch(Data_Path_p -> Previous_Circle_Kind)
-            {
-                case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = OUT; break; }
-                case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = OUT; break; }
-            }
-
-            // 记录出环时间
-            State_Circle_OUT = Img_Store_p -> ImgNum;
-        }
-        // 普通赛道判断
-        else
-        {
-            Loop_Kind = COMMON_TRACK_LOOP;
-            // 判定是弯道还是直道
-            if((Data_Path_p -> BendPointNum[0] >= 1) || (Data_Path_p -> BendPointNum[1] >= 1))
-            {
-                Data_Path_p -> Track_Kind = BEND_TRACK;
-            }
-            else
-            {
-                Data_Path_p -> Track_Kind = STRIGHT_TRACK;
-            }
-
-            // 判定圆环步骤
-            // 进入圆环后固定帧数进入准备出环步骤
-            if(State - State_Circle_IN >= 10 && Data_Path_p -> Circle_Track_Step == IN)
-            {
-                Data_Path_p -> Circle_Track_Step = OUT_PREPARE;
-                State_Circle_OUT_PREPARE = Img_Store_p -> ImgNum;
-            }
-            // 若误判为准备入环则在固定帧数之后进入占位：防止在弯道十字等位置误判导致一直补线从而影响寻线
-            if(State - State_Circle_IN_PREPARE >= JSON_TrackConfigData.Circle_IN_PREPARE_Time && Data_Path_p -> Circle_Track_Step == IN_PREPARE)
-            {
+                State_Across = Img_Store_p -> ImgNum;
+                Loop_Kind = ACROSS_TRACK_LOOP;
+                Data_Path_p -> Track_Kind = ACROSS_TRACK;
                 Data_Path_p -> Circle_Track_Step = INIT;
+
+                // 防止左右边线均寻找到同一个拐点导致误判为十字
+                if(abs((Data_Path_p -> InflectionPointCoordinate[0][0])-(Data_Path_p -> InflectionPointCoordinate[0][2])) <= 30)
+                {
+                    switch(Data_Path_p -> Previous_Circle_Kind)
+                    {
+                        case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                        case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                    }
+                }
             }
-            // 出环后进入出环转直线
-            if((Data_Path_p -> Circle_Track_Step) == OUT)
+            // 圆环判断
+            // 若左右边线只有一边有拐点和弯点  
+            //且当前图像序号和十字中存储的图像序号有间隔才为左右圆环
+            else if((Data_Path_p -> InflectionPointNum[0] == 0) && (Data_Path_p -> InflectionPointNum[1] >= 1) && (Data_Path_p -> BendPointNum[0] <= 2) && (Data_Path_p -> BendPointNum[1] >= 1) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
             {
-                Data_Path_p -> Circle_Track_Step = OUT_2_STRIGHT;
+                // 在出环后经过固定帧数才能再次准备进环
+                if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE || (Data_Path_p -> Circle_Track_Step) == IN) && Data_Path_p -> Vector_Add_Unit_Dir[1] == 1)
+                {
+                    Loop_Kind = R_CIRCLE_TRACK_LOOP;
+                    Data_Path_p -> Track_Kind = R_CIRCLE_TRACK;
+
+                    Data_Path_p -> Circle_Track_Step = IN_PREPARE;
+                    Data_Path_p -> Previous_Circle_Kind = R_CIRCLE_TRACK;
+
+                    // 记录准备进环时间
+                    State_Circle_IN_PREPARE = Img_Store_p -> ImgNum;
+                }
+                else if(Data_Path_p -> Vector_Add_Unit_Dir[1] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
+                {
+                    Data_Path_p -> Circle_Track_Step = IN;
+
+                    // 以准备入环阶段确定的圆环类型作为入环阶段的圆环类型
+                    switch(Data_Path_p -> Previous_Circle_Kind)
+                    {
+                        case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                        case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                    }
+
+                    // 记录进环时间
+                    State_Circle_IN = Img_Store_p -> ImgNum;
+                }   
+                // 考虑十字姿态不好，误判为圆环的情况
+                else if(Data_Path_p -> Vector_Add_Unit_Dir[1] == -1 && Data_Path_p -> Circle_Track_Step == INIT)  
+                {
+                    Loop_Kind = COMMON_TRACK_LOOP;
+                    Data_Path_p -> Track_Kind = BEND_TRACK;
+                }
+                else
+                {
+                    Loop_Kind = COMMON_TRACK_LOOP;
+                    Data_Path_p -> Track_Kind = BEND_TRACK;
+                }
+            }
+            else if((Data_Path_p -> InflectionPointNum[0] >= 1) && (Data_Path_p -> InflectionPointNum[1] == 0) && (Data_Path_p -> BendPointNum[0] >= 1) && (Data_Path_p -> BendPointNum[1] <= 2) && State - State_Across >= 10 && Function_EN_p -> Gyroscope_EN == false && JSON_FunctionConfigData.CircleIdentify_EN == true)
+            {
+                // 在出环后经过固定帧数才能再次准备进环
+                if(((Data_Path_p -> Circle_Track_Step) == INIT || (Data_Path_p -> Circle_Track_Step) == IN_PREPARE || (Data_Path_p -> Circle_Track_Step) == IN) && Data_Path_p -> Vector_Add_Unit_Dir[0] == 1)
+                {
+                    Loop_Kind = L_CIRCLE_TRACK_LOOP;
+                    Data_Path_p -> Track_Kind = L_CIRCLE_TRACK;
+
+                    Data_Path_p -> Circle_Track_Step = IN_PREPARE;
+                    Data_Path_p -> Previous_Circle_Kind = L_CIRCLE_TRACK;
+
+                    // 记录准备进环时间
+                    State_Circle_IN_PREPARE = Img_Store_p -> ImgNum;
+                }
+                else if(Data_Path_p -> Vector_Add_Unit_Dir[0] == -1 && (Data_Path_p -> Circle_Track_Step == IN_PREPARE || Data_Path_p -> Circle_Track_Step == IN))   
+                {
+                    Data_Path_p -> Circle_Track_Step = IN;
+
+                    // 以准备入环阶段确定的圆环类型作为入环阶段的圆环类型
+                    switch(Data_Path_p -> Previous_Circle_Kind)
+                    {
+                        case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                        case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = IN; break; }
+                    }
+                    
+                    // 记录进环时间
+                    State_Circle_IN = Img_Store_p -> ImgNum;
+                }   
+                // 考虑十字姿态不好，误判为圆环的情况
+                else if(Data_Path_p -> Vector_Add_Unit_Dir[0] == -1 && Data_Path_p -> Circle_Track_Step == INIT)  
+                {
+                    Loop_Kind = COMMON_TRACK_LOOP;
+                    Data_Path_p -> Track_Kind = BEND_TRACK;
+                }
+                else
+                {
+                    Loop_Kind = COMMON_TRACK_LOOP;
+                    Data_Path_p -> Track_Kind = BEND_TRACK;
+                }
+            }
+            // 出环判断
+            // 若当前圆环步骤为准备出环或出环状态则在下位机陀螺仪积分达到目标值的时间区间内进行出环操作
+            else if((Data_Path_p -> Circle_Track_Step == OUT_PREPARE || Data_Path_p -> Circle_Track_Step == OUT) && Function_EN_p -> Gyroscope_EN == true)
+            {
+                Data_Path_p -> Circle_Track_Step = OUT;
+
+                // 以准备入环阶段确定的圆环类型作为出环阶段的圆环类型
+                switch(Data_Path_p -> Previous_Circle_Kind)
+                {
+                    case L_CIRCLE_TRACK:{ Loop_Kind = L_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = L_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = OUT; break; }
+                    case R_CIRCLE_TRACK:{ Loop_Kind = R_CIRCLE_TRACK_LOOP; Data_Path_p -> Track_Kind = R_CIRCLE_TRACK; Data_Path_p -> Circle_Track_Step = OUT; break; }
+                }
+
+                // 记录出环时间
                 State_Circle_OUT = Img_Store_p -> ImgNum;
             }
-            // 经过固定帧数后出环转直线进入占位从而可以进行准备下一次的圆环
-            if((Data_Path_p -> Circle_Track_Step) == OUT_2_STRIGHT && State-State_Circle_OUT >= 60)
+            // 普通赛道判断
+            else
             {
-                Data_Path_p -> Circle_Track_Step = INIT;
+                Loop_Kind = COMMON_TRACK_LOOP;
+                // 判定是弯道还是直道
+                if((Data_Path_p -> BendPointNum[0] >= 1) || (Data_Path_p -> BendPointNum[1] >= 1))
+                {
+                    Data_Path_p -> Track_Kind = BEND_TRACK;
+                }
+                else
+                {
+                    Data_Path_p -> Track_Kind = STRIGHT_TRACK;
+                }
+
+                // 判定圆环步骤
+                // 进入圆环后固定帧数进入准备出环步骤
+                if(State - State_Circle_IN >= 10 && Data_Path_p -> Circle_Track_Step == IN)
+                {
+                    Data_Path_p -> Circle_Track_Step = OUT_PREPARE;
+                    State_Circle_OUT_PREPARE = Img_Store_p -> ImgNum;
+                }
+                // 若误判为准备入环则在固定帧数之后进入占位：防止在弯道十字等位置误判导致一直补线从而影响寻线
+                if(State - State_Circle_IN_PREPARE >= JSON_TrackConfigData.Circle_IN_PREPARE_Time && Data_Path_p -> Circle_Track_Step == IN_PREPARE)
+                {
+                    Data_Path_p -> Circle_Track_Step = INIT;
+                }
+                // 出环后进入出环转直线
+                if((Data_Path_p -> Circle_Track_Step) == OUT)
+                {
+                    Data_Path_p -> Circle_Track_Step = OUT_2_STRIGHT;
+                    State_Circle_OUT = Img_Store_p -> ImgNum;
+                }
+                // 经过固定帧数后出环转直线进入占位从而可以进行准备下一次的圆环
+                if((Data_Path_p -> Circle_Track_Step) == OUT_2_STRIGHT && State-State_Circle_OUT >= 60)
+                {
+                    Data_Path_p -> Circle_Track_Step = INIT;
+                }
             }
         }
-    }
-    // 模型赛道判断
-    else 
-    {
-        Loop_Kind = MODEL_TRACK_LOOP;
-        Data_Path_p -> Track_Kind = MODEL_TRACK;
+        // 模型赛道判断
+        else 
+        {
+            Loop_Kind = MODEL_TRACK_LOOP;
+            Data_Path_p -> Track_Kind = MODEL_TRACK;
+        }
     }
     // 模型赛道控制权转移后则直接进入串口接收循环
-    if(Function_EN_p -> Control_EN == true)
+    else
     {
-        Loop_Kind = UART_RECEIVE_LOOP;
+        Loop_Kind = IMG_SHOW_STORE_LOOP;
     }
     
     return Loop_Kind;
@@ -221,93 +224,100 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
     static int BridgeTime = 0;
     static int CrosswalkTime = 0;
     static int RescueTime = 0;
+    int ConeNum = 0;
 
     int Crosswalk_Y = 0;
-    // 获取模型结果
-    if(JSON_FunctionConfigData.ModelDetection_EN == true)
-    {
-        for(int i=0;i<results.size();i++)
-        {
-            PredictResult result = results[i];
-        
-            if(result.label == "bomb" && result.x >= 100 && result.y >= JSON_TrackConfigData.Bomb_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = DANGER_ZONE; DangerTime = (Img_Store_p -> ImgNum); break; }
-            else if(result.label == "bridge" && result.x >= 100 && result.y >= JSON_TrackConfigData.Bridge_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE; BridgeTime = (Img_Store_p -> ImgNum); 
-                // 防止车速过快时的动态模糊造成的桥梁区域和危险区域误判
-                // 若检测到桥梁区域且检测到锥桶或路障
-                // for(int j = 0;j < results.size();j++)
-                // {
-                //     PredictResult resulterror = results[j];
-                //     if(resulterror.label == "cone" || resulterror.label == "block")
-                //     {
-                //         Data_Path_p -> Model_Zone_Kind = DANGER_ZONE;
-                //         DangerTime = (Img_Store_p -> ImgNum);
-                //     }
-                // }
-                break;
-            }
-            else if(result.label == "crosswalk" && result.y >= JSON_TrackConfigData.Crosswalk_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; CrosswalkTime = (Img_Store_p -> ImgNum); break; }
-            else if((result.label == "patient" || result.label == "tumble") && result.x >= 100 && result.y >= JSON_TrackConfigData.Rescue_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCUE_ZONE; Data_Path_p -> Rescue_Zone_Garage_Dir = LEFT_GARAGE; RescueTime = (Img_Store_p -> ImgNum); break; }
-            else if((result.label == "evil" || result.label == "thief") && result.x >= 100 && result.y >= JSON_TrackConfigData.Rescue_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCUE_ZONE; Data_Path_p -> Rescue_Zone_Garage_Dir = RIGHT_GARAGE; RescueTime = (Img_Store_p -> ImgNum); break; }
-            else{ Loop_Kind = COMMON_TRACK_LOOP; break; }
-            // else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; }
-        }
 
-        // 在救援区域限定时间内将锁为模型赛道的救援区域
-        if((Img_Store_p -> ImgNum)-RescueTime < JSON_TrackConfigData.RescueTime)
+    if(Function_EN_p -> Control_EN == false)
+    {
+        // 获取模型结果
+        if(JSON_FunctionConfigData.ModelDetection_EN == true)
         {
-            Loop_Kind = MODEL_TRACK_LOOP; 
-            Data_Path_p -> Model_Zone_Kind = RESCUE_ZONE;
-        }
-        // 在危险区域限定时间内将锁为模型赛道的危险区域
-        else if((Img_Store_p -> ImgNum)-DangerTime < JSON_TrackConfigData.DangerTime)
-        {
-            Loop_Kind = MODEL_TRACK_LOOP; 
-            Data_Path_p -> Model_Zone_Kind = DANGER_ZONE;
-            
-        }
-        // 在桥梁区域限定时间内将锁为模型赛道的桥梁区域且若检测到危险区后就不能进入桥梁区域，直到危险区域结束
-        else if((Img_Store_p -> ImgNum)-BridgeTime < JSON_TrackConfigData.BridgeTime && (Img_Store_p -> ImgNum)-DangerTime > JSON_TrackConfigData.DangerTime)
-        {
-            Loop_Kind = MODEL_TRACK_LOOP; 
-            Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE;
-        }
-        // 在斑马线区域限定时间内将锁为模型赛道的斑马线区域
-        // 当斑马线在图像下方时才能判定为斑马线
-        else if(Img_Store_p -> ImgNum <= 500)
-        {
-            // 发车
-            if((Img_Store_p -> ImgNum)-CrosswalkTime < 5)
+            for(int i=0;i<results.size();i++)
             {
-                Data_Path_p -> Crosswalk_Zone_Step = START;
-                Loop_Kind = MODEL_TRACK_LOOP; 
-                Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
+                PredictResult result = results[i];
+
+                if(result.label == "bomb" && result.x >= 100 && result.y >= JSON_TrackConfigData.Bomb_Y && (Img_Store_p -> ImgNum)-RescueTime >= JSON_TrackConfigData.RescueTime){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = DANGER_ZONE; DangerTime = (Img_Store_p -> ImgNum); break; }
+                else if(result.label == "bridge" && result.x >= 100 && result.y >= JSON_TrackConfigData.Bridge_Y && (Img_Store_p -> ImgNum)-RescueTime >= JSON_TrackConfigData.RescueTime){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE; BridgeTime = (Img_Store_p -> ImgNum); 
+                    // 防止车速过快时的动态模糊造成的桥梁区域和危险区域误判
+                    // 若检测到桥梁区域且检测到锥桶或路障
+                    // for(int j = 0;j < results.size();j++)
+                    // {
+                    //     PredictResult resulterror = results[j];
+                    //     if(resulterror.label == "cone" || resulterror.label == "block")
+                    //     {
+                    //         Data_Path_p -> Model_Zone_Kind = DANGER_ZONE;
+                    //         DangerTime = (Img_Store_p -> ImgNum);
+                    //     }
+                    // }
+                    break;
+                }
+                else if(result.label == "crosswalk" && result.y >= JSON_TrackConfigData.Crosswalk_Y && (Img_Store_p -> ImgNum)-RescueTime >= JSON_TrackConfigData.RescueTime){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; CrosswalkTime = (Img_Store_p -> ImgNum); break; }
+                else if((result.label == "patient" || result.label == "tumble") && result.x >= 100 && result.y >= JSON_TrackConfigData.Rescue_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCUE_ZONE; Data_Path_p -> Rescue_Zone_Garage_Dir = LEFT_GARAGE; RescueTime = (Img_Store_p -> ImgNum); break; }
+                else if((result.label == "evil" || result.label == "thief") && result.x >= 100 && result.y >= JSON_TrackConfigData.Rescue_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCUE_ZONE; Data_Path_p -> Rescue_Zone_Garage_Dir = RIGHT_GARAGE; RescueTime = (Img_Store_p -> ImgNum); break; }
+                else{ Loop_Kind = COMMON_TRACK_LOOP; break; }
+                // else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; }
             }
-        }
-        else if(Img_Store_p -> ImgNum >= 1000)
-        {
-            // 停车
-            if((Img_Store_p -> ImgNum)-CrosswalkTime < JSON_TrackConfigData.CrosswalkTime)
+
+            if(Img_Store_p -> ImgNum >= 200)
             {
-                if((Img_Store_p -> ImgNum)-CrosswalkTime <= 20)
+                // 在救援区域限定时间内将锁为模型赛道的救援区域
+                if((Img_Store_p -> ImgNum)-RescueTime < JSON_TrackConfigData.RescueTime)
                 {
-                    Data_Path_p -> Crosswalk_Zone_Step = STOP_PREPARE;
+                    Loop_Kind = MODEL_TRACK_LOOP; 
+                    Data_Path_p -> Model_Zone_Kind = RESCUE_ZONE;
+                }
+                // 在危险区域限定时间内将锁为模型赛道的危险区域
+                else if((Img_Store_p -> ImgNum)-DangerTime < JSON_TrackConfigData.DangerTime)
+                {
+                    Loop_Kind = MODEL_TRACK_LOOP; 
+                    Data_Path_p -> Model_Zone_Kind = DANGER_ZONE;
+                    
+                }
+                // 在桥梁区域限定时间内将锁为模型赛道的桥梁区域且若检测到危险区后就不能进入桥梁区域，直到危险区域结束
+                else if((Img_Store_p -> ImgNum)-BridgeTime < JSON_TrackConfigData.BridgeTime && (Img_Store_p -> ImgNum)-DangerTime > JSON_TrackConfigData.DangerTime)
+                {
+                    Loop_Kind = MODEL_TRACK_LOOP; 
+                    Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE;
+                }
+            }
+            // 在斑马线区域限定时间内将锁为模型赛道的斑马线区域
+            // 当斑马线在图像下方时才能判定为斑马线
+            if(Img_Store_p -> ImgNum < 200)
+            {
+                // 发车
+                if((Img_Store_p -> ImgNum)-CrosswalkTime < 5)
+                {
+                    Data_Path_p -> Crosswalk_Zone_Step = START;
                     Loop_Kind = MODEL_TRACK_LOOP; 
                     Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
                 }
-                else
+            }
+            else if(Img_Store_p -> ImgNum >= 1000)
+            {
+                // 停车
+                if((Img_Store_p -> ImgNum)-CrosswalkTime < JSON_TrackConfigData.CrosswalkTime)
                 {
-                    Data_Path_p -> Crosswalk_Zone_Step = STOP;
-                    Loop_Kind = MODEL_TRACK_LOOP; 
-                    Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
+                    if((Img_Store_p -> ImgNum)-CrosswalkTime <= 20)
+                    {
+                        Data_Path_p -> Crosswalk_Zone_Step = STOP_PREPARE;
+                        Loop_Kind = MODEL_TRACK_LOOP; 
+                        Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
+                    }
+                    else
+                    {
+                        Data_Path_p -> Crosswalk_Zone_Step = STOP;
+                        Loop_Kind = MODEL_TRACK_LOOP; 
+                        Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
+                    }
                 }
             }
         }
     }
-
     // 模型赛道控制权转移后则直接进入串口接收循环
-    if(Function_EN_p -> Control_EN == true)
+    else
     {
-        Loop_Kind = UART_RECEIVE_LOOP;
+        Loop_Kind = IMG_SHOW_STORE_LOOP;
     }
 
     return Loop_Kind;

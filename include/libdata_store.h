@@ -43,12 +43,13 @@ typedef enum LoopKind
     CAMERA_CATCH_LOOP = 0,   // 图像循环
     UART_RECEIVE_LOOP = 1,   // 串口接收循环
     UART_SEND_LOOP = 2,   // 串口发送循环
-    JUDGE_LOOP = 3,    // 决策循环
-    COMMON_TRACK_LOOP = 4,   // 普通赛道循环
-    R_CIRCLE_TRACK_LOOP = 5,   // 右圆环赛道循环
-    L_CIRCLE_TRACK_LOOP = 6,   // 左圆环赛道循环
-    ACROSS_TRACK_LOOP = 7,   // 十字赛道循环
-    MODEL_TRACK_LOOP = 8   // 模型赛道循环
+    IMG_SHOW_STORE_LOOP = 3,    // 图像显示存储循环
+    JUDGE_LOOP = 4,    // 决策循环
+    COMMON_TRACK_LOOP = 5,   // 普通赛道循环
+    R_CIRCLE_TRACK_LOOP = 6,   // 右圆环赛道循环
+    L_CIRCLE_TRACK_LOOP = 7,   // 左圆环赛道循环
+    ACROSS_TRACK_LOOP = 8,   // 十字赛道循环
+    MODEL_TRACK_LOOP = 9   // 模型赛道循环
 }LoopKind;
 
 

@@ -83,6 +83,7 @@ void Rescue_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
 
     int coneNum = 0;
+    static int Num = 0;
 
     Data_Path_p -> Forward = JSON_TrackConfigData.DangerZoneForward;
 
@@ -100,18 +101,25 @@ void Rescue_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
         }
     }
 
-    // 若检测到的锥桶数量超过阈值，则将控制权转移
-    if(coneNum >= JSON_TrackConfigData.RescueZoneConeNum)
+    // 在识别到标志20帧后才开始判断入库时间
+    if(Num >= 20)
     {
-        switch(Data_Path_p -> Rescue_Zone_Garage_Dir)
+        // 若检测到的锥桶数量超过阈值，则将控制权转移
+        if(coneNum <= JSON_TrackConfigData.RescueZoneConeNum)
         {
-            case LEFT_GARAGE:{ Function_EN_p -> Control_EN = true; break; }
-            case RIGHT_GARAGE:{ Function_EN_p -> Control_EN = true; break; }
+            switch(Data_Path_p -> Rescue_Zone_Garage_Dir)
+            {
+                case LEFT_GARAGE:{ Function_EN_p -> Control_EN = true; break; }
+                case RIGHT_GARAGE:{ Function_EN_p -> Control_EN = true; break; }
+            }
         }
+        Num = 0;
     }
 
     ImgPathSearch(Img_Store_p,Data_Path_p);
     Judge.ServoDirAngle_Judge(Data_Path_p);
     Data_Path_p -> MotorSpeed = JSON_TrackConfigData.RescueZoneMotorSpeed;
+
+    Num++;
 }
 

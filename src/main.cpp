@@ -52,7 +52,7 @@ int main()
     while(Function_EN_p -> Game_EN == true)
     {   
         // 图像主循环 / 串口接收循环 / 串口发送循环
-        while( Function_EN_p -> Loop_Kind_EN == CAMERA_CATCH_LOOP || Function_EN_p -> Loop_Kind_EN == UART_RECEIVE_LOOP || Function_EN_p -> Loop_Kind_EN == UART_SEND_LOOP)
+        while( Function_EN_p -> Loop_Kind_EN == CAMERA_CATCH_LOOP || Function_EN_p -> Loop_Kind_EN == UART_RECEIVE_LOOP || Function_EN_p -> Loop_Kind_EN == UART_SEND_LOOP || Function_EN_p -> Loop_Kind_EN == IMG_SHOW_STORE_LOOP)
         {
             switch(Function_EN_p -> Loop_Kind_EN)
             {  
@@ -87,7 +87,15 @@ int main()
                     DataPrint(Data_Path_p,Function_EN_p);
                     SYNC.UartSend_Program_To_Change_SYNC(UartSendProtocol_p , Data_Path_p , Function_EN_p); // 同步程序数据至串口发送协议
                     Uart.UartSend(UartSendProtocol_p , JSON_FunctionConfigData.Uart_EN);
-
+                    Function_EN_p -> Loop_Kind_EN = UART_RECEIVE_LOOP;
+                    break;
+                }
+                // 图像显示存储：专用于救援区
+                case IMG_SHOW_STORE_LOOP:
+                {
+                    ImgProcess.ImgRealFPS(Img_Store_p,false);
+                    ImgProcess.ImgShow(Img_Store_p,Data_Path_p,Function_EN_p);    // 图像合成显示并保存
+                    DataPrint(Data_Path_p,Function_EN_p);
                     Function_EN_p -> Loop_Kind_EN = UART_RECEIVE_LOOP;
                     break;
                 }
