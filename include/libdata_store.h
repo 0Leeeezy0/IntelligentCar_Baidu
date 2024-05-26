@@ -86,8 +86,8 @@ typedef enum CircleTrackStep
 */
 typedef enum RescueZoneGarageDir
 {
-    LEFT_GARAGE = 0,   // 左车库
-    RIGHT_GARAGE = 1,  // 右车库
+    RIGHT_GARAGE = 0,  // 右车库
+    LEFT_GARAGE = 1,   // 左车库
 }RescueZoneGarageDir;
 
 
@@ -153,6 +153,7 @@ typedef struct JSON_FunctionConfigData
     bool ImgCompress_EN;   // 图像压缩使能
     CameraKind Camera_EN;   // 相机使能
     bool VideoShow_EN;  // 图像显示使能
+    bool ImageSave_EN;  // 图像存储使能
     bool DataPrint_EN;  // 数据显示使能
     bool AcrossIdentify_EN;    // 十字特征点识别使能
     bool CircleIdentify_EN;    // 圆环特征点识别使能
@@ -181,11 +182,12 @@ typedef struct JSON_TrackConfigData
     int BridgeTime = 0; // 进入桥梁区域的时间
     int RescueTime = 0; // 救援区进入车库前准备时间上限
     int CrosswalkTime = 0;  // 进入斑马线区域的时间
-    int RescueZoneConeNum = 0;  // 救援区域锥桶数量阈值
+    int RescueGarageTime = 0;   // 获取救援区域过标志后与开始判断进车库时机的时间间隔
+    int RescueZoneConeAvgY[2] = {0};  // 救援区域锥桶平均高度阈值
     int Crosswalk_Y = 0;    // 斑马线识别纵坐标阈值
     int Bomb_Y = 0; // 爆炸物识别纵坐标阈值
     int Bridge_Y = 0;   // 桥识别纵坐标阈值
-    int Rescue_Y = 0;   // 救援区域标识牌纵坐标阈值
+    int Rescue_Lable_Y = 0;   // 救援区域识别标识牌纵坐标阈值
     int DangerZone_Cone_Radius = 0; // 危险区域锥桶避障补线半径
     int DangerZone_Block_Radius = 0; // 危险区域路障避障补线半径
     int DangerZoneForward = 0;  // 危险区域前瞻值
@@ -255,9 +257,9 @@ typedef struct Data_Path
     CircleTrackStep Circle_Track_Step = INIT;  // 圆环入环步骤：1.准备入环 2.入环 3.出环
     TrackKind Previous_Circle_Kind; // 目前圆环类型
     // 控制参数
-    int ServoDir;  // 舵机方向
-    int ServoAngle;    // 舵机角度
-    int MotorSpeed;    // 电机速度
+    int ServoDir = 0;  // 舵机方向
+    int ServoAngle = 0;    // 舵机角度
+    int MotorSpeed = 0;    // 电机速度
 
     // 模型赛道参数
     ModelZoneKind Model_Zone_Kind = CROSSWALK_ZONE;    // 模型赛道区域类型

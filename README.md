@@ -87,12 +87,14 @@
 	"DANGER_TIME" : 危险区域时间
 	"BRIDGE_TIME" : 桥梁区域时间
 	"RESCUE_TIME" : 救援区域判断入库时机的时间阈值
+	"RESCUE_GARAGE_TIME" : 救援区域从识别到标志到准备判断入库时机间的时间间隔
 	"CROSSWALK_TIME" : 斑马线区域时间
 	"CROSSWALK_IDENTIFY_Y" : 斑马线区域识别的纵坐标：在该纵坐标之下才能执行斑马线区域操作
 	"BOMB_IDENTIFY_Y" : 爆炸物区域识别的纵坐标：在该纵坐标之下才能执行危险区域操作
 	"BRIDGE_IDENTIFY_Y" : 桥区域识别的纵坐标：在该纵坐标之下才能执行桥区域操作
 	"RESCUE_IDENTIFY_Y" : 救援区域标识牌识别的纵坐标：在该纵坐标之下才能执行救援区域操作
-	"RESCUE_ZONE_CONE_NUM" : 救援区域进入车库的锥桶数量阈值
+	"RESCUE_ZONE_CONE_AVG_Y_MIN" : 救援区域进入车库的锥桶平均高度最小阈值
+	"RESCUE_ZONE_CONE_AVG_Y_MAX" : 救援区域进入车库的锥桶平均高度最大阈值
 	"DANGER_ZONE_CONE_RADIUS" : 危险区域锥桶半径
 	"DANGER_ZONE_BLOCK_RADIUS" : 危险区域路障半径
 	"DANGER_ZONE_FORWARD" : 危险区域前瞻值

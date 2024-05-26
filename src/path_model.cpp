@@ -82,7 +82,9 @@ void Rescue_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
     Judge Judge;
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
 
-    int coneNum = 0;
+    int cone_Y = 0;
+    int cone_Num = 0;
+    int cone_Avg_Y = 0;
     static int Num = 0;
 
     Data_Path_p -> Forward = JSON_TrackConfigData.DangerZoneForward;
@@ -97,15 +99,19 @@ void Rescue_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
         if(result.label == "cone")
         {
             // 锥桶数量获取
-            coneNum++;
+            cone_Num++;
+            // 锥桶总高度获取
+            cone_Y += result.y;
         }
     }
 
+    cone_Avg_Y = 239-int(cone_Y/cone_Num);
+
     // 在识别到标志20帧后才开始判断入库时间
-    if(Num >= 20)
+    if(Num >= JSON_TrackConfigData.RescueGarageTime)
     {
-        // 若检测到的锥桶数量超过阈值，则将控制权转移
-        if(coneNum <= JSON_TrackConfigData.RescueZoneConeNum)
+        // 若检测到的锥桶平均高度在阈值区间内，则将控制权转移
+        if(cone_Avg_Y >= JSON_TrackConfigData.RescueZoneConeAvgY[0] && cone_Avg_Y <= JSON_TrackConfigData.RescueZoneConeAvgY[1] && cone_Num > 2)
         {
             switch(Data_Path_p -> Rescue_Zone_Garage_Dir)
             {

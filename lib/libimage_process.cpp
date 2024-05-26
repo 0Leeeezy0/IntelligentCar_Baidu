@@ -267,13 +267,17 @@ void ImgProcess::ImgText(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_
 */
 void ImgProcess::ImgShow(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p)
 {
+	JSON_FunctionConfigData JSON_FunctionConfigData = Function_EN_p -> JSON_FunctionConfigData_v[0];
 	ImgProcess::ImgInflectionPointDraw(Img_Store_p,Data_Path_p); 
 	ImgProcess::ImgBendPointDraw(Img_Store_p,Data_Path_p); 
 	ImgProcess::ImgForwardLine(Img_Store_p,Data_Path_p);
 	ImgProcess::ImgReferenceLine(Img_Store_p,Data_Path_p);
 	ImgProcess::ImgText(Img_Store_p,Data_Path_p,Function_EN_p);
 	ImgProcess::ImgSynthesis(Img_Store_p,Function_EN_p);
-	ImgProcess::ImgSave(Img_Store_p);
+	if(JSON_FunctionConfigData.ImageSave_EN == true)
+	{
+		ImgProcess::ImgSave(Img_Store_p);
+	}
 }
 
 

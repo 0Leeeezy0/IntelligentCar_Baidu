@@ -1,5 +1,25 @@
 #pragma once
-
+/**
+ ********************************************************************************************************
+ *                                               示例代码
+ *                                             EXAMPLE  CODE
+ *
+ *                      (c) Copyright 2024; SaiShu.Lcc.; Leo; https://bjsstech.com
+ *                                   版权所属[SASU-北京赛曙科技有限公司]
+ *
+ *            The code is for internal use only, not for commercial transactions(开源学习,请勿商用).
+ *            The code ADAPTS the corresponding hardware circuit board(代码适配百度Edgeboard-智能汽车赛事版),
+ *            The specific details consult the professional(欢迎联系我们,代码持续更正，敬请关注相关开源渠道).
+ *********************************************************************************************************
+ * @file detection.hpp
+ * @author Leo
+ * @brief 基于Paddle飞桨，Edgeboard板卡部署的AI目标检测框架
+ * @version 0.1
+ * @date 2024-01-12
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 #include "predictor_api.h"
 #include "json.hpp"
 #include <cstdio>
@@ -18,39 +38,35 @@
 #include <memory>
 #include <stdlib.h>
 
-
+/**
+ * @brief 目标检测结果
+ *
+ */
 struct PredictResult
 {
-  int type;
-  std::string label;
-  float score;
-  int x;
-  int y;
-  int width;
-  int height;
+    int type;          // ID
+    std::string label; // 标签
+    float score;       // 置信度
+    int x;             // 坐标
+    int y;             // 坐标
+    int width;         // 尺寸
+    int height;        // 尺寸
 };
-
 
 class PPNCDetection
 {
-private:
-    std::vector<std::string> labels;
-    // onnx info
-    std::pair<std::vector<std::string>, std::vector<const char*>> onnx_input_names_;
-    std::pair<std::vector<std::string>, std::vector<const char*>> onnx_out_names_;
-    Ort::Env onnx_env_;
-    // predictor
-    std::shared_ptr<PPNCPredictor> predictor_nna_;
-    std::shared_ptr<PPNCPredictor> predictor_nms_;
-    std::shared_ptr<Ort::Session> predictor_onnx_;
-
-
 public:
-    std::vector<PredictResult> results; //AI推理结果
+    std::vector<PredictResult> results; // AI推理结果
+    float score = 0.5;                  // AI检测置信度
 
-    bool init(const std::string pathModel)
+    /**
+     * @brief Construct a new Detection object
+     *
+     * @param pathModel
+     */
+    void init(const std::string pathModel)
     {
-        //模型初始化
+        // 模型初始化
         this->predictor_nna_ = std::make_shared<PPNCPredictor>("../model/config/config_ppncnna.json");
         this->predictor_nms_ = std::make_shared<PPNCPredictor>("../model/config/config_ppncnms.json");
         this->onnx_env_ = Ort::Env(OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, "test");
@@ -60,42 +76,43 @@ public:
         std::string onnx_model = pathModel + "/post.onnx";
         this->predictor_onnx_ = std::make_shared<Ort::Session>(this->onnx_env_, onnx_model.c_str(), session_options);
 
-        //ONNX模型加载
+        // ONNX模型加载
         this->onnx_input_names_.first.push_back("im_shape");
         this->onnx_input_names_.first.push_back("scale_factor");
         std::string io_paddle = pathModel + "/io_paddle.json";
-        std::cout<<"------------------------> 1 <----------------------------"<<std::endl;
         // read io_paddle
         std::ifstream ifs(io_paddle);
-        std::cout<<"------------------------> 2 <----------------------------"<<std::endl;
         nlohmann::json j;
         ifs >> j;
         ifs.close();
-        std::cout<<"------------------------> 3 <----------------------------"<<std::endl;
-        for (size_t i = 0; i < j.size(); ++i) {
-            if (j[i]["type"] == "OUTPUT") {
+        for (size_t i = 0; i < j.size(); ++i)
+        {
+            if (j[i]["type"] == "OUTPUT")
+            {
                 assert(j[i]["shape"].size() == 4);
                 this->onnx_input_names_.first.push_back(j[i]["name"]);
             }
-            if (j[i]["type"] == "post_out") {
+            if (j[i]["type"] == "post_out")
+            {
                 this->onnx_out_names_.first.push_back(j[i]["name"]);
             }
         }
 
-        for (auto &s : this->onnx_input_names_.first) {
+        for (auto &s : this->onnx_input_names_.first)
+        {
             this->onnx_input_names_.second.push_back(s.c_str());
         }
 
-        for (auto &s : this->onnx_out_names_.first) {
+        for (auto &s : this->onnx_out_names_.first)
+        {
             this->onnx_out_names_.second.push_back(s.c_str());
         }
-        build_nms(pathModel);//编译生成.so文件
-
+        buildNms(pathModel); // 编译生成.so文件
 
         this->predictor_nna_->load();
         this->predictor_nms_->load();
 
-        //模型标签加载
+        // 模型标签加载
         std::string pathLabels = pathModel + "/label_list.txt";
         labels.clear();
         std::ifstream file(pathLabels);
@@ -104,21 +121,33 @@ public:
             std::string line;
             while (getline(file, line))
             {
-            labels.push_back(line);
+                labels.push_back(line);
             }
             file.close();
-            
-            return true;
         }
         else
         {
             std::cout << "Open Lable File failed: " << pathLabels << std::endl;
         }
+    };
 
-        return false;
+    /**
+     * @brief AI模型推理
+     *
+     */
+    void inference(cv::Mat img)
+    {
+        auto feeds = preprocess(img, {320, 320}); // 图像前处理
+        run(*feeds);                              // 模型推理
+        render();                                 // 后处理
     }
 
-    void build_nms(const std::string &model_dir) 
+    /**
+     * @brief
+     *
+     * @param model_dir
+     */
+    void buildNms(const std::string &model_dir)
     {
         std::string model_file = model_dir + "/nms.tar";
         std::string untar_cmd = "tar -xf " + model_file + " -C . --no-same-owner";
@@ -127,14 +156,16 @@ public:
         int sys_status = 0;
 
         sys_status = system(untar_cmd.c_str());
-        if (sys_status) {
+        if (sys_status)
+        {
             std::cout << "Error: cannot untar file " << model_file << std::endl;
             exit(-1);
         }
 
         // create shared
         sys_status = system(cc_cmd.c_str());
-        if (sys_status) {
+        if (sys_status)
+        {
             std::cout << "Error: compile for " << model_file << std::endl;
             exit(-1);
         }
@@ -144,7 +175,7 @@ public:
     void TransposeAndCopyToTensor(const cv::Mat &src, NDTensor &dst)
     {
         cv::Mat channels[3];
-        split(src, channels);
+        cv::split(src, channels);
         int offset = src.rows * src.cols;
         auto start = dst.value();
         for (int i = 0; i < 3; ++i)
@@ -155,8 +186,9 @@ public:
     }
 
     std::shared_ptr<std::unordered_map<std::string, NDTensor>> preprocess(
-            cv::Mat frame,
-            const std::vector<int64_t> &input_size) {
+        cv::Mat frame,
+        const std::vector<int64_t> &input_size)
+    {
         cv::Mat x;
         NDTensor scale_factor({1, 2}), img({1, 3, input_size[0], input_size[1]});
         scale_factor.value()[0] = static_cast<float>(input_size[0]) / frame.size[0];
@@ -173,12 +205,12 @@ public:
         TransposeAndCopyToTensor(x, img);
 
         std::unordered_map<std::string, NDTensor> ret = {
-                {"image", img}, {"im_shape", im_shape}, {"scale_factor", scale_factor}};
+            {"image", img}, {"im_shape", im_shape}, {"scale_factor", scale_factor}};
 
         return std::make_shared<std::unordered_map<std::string, NDTensor>>(ret);
     }
 
-    void run(const std::unordered_map<std::string, NDTensor> &feeds) 
+    void run(const std::unordered_map<std::string, NDTensor> &feeds)
     {
         auto &image = feeds.at("image");
         this->predictor_nna_->set_inputs({{"image", image}});
@@ -193,35 +225,35 @@ public:
 
         int numel = std::accumulate(im_shape.shape.begin(), im_shape.shape.end(), 1, std::multiplies<>());
         input_tensors.push_back(Ort::Value::CreateTensor<float>(
-                memory_info,
-                im_shape.value(),
-                numel,
-                im_shape.shape.data(),
-                im_shape.shape.size()));
+            memory_info,
+            im_shape.value(),
+            numel,
+            im_shape.shape.data(),
+            im_shape.shape.size()));
         numel = std::accumulate(scale_factor.shape.begin(), scale_factor.shape.end(), 1, std::multiplies<>());
         input_tensors.push_back(Ort::Value::CreateTensor<float>(
-                memory_info,
-                scale_factor.value(),
-                numel,
-                scale_factor.shape.data(),
-                scale_factor.shape.size()));
+            memory_info,
+            scale_factor.value(),
+            numel,
+            scale_factor.shape.data(),
+            scale_factor.shape.size()));
 
-        for (size_t i = 2; i < this->onnx_input_names_.second.size(); ++i) 
+        for (size_t i = 2; i < this->onnx_input_names_.second.size(); ++i)
         {
             const NDTensor &t = this->predictor_nna_->get_output(i - 2);
             numel = std::accumulate(t.shape.begin(), t.shape.end(), 1, std::multiplies<>());
             input_tensors.push_back(Ort::Value::CreateTensor<float>(
-                    memory_info, t.value(), numel, t.shape.data(), t.shape.size()));
+                memory_info, t.value(), numel, t.shape.data(), t.shape.size()));
         }
 
         Ort::RunOptions run_options;
         auto onnx_out = this->predictor_onnx_->Run(
-                run_options,
-                this->onnx_input_names_.second.data(),
-                input_tensors.data(),
-                input_tensors.size(),
-                this->onnx_out_names_.second.data(),
-                this->onnx_out_names_.second.size());
+            run_options,
+            this->onnx_input_names_.second.data(),
+            input_tensors.data(),
+            input_tensors.size(),
+            this->onnx_out_names_.second.data(),
+            this->onnx_out_names_.second.size());
 
         auto *data0 = onnx_out[0].GetTensorData<float>();
         auto *data1 = onnx_out[1].GetTensorData<float>();
@@ -245,11 +277,10 @@ public:
         this->predictor_nms_->run();
     }
 
-    NDTensor get_output(int index) 
+    NDTensor get_output(int index)
     {
         return this->predictor_nms_->get_output(index);
     }
-
 
     void render()
     {
@@ -264,32 +295,32 @@ public:
         {
             result.type = data[i];
             result.score = data[i + 1];
-            if (result.score < 0.5)   //阈值
+            if (result.score < score) // 阈值
             {
                 continue;
             }
 
-            //turnning....
-            if(result.type<labels.size())
+            // turnning....
+            if (result.type < labels.size())
                 result.label = labels[result.type];
             result.x = data[i + 2];
             result.y = data[i + 3];
-            result.width = data[i + 4]-data[i + 2];
-            result.height = data[i + 5]-data[i + 3];
+            result.width = data[i + 4] - data[i + 2];
+            result.height = data[i + 5] - data[i + 3];
             results.push_back(result);
-        }    
+        }
     }
 
     void drawBox(cv::Mat &img)
     {
-        for(int i=0;i<results.size();i++)
+        for (int i = 0; i < results.size(); i++)
         {
             PredictResult result = results[i];
-        
+
             auto score = std::to_string(result.score);
             int pointY = result.y - 20;
             if (pointY < 0)
-            pointY = 0;
+                pointY = 0;
             cv::Rect rectText(result.x, pointY, result.width, 20);
             cv::rectangle(img, rectText, getCvcolor(result.type), -1);
             std::string label_name = result.label + " [" + score.substr(0, score.find(".") + 3) + "]";
@@ -299,53 +330,62 @@ public:
         }
     }
 
+    /**
+     * @brief 获取Opencv颜色
+     *
+     * @param index 序号
+     * @return cv::Scalar
+     */
     cv::Scalar getCvcolor(int index)
     {
         switch (index)
         {
         case 0:
-            return cv::Scalar(37, 234, 247);
+            return cv::Scalar(0, 255, 0); // 绿
             break;
         case 1:
-            return cv::Scalar(23, 114, 251);
+            return cv::Scalar(255, 255, 0); // 天空蓝
             break;
         case 2:
-            return cv::Scalar(120, 62, 244);
+            return cv::Scalar(0, 0, 255); // 大红
             break;
         case 3:
-            return cv::Scalar(139, 94, 59);
+            return cv::Scalar(0, 250, 250); // 大黄
             break;
         case 4:
-            return cv::Scalar(0, 254, 0);
+            return cv::Scalar(250, 0, 250); // 粉色
             break;
         case 5:
-            return cv::Scalar(247, 57, 241);
+            return cv::Scalar(0, 102, 255); // 橙黄
             break;
         case 6:
-            return cv::Scalar(255, 255, 255);
+            return cv::Scalar(255, 0, 0); // 深蓝
             break;
         case 7:
-            return cv::Scalar(247, 43, 113);
+            return cv::Scalar(255, 255, 255); // 大白
             break;
         case 8:
+            return cv::Scalar(247, 43, 113);
+            break;
+        case 9:
             return cv::Scalar(40, 241, 245);
             break;
-        case 11:
+        case 10:
             return cv::Scalar(237, 226, 19);
             break;
-        case 12:
+        case 11:
             return cv::Scalar(245, 117, 233);
             break;
-        case 13:
+        case 12:
             return cv::Scalar(55, 13, 19);
             break;
-        case 14:
+        case 13:
             return cv::Scalar(255, 255, 255);
             break;
-        case 15:
+        case 14:
             return cv::Scalar(237, 226, 19);
             break;
-        case 16:
+        case 15:
             return cv::Scalar(0, 255, 0);
             break;
         default:
@@ -353,5 +393,15 @@ public:
             break;
         }
     }
-  
+
+private:
+    std::vector<std::string> labels;
+    // onnx info
+    std::pair<std::vector<std::string>, std::vector<const char *>> onnx_input_names_;
+    std::pair<std::vector<std::string>, std::vector<const char *>> onnx_out_names_;
+    Ort::Env onnx_env_;
+    // predictor
+    std::shared_ptr<PPNCPredictor> predictor_nna_;
+    std::shared_ptr<PPNCPredictor> predictor_nms_;
+    std::shared_ptr<Ort::Session> predictor_onnx_;
 };
