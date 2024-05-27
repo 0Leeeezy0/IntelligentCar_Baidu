@@ -234,11 +234,12 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
         // 获取模型结果
         if(JSON_FunctionConfigData.ModelDetection_EN == true)
         {
+            Loop_Kind = COMMON_TRACK_LOOP;
             for(int i=0;i<results.size();i++)
             {
                 PredictResult result = results[i];
 
-                if(result.label == "bomb" && result.x >= 100 && result.y >= JSON_TrackConfigData.Bomb_Y && (Img_Store_p -> ImgNum)-RescueTime >= JSON_TrackConfigData.RescueTime){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = DANGER_ZONE; DangerTime = (Img_Store_p -> ImgNum); break; }
+                if(result.label == "bomb" && result.x >= 100 && result.y >= JSON_TrackConfigData.Bomb_Y && (Img_Store_p -> ImgNum)-RescueTime >= JSON_TrackConfigData.RescueTime){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = DANGER_ZONE; DangerTime = (Img_Store_p -> ImgNum); }
                 else if(result.label == "bridge" && result.x >= 100 && result.y >= JSON_TrackConfigData.Bridge_Y && (Img_Store_p -> ImgNum)-RescueTime >= JSON_TrackConfigData.RescueTime){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = BRIDGE_ZONE; BridgeTime = (Img_Store_p -> ImgNum); 
                     // 防止车速过快时的动态模糊造成的桥梁区域和危险区域误判
                     // 若检测到桥梁区域且检测到锥桶或路障
@@ -251,12 +252,11 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
                     //         DangerTime = (Img_Store_p -> ImgNum);
                     //     }
                     // }
-                    break;
                 }
-                else if(result.label == "crosswalk" && result.y >= JSON_TrackConfigData.Crosswalk_Y && (Img_Store_p -> ImgNum)-RescueTime >= JSON_TrackConfigData.RescueTime){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; CrosswalkTime = (Img_Store_p -> ImgNum); break; }
+                else if(result.label == "crosswalk" && result.y >= JSON_TrackConfigData.Crosswalk_Y && (Img_Store_p -> ImgNum)-RescueTime >= JSON_TrackConfigData.RescueTime){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; CrosswalkTime = (Img_Store_p -> ImgNum); }
                 else if((result.label == "patient" || result.label == "tumble") && result.x >= 100 && result.y >= JSON_TrackConfigData.Rescue_Lable_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCUE_ZONE; Data_Path_p -> Rescue_Zone_Garage_Dir = LEFT_GARAGE; RescueTime = (Img_Store_p -> ImgNum); break; }
                 else if((result.label == "evil" || result.label == "thief") && result.x >= 100 && result.y >= JSON_TrackConfigData.Rescue_Lable_Y){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = RESCUE_ZONE; Data_Path_p -> Rescue_Zone_Garage_Dir = RIGHT_GARAGE; RescueTime = (Img_Store_p -> ImgNum); break; }
-                else{ Loop_Kind = COMMON_TRACK_LOOP; break; }
+                else{ Loop_Kind = COMMON_TRACK_LOOP; }
                 // else if(result.label == "crosswalk"){ Loop_Kind = MODEL_TRACK_LOOP; Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE; }
             }
 
