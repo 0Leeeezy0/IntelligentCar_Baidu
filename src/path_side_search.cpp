@@ -66,6 +66,7 @@ void ImgPathSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
         if(abs((Data_Path_p -> SideCoordinate[NumSearch][0])-(Data_Path_p -> SideCoordinate[NumSearch][2])) <= 20 || ((Data_Path_p -> SideCoordinate[NumSearch][0]) >= (Data_Path_p -> SideCoordinate[NumSearch][2])))
         {
             NumSearch--;
+            Data_Path_p -> Forward = Data_Path_p -> SideCoordinate[NumSearch][1];            
             break;
         }
 

@@ -55,7 +55,7 @@ void Danger_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
 // 桥梁区域
 void Bridge_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
 // 斑马线区域
-void Crosswalk_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
+void Crosswalk_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p);
 // 救援区域
 void Rescue_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p);
 

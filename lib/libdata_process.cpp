@@ -234,7 +234,6 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
         // 获取模型结果
         if(JSON_FunctionConfigData.ModelDetection_EN == true)
         {
-            Loop_Kind = COMMON_TRACK_LOOP;
             for(int i=0;i<results.size();i++)
             {
                 PredictResult result = results[i];
@@ -299,7 +298,7 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
                 // 停车
                 if((Img_Store_p -> ImgNum)-CrosswalkTime < JSON_TrackConfigData.CrosswalkTime)
                 {
-                    if((Img_Store_p -> ImgNum)-CrosswalkTime <= 20)
+                    if((Img_Store_p -> ImgNum)-CrosswalkTime <= 3)
                     {
                         Data_Path_p -> Crosswalk_Zone_Step = STOP_PREPARE;
                         Loop_Kind = MODEL_TRACK_LOOP; 

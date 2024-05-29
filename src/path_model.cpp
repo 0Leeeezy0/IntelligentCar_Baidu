@@ -60,16 +60,38 @@ void Danger_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
     Crosswalk_Zone说明
     斑马线区域
 */
-void Crosswalk_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
+void Crosswalk_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_EN *Function_EN_p)
 {
     Judge Judge;
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
+
+    while(Function_EN_p -> ThreadModelDetection_EN == false);  // 等待模型推理完成
+
+    // 斑马线区域补白
+    for(int i=0;i<PPNCDetection.results.size();i++)
+    {
+        PredictResult result = PPNCDetection.results[i];
+        if(result.label == "crosswalk")
+        {
+            line((Img_Store_p -> Img_OTSU),Point(result.x,result.y),Point(result.x,result.y+result.height),Scalar(255),3);
+            line((Img_Store_p -> Img_OTSU),Point(result.x+result.width,result.y),Point(result.x+result.width,result.y+result.height),Scalar(255),3);
+            Rect Rect;
+            Rect.x = result.x+3;
+            Rect.y = result.y;
+            Rect.width = result.width-6;
+            Rect.height = result.height;
+            rectangle((Img_Store_p -> Img_OTSU),Rect,Scalar(0),-1);
+        }
+    }
+
     switch(Data_Path_p -> Crosswalk_Zone_Step)
     {
         case START:{ Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CrosswalkZoneMotorSpeed[0]; Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; break; }
         case STOP_PREPARE:{ Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CrosswalkZoneMotorSpeed[1]; Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; break; }
         case STOP:{ Data_Path_p -> MotorSpeed = 0; Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; break; }
     }
+    ImgPathSearch(Img_Store_p,Data_Path_p);
+    Judge.ServoDirAngle_Judge(Data_Path_p);
 }
 
 
