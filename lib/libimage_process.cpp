@@ -215,8 +215,9 @@ void ImgProcess::ImgSave(Img_Store *Img_Store_p)
 */
 void ImgProcess::ImgForwardLine(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
-    line((Img_Store_p -> Img_Track),Point(160,300),Point((Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][0]),(Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][1])),Scalar(255,0,0),3);
-	putText((Img_Store_p -> Img_Track),to_string(abs(160-(Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][0]))),Point((Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][0]),(Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][1])),FONT_HERSHEY_COMPLEX,0.6,(255,255,255),1);
+	JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
+    line((Img_Store_p -> Img_Track),Point(160,300),Point((Data_Path_p -> TrackCoordinate[(JSON_TrackConfigData.Forward)-(JSON_TrackConfigData.Path_Search_Start)][0]),(Data_Path_p -> TrackCoordinate[(JSON_TrackConfigData.Forward)-(JSON_TrackConfigData.Path_Search_Start)][1])),Scalar(255,0,0),3);
+	putText((Img_Store_p -> Img_Track),to_string(abs(160-(Data_Path_p -> TrackCoordinate[(JSON_TrackConfigData.Forward)-(JSON_TrackConfigData.Path_Search_Start)][0]))),Point((Data_Path_p -> TrackCoordinate[(JSON_TrackConfigData.Forward)-(JSON_TrackConfigData.Path_Search_Start)][0]),(Data_Path_p -> TrackCoordinate[(JSON_TrackConfigData.Forward)-(JSON_TrackConfigData.Path_Search_Start)][1])),FONT_HERSHEY_COMPLEX,0.6,(255,255,255),1);
 }
 
 
@@ -380,35 +381,13 @@ void ImgProcess::ImgBendPointDraw(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 */
 void ImgProcess::ImgReferenceLine(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
-	line((Img_Store_p -> Img_Track),Point(0,239-(Data_Path_p -> Path_Search_Start)),Point(319,239-(Data_Path_p -> Path_Search_Start)),Scalar(0,0,255),1);	// 寻路径起始线
-	line((Img_Store_p -> Img_Track),Point(0,239-(Data_Path_p -> Path_Search_End)),Point(319,239-(Data_Path_p -> Path_Search_End)),Scalar(0,0,255),1);	// 寻路径结束线
-	line((Img_Store_p -> Img_Track),Point(0,239-(Data_Path_p -> Side_Search_Start)),Point(319,239-(Data_Path_p -> Side_Search_Start)),Scalar(255,0,255),1);	// 寻边线起始线
-	line((Img_Store_p -> Img_Track),Point(0,239-(Data_Path_p -> Side_Search_End)),Point(319,239-(Data_Path_p -> Side_Search_End)),Scalar(255,0,255),1);	// 寻边线结束线
-	line((Img_Store_p -> Img_Track),Point(160,239-(Data_Path_p -> Path_Search_Start)),Point(160,239-(Data_Path_p -> Path_Search_End)),Scalar(0,0,255),1);	// 中心竖线
-}
+    JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
 
-
-/*
-	ImgRealFPS说明
-	实时图像帧数显示
-*/
-void ImgProcess::ImgRealFPS(Img_Store *Img_Store_p,bool StartEndFlag)
-{
-	struct timeval tv;
-	static auto StartTime = 0;
-	static auto EndTime = 0;
-	static auto DeltaTime = 0;
-	int FPS;
-
-	switch(StartEndFlag)
-	{
-		case true:{ gettimeofday(&tv,NULL); StartTime = tv.tv_usec; break; }
-		case false:{ gettimeofday(&tv,NULL); EndTime = tv.tv_usec; DeltaTime = EndTime-StartTime; FPS = (1000000/DeltaTime); break; }
-	}
-	if(StartEndFlag == false)
-	{
-		putText((Img_Store_p -> Img_Color),to_string(FPS),Point(280,30),FONT_HERSHEY_COMPLEX,1,(255,0,255),1);
-	}
+	line((Img_Store_p -> Img_Track),Point(0,239-(JSON_TrackConfigData.Path_Search_Start)),Point(319,239-(JSON_TrackConfigData.Path_Search_Start)),Scalar(0,0,255),1);	// 寻路径起始线
+	line((Img_Store_p -> Img_Track),Point(0,239-(JSON_TrackConfigData.Path_Search_End)),Point(319,239-(JSON_TrackConfigData.Path_Search_End)),Scalar(0,0,255),1);	// 寻路径结束线
+	line((Img_Store_p -> Img_Track),Point(0,239-(JSON_TrackConfigData.Side_Search_Start)),Point(319,239-(JSON_TrackConfigData.Side_Search_Start)),Scalar(255,0,255),1);	// 寻边线起始线
+	line((Img_Store_p -> Img_Track),Point(0,239-(JSON_TrackConfigData.Side_Search_End)),Point(319,239-(JSON_TrackConfigData.Side_Search_End)),Scalar(255,0,255),1);	// 寻边线结束线
+	line((Img_Store_p -> Img_Track),Point(160,239-(JSON_TrackConfigData.Path_Search_Start)),Point(160,239-(JSON_TrackConfigData.Path_Search_End)),Scalar(0,0,255),1);	// 中心竖线
 }
 
 

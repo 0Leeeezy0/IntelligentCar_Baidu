@@ -5,11 +5,6 @@
 #define _LIBDATA_STORE_H_
 
 // 串口接收初始化的调试参数
-#define Forward_Default 55  // 调试参数
-#define Path_Search_Start_Default 30   // 调试参数
-#define Path_Search_End_Default 170 // 调试参数
-#define Side_Search_Start_Default 30   // 调试参数
-#define Side_Search_End_Default 200   // 调试参数
 #define Game_EN_Default 1   // 调试参数
 
 #define BAUDRATE 115200 // 串口波特率
@@ -96,9 +91,8 @@ typedef enum RescueZoneGarageDir
 */
 typedef enum CrosswalkZoneStep
 {
-    START = 0,   // 发车
-    STOP_PREPARE = 1, // 准备停车
-    STOP = 2,   // 停车
+    STOP_PREPARE = 0, // 准备停车
+    STOP = 1,   // 停车
 }CrosswalkZoneStep;
 
 
@@ -165,6 +159,12 @@ typedef struct JSON_FunctionConfigData
 */
 typedef struct JSON_TrackConfigData
 {
+    int Forward;    // 前瞻点
+    int Default_Forward;    // 默认前瞻点，用于前瞻点初始化
+    int Path_Search_Start;  // 寻路径起始点
+    int Path_Search_End;    // 寻路径结束点
+    int Side_Search_Start; // 寻边线起始点
+    int Side_Search_End; // 寻边线结束点
     int TrackWidth = 0; // 赛道宽度
     int CircleOutWidth = 0; // 圆环出环补线终点与中线距离
     int InflectionPointIdentifyAngle[2] = {0};    // 元素拐点识别角度
@@ -176,12 +176,12 @@ typedef struct JSON_TrackConfigData
     int BridgeZoneMotorSpeed = 0;   // 桥梁区域电机速度
     int DangerZoneMotorSpeed = 0;   // 危险区域电机速度
     int RescueZoneMotorSpeed = 0;   // 救援区域电机速度
-    int CrosswalkZoneMotorSpeed[2] = {0};    // 斑马线区域电机速度：0.发车 1.准备停车
+    int CrosswalkZoneMotorSpeed = 0;    // 斑马线区域电机准备停车速度
     int Circle_IN_PREPARE_Time = 0;    // 准备入环限定时间
     int DangerTime = 0; // 进入危险区域的时间
     int BridgeTime = 0; // 进入桥梁区域的时间
     int RescueTime = 0; // 救援区进入车库前准备时间上限
-    int CrosswalkTime = 0;  // 进入斑马线区域的时间
+    int CrosswalkStopTime = 0;  // 进入斑马线区域停车的时间
     int RescueGarageTime = 0;   // 获取救援区域过标志后与开始判断进车库时机的时间间隔
     int RescueZoneConeAvgY[2] = {0};  // 救援区域锥桶平均高度阈值
     int Crosswalk_Y = 0;    // 斑马线识别纵坐标阈值
@@ -233,13 +233,6 @@ typedef struct Function_EN
 */
 typedef struct Data_Path
 {
-    // 赛道识别参数
-    int Forward;    // 前瞻点
-    int Path_Search_Start; // 寻路径起始点
-    int Path_Search_End;   // 寻路径结束点
-    int Side_Search_Start; // 寻边线起始点
-    int Side_Search_End; // 寻边线结束点
-
     std::vector<JSON_TrackConfigData> JSON_TrackConfigData_v; // JSON文件存储的赛道识别设置参数
     
     // 赛道识别结果
@@ -263,7 +256,7 @@ typedef struct Data_Path
 
     // 模型赛道参数
     ModelZoneKind Model_Zone_Kind = CROSSWALK_ZONE;    // 模型赛道区域类型
-    CrosswalkZoneStep Crosswalk_Zone_Step = START;    // 模型斑马线赛道步骤
+    CrosswalkZoneStep Crosswalk_Zone_Step;    // 模型斑马线赛道步骤
     RescueZoneGarageDir Rescue_Zone_Garage_Dir = LEFT_GARAGE;    // 模型救援赛道车库方向
     ChaseZoneCarKind Chase_Zone_CarKind;    // 模型追逐区赛道步骤
 }Data_Path;
@@ -314,11 +307,6 @@ typedef struct UartReceiveProtocol
     unsigned char Head_2;   // 0XA1
 
     // 数据交换区
-    int Forward;    // 前瞻点
-    int Path_Search_Start;  // 寻路径起始点
-    int Path_Search_End;    // 寻路径结束点
-    int Side_Search_Start; // 寻边线起始点
-    int Side_Search_End; // 寻边线结束点
     int Control_EN;    // 控制权转移使能
     int Gyroscope_EN;   // 陀螺仪状态
     int Game_EN;    // 比赛开始

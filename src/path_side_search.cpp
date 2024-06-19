@@ -12,6 +12,7 @@ using namespace cv;
 */
 void ImgPathSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
+    JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
     //变量设置
     //————————————————————————————————————————————————————————————————————————————————————//
     //边线坐标
@@ -19,15 +20,15 @@ void ImgPathSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
     int Y = 0;
 
     // 设置路径起始坐标
-    Data_Path_p -> TrackCoordinate[0][0] = ((Data_Path_p -> SideCoordinate_Eight[Data_Path_p -> Path_Search_Start][0])+(Data_Path_p -> SideCoordinate_Eight[Data_Path_p -> Path_Search_Start][2]))/2;
-    Data_Path_p -> TrackCoordinate[0][1] = 239-(Data_Path_p -> Path_Search_Start);
+    Data_Path_p -> TrackCoordinate[0][0] = ((Data_Path_p -> SideCoordinate_Eight[JSON_TrackConfigData.Path_Search_Start][0])+(Data_Path_p -> SideCoordinate_Eight[JSON_TrackConfigData.Path_Search_Start][2]))/2;
+    Data_Path_p -> TrackCoordinate[0][1] = 239-(JSON_TrackConfigData.Path_Search_Start);
 
     int NumSearch = 0;  //坐标数组的行序号
     //————————————————————————————————————————————————————————————————————————————————————//
 
     //寻线
     //————————————————————————————————————————————————————————————————————————————————————//
-    for(Y = 239-(Data_Path_p -> Path_Search_Start);Y >= 239-(Data_Path_p -> Path_Search_End);Y--)
+    for(Y = 239-(JSON_TrackConfigData.Path_Search_Start);Y >= 239-(JSON_TrackConfigData.Path_Search_End);Y--)
     {
         //左边线
         for(X[0] = (Data_Path_p -> TrackCoordinate[NumSearch][0]);X[0] >= 0;X[0]--)
@@ -66,7 +67,7 @@ void ImgPathSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
         if(abs((Data_Path_p -> SideCoordinate[NumSearch][0])-(Data_Path_p -> SideCoordinate[NumSearch][2])) <= 20 || ((Data_Path_p -> SideCoordinate[NumSearch][0]) >= (Data_Path_p -> SideCoordinate[NumSearch][2])))
         {
             NumSearch--;
-            Data_Path_p -> Forward = Data_Path_p -> SideCoordinate[NumSearch][1];            
+            JSON_TrackConfigData.Forward = Data_Path_p -> SideCoordinate[NumSearch][1];            
             break;
         }
 
@@ -88,6 +89,7 @@ void ImgPathSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 */
 void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
+    JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
     //变量设置
     //————————————————————————————————————————————————————————————————————————————————————//
     // 寻种子变量设置
@@ -110,7 +112,7 @@ void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
     // 八邻域种子寻找
     if(NumSearch[0] <= 1 && NumSearch[1] <= 1)
     {
-        for(Y = 239-(Data_Path_p -> Side_Search_Start);Y >= 238-(Data_Path_p -> Side_Search_Start);Y--)
+        for(Y = 239-(JSON_TrackConfigData.Side_Search_Start);Y >= 238-(JSON_TrackConfigData.Side_Search_Start);Y--)
         {
             //左边线
             for(X = 160;X >= 0;X--)
@@ -191,7 +193,7 @@ void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
             circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> SideCoordinate_Eight[NumSearch[0]][0]),(Data_Path_p -> SideCoordinate_Eight[NumSearch[0]][1])),1,Scalar(255,0,255),1);	//左边线画点
             
             // 循环退出条件：1.寻线到寻线结束点和起始点 2.寻线折返 3.寻线到中心线 4.坐标数量大于阈值
-            if((Data_Path_p -> SideCoordinate_Eight[NumSearch[0]][1]) <= 239-(Data_Path_p -> Side_Search_End) || (Data_Path_p -> SideCoordinate_Eight[NumSearch[0]][1]) >= 239-(Data_Path_p -> Side_Search_Start))
+            if((Data_Path_p -> SideCoordinate_Eight[NumSearch[0]][1]) <= 239-(JSON_TrackConfigData.Side_Search_End) || (Data_Path_p -> SideCoordinate_Eight[NumSearch[0]][1]) >= 239-(JSON_TrackConfigData.Side_Search_Start))
             {
                 break;
             } 
@@ -251,7 +253,7 @@ void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
             circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> SideCoordinate_Eight[NumSearch[1]][2]),(Data_Path_p -> SideCoordinate_Eight[NumSearch[1]][3])),1,Scalar(255,0,255),1);	//右边线画点
             
             // 循环退出条件：1.寻线到寻线结束点和起始点 2.寻线折返 3.寻线到中心线 4.坐标数量大于阈值
-            if((Data_Path_p -> SideCoordinate_Eight[NumSearch[1]][3]) <= 239-(Data_Path_p -> Side_Search_End) || (Data_Path_p -> SideCoordinate_Eight[NumSearch[1]][3]) >= 239-(Data_Path_p -> Side_Search_Start))
+            if((Data_Path_p -> SideCoordinate_Eight[NumSearch[1]][3]) <= 239-(JSON_TrackConfigData.Side_Search_End) || (Data_Path_p -> SideCoordinate_Eight[NumSearch[1]][3]) >= 239-(JSON_TrackConfigData.Side_Search_Start))
             {
                 break;
             } 

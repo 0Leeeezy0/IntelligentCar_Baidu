@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 3.5)
 #工程名字
 project(INCAR.RUN)
 
+#启动对C++14标准的支持
+set(CMAKE_CXX_STANDARD 14)
+
 #OpenCV
 #用find_package方法引入OpenCV库
 #也可以用dir的方法

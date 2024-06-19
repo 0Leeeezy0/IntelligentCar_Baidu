@@ -48,9 +48,18 @@ class Judge
         /*
             电机速度决策
             @参数说明
+            Img_Store_p 图像存储指针
             Data_Path_p 路径相关数据指针
         */
-        void MotorSpeed_Judge(Data_Path *Data_Path_p);
+        void MotorSpeed_Judge(Img_Store *Img_Store_p,Data_Path *Data_Path_p);
+
+        
+        /*
+            保护线程
+            @参数说明
+            Data_Path_p 路径相关数据指针
+        */
+        void Protect_Thread(Data_Path * Data_Path_p);
     
     private:
         /*

@@ -283,20 +283,10 @@ LoopKind Judge::ModelTrack_Judge(vector<PredictResult> results,Data_Path *Data_P
             }
             // 在斑马线区域限定时间内将锁为模型赛道的斑马线区域
             // 当斑马线在图像下方时才能判定为斑马线
-            if(Img_Store_p -> ImgNum < 200)
-            {
-                // 发车
-                if((Img_Store_p -> ImgNum)-CrosswalkTime < 20)
-                {
-                    Data_Path_p -> Crosswalk_Zone_Step = START;
-                    Loop_Kind = MODEL_TRACK_LOOP; 
-                    Data_Path_p -> Model_Zone_Kind = CROSSWALK_ZONE;
-                }
-            }
-            else if(Img_Store_p -> ImgNum >= 1000)
+            if(Img_Store_p -> ImgNum >= 400)
             {
                 // 停车
-                if((Img_Store_p -> ImgNum)-CrosswalkTime < JSON_TrackConfigData.CrosswalkTime)
+                if((Img_Store_p -> ImgNum)-CrosswalkTime < JSON_TrackConfigData.CrosswalkStopTime)
                 {
                     if((Img_Store_p -> ImgNum)-CrosswalkTime <= 3)
                     {
@@ -332,8 +322,8 @@ void Judge::ServoDirAngle_Judge(Data_Path *Data_Path_p)
 {
     static int Count = 0; 
     static int Dir = 0;
-    (Data_Path_p -> ServoAngle) = (Data_Path_p -> TrackCoordinate[(Data_Path_p -> Forward)-(Data_Path_p -> Path_Search_Start)][0]) - 160;
-   
+    JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
+(Data_Path_p -> ServoAngle) = (Data_Path_p -> TrackCoordinate[(JSON_TrackConfigDataForward)-(JSON_TrackConfigData.Path_Search_Start)][0]) - 160;   
     // 计算舵机方向和角度
     if((Data_Path_p -> ServoAngle) < 0)
     {
@@ -351,7 +341,7 @@ void Judge::ServoDirAngle_Judge(Data_Path *Data_Path_p)
     MotorSpeed_Judge说明
     电机速度决策
 */
-void Judge::MotorSpeed_Judge(Data_Path *Data_Path_p)
+void Judge::MotorSpeed_Judge(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
 
@@ -522,6 +512,7 @@ void Judge::InflectionPointSearch(Img_Store* Img_Store_p,Data_Path *Data_Path_p)
 }
 
 
+
 /*
     BendPointSearch说明
     边线弯点寻找
@@ -627,6 +618,30 @@ void Judge::HoughCircleSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 
 
 /*
+    Protect_Thread说明
+    保护线程
+    若检测到有ESC键输入则速度至0
+*/
+void Judge::Protect_Thread(Data_Path * Data_Path_p)
+{
+    bool Protect_EN = false;    // 保护使能
+    int Stop = 0;
+    while(Protect_EN == false)
+    {
+        cin >> Stop;
+        if(Stop != 0)
+        {
+            Protect_EN = true;
+        }
+    }
+    while(Protect_EN == true)
+    {
+        Data_Path_p -> MotorSpeed = 0;
+    }
+}
+
+
+/*
     ConfigData_SYNC说明
     车辆上位机设置文件数据同步
 */
@@ -637,7 +652,21 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     JSON_FunctionConfigData JSON_FunctionConfigData;
     JSON_TrackConfigData JSON_TrackConfigData;
 
-    ifstream ConfigFile("../config.json");
+    int JSON_FileNum;
+    char* ConfigFilePath;
+
+    cout << "<---------------------JSON文件选择--------------------->" << endl;
+    cout << "0.低速参数\n1.中速参数\n2.高速参数" << endl;
+    cout << "参数选择：";
+    cin >> JSON_FileNum;
+
+    switch(JSON_FileNum)
+    {
+        case 0:{ ConfigFilePath = "../config/config_0.json"; break; }
+        case 1:{ ConfigFilePath = "../config/config_1.json"; break; }
+        case 2:{ ConfigFilePath = "../config/config_2.json"; break; }
+    }
+    ifstream ConfigFile(ConfigFilePath);
     nlohmann::json ConfigData = nlohmann::json::parse(ConfigFile);
 
     JSON_FunctionConfigData.Uart_EN = ConfigData.at("UART_EN");    // 获取串口使能参数
@@ -649,6 +678,12 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     JSON_FunctionConfigData.AcrossIdentify_EN = ConfigData.at("ACROSS_IDENTIFY_EN");   // 获取十字识别使能参数
     JSON_FunctionConfigData.CircleIdentify_EN = ConfigData.at("CIRCLE_IDENTIFY_EN");   // 获取圆环识别使能参数
     JSON_FunctionConfigData.ModelDetection_EN = ConfigData.at("MODEL_DETECTION_EN");   // 获取模型推理使能参数
+    JSON_TrackConfigData.Forward = ConfigData.at("FORWARD"); // 获取前瞻点
+    JSON_TrackConfigData.Default_Forward = ConfigData.at("FORWARD"); // 获取默认前瞻点
+    JSON_TrackConfigData.Path_Search_Start = ConfigData.at("PATH_SEARCH_START"); // 获取路径循线起始点
+    JSON_TrackConfigData.Path_Search_End = ConfigData.at("PATH_SEARCH_END"); // 获取路径循线结束点
+    JSON_TrackConfigData.Side_Search_Start = ConfigData.at("SIDE_SEARCH_START");    // 获取边线循线起始点
+    JSON_TrackConfigData.Side_Search_End = ConfigData.at("SIDE_SEARCH_END");    // 获取边线循线结束点
     JSON_TrackConfigData.InflectionPointVectorDistance = ConfigData.at("POINT_DISTANCE");  // 获取元素拐点角度区
     JSON_TrackConfigData.BendPointVectorDistance = ConfigData.at("POINT_DISTANCE");  // 获取边线弯点角度区
     JSON_TrackConfigData.InflectionPointIdentifyAngle[0] = ConfigData.at("MIN_INFLECTION_POINT_ANGLE");  // 获取元素拐点角度区间
@@ -665,15 +700,14 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
     JSON_TrackConfigData.BridgeZoneMotorSpeed = ConfigData.at("BRIDGE_ZONE_MOTOR_SPEED"); // 桥梁区域电机速度
     JSON_TrackConfigData.DangerZoneMotorSpeed = ConfigData.at("DANGER_ZONE_MOTOR_SPEED");   // 危险区域电机速度
     JSON_TrackConfigData.RescueZoneMotorSpeed = ConfigData.at("RESCUE_ZONE_MOTOR_SPEED");   // 救援区域电机速度 
-    JSON_TrackConfigData.CrosswalkZoneMotorSpeed[0] = ConfigData.at("CROSSWALK_ZONE_MOTOR_SPEED_START"); // 斑马线区域发车电机速度
-    JSON_TrackConfigData.CrosswalkZoneMotorSpeed[1] = ConfigData.at("CROSSWALK_ZONE_MOTOR_SPEED_STOP_PREPARE"); // 斑马线区域准备停车电机速度
+    JSON_TrackConfigData.CrosswalkZoneMotorSpeed = ConfigData.at("CROSSWALK_ZONE_MOTOR_SPEED_STOP_PREPARE"); // 斑马线区域准备停车电机速度
     JSON_TrackConfigData.Circle_IN_PREPARE_Time = ConfigData.at("CIRCLE_IN_PREPARE_TIME");  // 准备入环限定时间
     JSON_TrackConfigData.DilateErode_Factor[0] = ConfigData.at("DILATE_FACTOR");  // 获取图形学膨胀系数
     JSON_TrackConfigData.DilateErode_Factor[1] = ConfigData.at("ERODE_FACTOR");  // 获取图形学腐蚀系数
     JSON_TrackConfigData.DangerTime = ConfigData.at("DANGER_TIME");  // 获取进入危险区域的时间
     JSON_TrackConfigData.BridgeTime = ConfigData.at("BRIDGE_TIME");   // 获取进入桥梁区域的时间
     JSON_TrackConfigData.RescueTime = ConfigData.at("RESCUE_TIME"); // 获取救援区进入车库前准备时间上限
-    JSON_TrackConfigData.CrosswalkTime = ConfigData.at("CROSSWALK_TIME");   // 获取进入斑马线区域的时间
+    JSON_TrackConfigData.CrosswalkStopTime = ConfigData.at("CROSSWALK_STOP_TIME");   // 获取进入斑马线区域后停车的时间
     JSON_TrackConfigData.RescueGarageTime = ConfigData.at("RESCUE_GARAGE_TIME");   // 获取救援区域过标志后与开始判断进车库时机的时间间隔 
     JSON_TrackConfigData.RescueZoneConeAvgY[0] = ConfigData.at("RESCUE_ZONE_CONE_AVG_Y_MIN"); // 获取救援区域锥桶平均高度最小阈值
     JSON_TrackConfigData.RescueZoneConeAvgY[1] = ConfigData.at("RESCUE_ZONE_CONE_AVG_Y_MAX"); // 获取救援区域锥桶平均高度最大阈值
@@ -700,11 +734,6 @@ void SYNC::ConfigData_SYNC(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
 */
 void SYNC::UartReceive_Bit_To_Change_SYNC(UartReceiveProtocol *UartReceiveProtocol_p)
 {
-    UartReceiveProtocol_p -> Forward = UartReceiveProtocol_p -> Data_1;
-    UartReceiveProtocol_p -> Path_Search_Start = UartReceiveProtocol_p -> Data_2;
-    UartReceiveProtocol_p -> Path_Search_End = UartReceiveProtocol_p -> Data_3;
-    UartReceiveProtocol_p -> Side_Search_Start = UartReceiveProtocol_p -> Data_4;
-    UartReceiveProtocol_p -> Side_Search_End = UartReceiveProtocol_p -> Data_5;
     UartReceiveProtocol_p -> Control_EN = UartReceiveProtocol_p ->Data_6;
     UartReceiveProtocol_p -> Gyroscope_EN = UartReceiveProtocol_p ->Data_7;
     UartReceiveProtocol_p -> Game_EN = UartReceiveProtocol_p -> Data_8;
@@ -754,11 +783,6 @@ void SYNC::UartSend_Program_To_Change_SYNC(UartSendProtocol *UartSendProtocol_p 
     UartReceive_Change_To_Program_SYNC说明
     @使用后必须先将串口接收数据位和数据交换区同步 Uart_Receive_Bit_To_Change_SYNC()
     同步串口接收数据交换区和程序内部数据
-    Forward
-    Path_Search_Start
-    Path_Search_End
-    Side_Search_Start
-    Side_Search_End
     Gyroscope_EN
     Model_Track_Control
     Game_EN
@@ -766,11 +790,6 @@ void SYNC::UartSend_Program_To_Change_SYNC(UartSendProtocol *UartSendProtocol_p 
 void SYNC::UartReceive_Change_To_Program_SYNC(UartReceiveProtocol *UartReceiveProtocol_p , Data_Path *Data_Path_p , Function_EN *Function_EN_p)
 {
     //  同步串口接收数据交换区至程序内部
-    Data_Path_p -> Forward = UartReceiveProtocol_p -> Forward;
-    Data_Path_p -> Path_Search_Start = UartReceiveProtocol_p -> Path_Search_Start;
-    Data_Path_p -> Path_Search_End = UartReceiveProtocol_p -> Path_Search_End;
-    Data_Path_p -> Side_Search_Start = UartReceiveProtocol_p -> Side_Search_Start;
-    Data_Path_p -> Side_Search_End = UartReceiveProtocol_p -> Side_Search_End;
     Function_EN_p -> Control_EN = (bool)UartReceiveProtocol_p -> Control_EN;
     Function_EN_p -> Gyroscope_EN = UartReceiveProtocol_p -> Gyroscope_EN;
     Function_EN_p -> Game_EN = (bool)UartReceiveProtocol_p -> Game_EN;
@@ -786,6 +805,8 @@ void SYNC::UartReceive_Change_To_Program_SYNC(UartReceiveProtocol *UartReceivePr
 void DataPrint(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
 {
     JSON_FunctionConfigData JSON_FunctionConfigData = Function_EN_p -> JSON_FunctionConfigData_v[0];
+    JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
+    
     cout << "\033c";    // 每次打印前清屏
 
     if(JSON_FunctionConfigData.DataPrint_EN == true)
@@ -803,11 +824,11 @@ void DataPrint(Data_Path *Data_Path_p,Function_EN *Function_EN_p)
 
         // 打印程序参数
         cout << "<---------------------程序参数--------------------->" << endl;
-        cout << " 前瞻点：" << Data_Path_p -> Forward << endl;
-        cout << " 路径线起始点：" << Data_Path_p -> Path_Search_Start << endl; 
-        cout << " 路径线结束点：" << Data_Path_p -> Path_Search_End << endl; 
-        cout << " 边线起始点：" << Data_Path_p -> Side_Search_Start << endl; 
-        cout << " 边线结束点：" << Data_Path_p -> Side_Search_End << endl; 
+        cout << " 前瞻点：" << JSON_TrackConfigData.Forward << endl;
+        cout << " 路径线起始点：" << JSON_TrackConfigData.Path_Search_Start << endl; 
+        cout << " 路径线结束点：" << JSON_TrackConfigData.Path_Search_End << endl; 
+        cout << " 边线起始点：" << JSON_TrackConfigData.Side_Search_Start << endl; 
+        cout << " 边线结束点：" << JSON_TrackConfigData.Side_Search_End << endl; 
         cout << " 比赛状态：";
         switch(Function_EN_p -> Game_EN)
         {

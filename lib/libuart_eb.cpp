@@ -111,14 +111,11 @@ void Uart::UartReceive(UartReceiveProtocol *UartReceiveProtocol_p,bool UartEN)
 				}
 			}
 		}	
+		// 下位机BUG导致
+		UartReceiveProtocol_p -> Game_EN = Game_EN_Default;
 	}
     else
     {
-		UartReceiveProtocol_p -> Forward = Forward_Default;
-        UartReceiveProtocol_p -> Path_Search_Start = Path_Search_Start_Default;
-        UartReceiveProtocol_p -> Path_Search_End = Path_Search_End_Default;
-		UartReceiveProtocol_p -> Side_Search_Start = Side_Search_Start_Default;
-        UartReceiveProtocol_p -> Side_Search_End = Side_Search_End_Default;
 		UartReceiveProtocol_p -> Gyroscope_EN = false;
         UartReceiveProtocol_p -> Game_EN = Game_EN_Default;
     }

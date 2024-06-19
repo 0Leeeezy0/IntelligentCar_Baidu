@@ -88,7 +88,7 @@
 	"BRIDGE_TIME" : 桥梁区域时间
 	"RESCUE_TIME" : 救援区域判断入库时机的时间阈值
 	"RESCUE_GARAGE_TIME" : 救援区域从识别到标志到准备判断入库时机间的时间间隔
-	"CROSSWALK_TIME" : 斑马线区域时间
+	"CROSSWALK_STOP_TIME" : 斑马线区域停车时间
 	"CROSSWALK_IDENTIFY_Y" : 斑马线区域识别的纵坐标：在该纵坐标之下才能执行斑马线区域操作
 	"BOMB_IDENTIFY_Y" : 爆炸物区域识别的纵坐标：在该纵坐标之下才能执行危险区域操作
 	"BRIDGE_IDENTIFY_Y" : 桥区域识别的纵坐标：在该纵坐标之下才能执行桥区域操作

@@ -12,7 +12,7 @@ void Bridge_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
     Judge Judge;
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
-    Data_Path_p -> Forward = JSON_TrackConfigData.BridgeZoneForward;
+    JSON_TrackConfigData.Forward = JSON_TrackConfigData.BridgeZoneForward;
     Data_Path_p -> MotorSpeed = JSON_TrackConfigData.BridgeZoneMotorSpeed;
     ImgPathSearch(Img_Store_p,Data_Path_p);
     Judge.ServoDirAngle_Judge(Data_Path_p);
@@ -28,7 +28,7 @@ void Danger_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
     Judge Judge;
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
 
-    Data_Path_p -> Forward = JSON_TrackConfigData.DangerZoneForward;
+    JSON_TrackConfigData.Forward = JSON_TrackConfigData.DangerZoneForward;
 
     while(Function_EN_p -> ThreadModelDetection_EN == false);  // 等待模型推理完成
 
@@ -86,9 +86,8 @@ void Crosswalk_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Pat
 
     switch(Data_Path_p -> Crosswalk_Zone_Step)
     {
-        case START:{ Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CrosswalkZoneMotorSpeed[0]; Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; break; }
-        case STOP_PREPARE:{ Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CrosswalkZoneMotorSpeed[1]; Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; break; }
-        case STOP:{ Data_Path_p -> MotorSpeed = 0; Data_Path_p -> ServoDir = 0; Data_Path_p -> ServoAngle = 0; break; }
+        case STOP_PREPARE:{ Data_Path_p -> MotorSpeed = JSON_TrackConfigData.CrosswalkZoneMotorSpeed; break; }
+        case STOP:{ Data_Path_p -> MotorSpeed = 0; break; }
     }
     ImgPathSearch(Img_Store_p,Data_Path_p);
     Judge.ServoDirAngle_Judge(Data_Path_p);
@@ -109,7 +108,7 @@ void Rescue_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
     int cone_Avg_Y = 0;
     static int Num = 0;
 
-    Data_Path_p -> Forward = JSON_TrackConfigData.DangerZoneForward;
+    JSON_TrackConfigData.Forward = JSON_TrackConfigData.DangerZoneForward;
 
     while(Function_EN_p -> ThreadModelDetection_EN == false);  // 等待模型推理完成
 
