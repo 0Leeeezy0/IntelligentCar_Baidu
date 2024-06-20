@@ -323,7 +323,7 @@ void Judge::ServoDirAngle_Judge(Data_Path *Data_Path_p)
     static int Count = 0; 
     static int Dir = 0;
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
-(Data_Path_p -> ServoAngle) = (Data_Path_p -> TrackCoordinate[(JSON_TrackConfigDataForward)-(JSON_TrackConfigData.Path_Search_Start)][0]) - 160;   
+    (Data_Path_p -> ServoAngle) = (Data_Path_p -> TrackCoordinate[(JSON_TrackConfigData.Forward)-(JSON_TrackConfigData.Path_Search_Start)][0]) - 160;   
     // 计算舵机方向和角度
     if((Data_Path_p -> ServoAngle) < 0)
     {

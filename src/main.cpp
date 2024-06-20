@@ -66,7 +66,7 @@ int main()
                 case CAMERA_CATCH_LOOP:
                 {
                     // 前瞻点初始化
-                    JSON_TrackConfigData.Forward = JSON_TrackConfigData.Default_Forward;
+                    Data_Path_p -> JSON_TrackConfigData_v[0].Forward = Data_Path_p -> JSON_TrackConfigData_v[0].Default_Forward;
 
                     Img_Store_p -> Img_Color = (Img_Store_p -> Img_Capture).clone();
                     ImgProcess.ImgCompress(Img_Store_p -> Img_Color,JSON_FunctionConfigData.ImgCompress_EN);

@@ -12,7 +12,7 @@ void Bridge_Zone(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
     Judge Judge;
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
-    JSON_TrackConfigData.Forward = JSON_TrackConfigData.BridgeZoneForward;
+    Data_Path_p -> JSON_TrackConfigData_v[0].Forward = JSON_TrackConfigData.BridgeZoneForward;
     Data_Path_p -> MotorSpeed = JSON_TrackConfigData.BridgeZoneMotorSpeed;
     ImgPathSearch(Img_Store_p,Data_Path_p);
     Judge.ServoDirAngle_Judge(Data_Path_p);
@@ -27,8 +27,7 @@ void Danger_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
 {
     Judge Judge;
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
-
-    JSON_TrackConfigData.Forward = JSON_TrackConfigData.DangerZoneForward;
+    Data_Path_p -> JSON_TrackConfigData_v[0].Forward = JSON_TrackConfigData.DangerZoneForward;
 
     while(Function_EN_p -> ThreadModelDetection_EN == false);  // 等待模型推理完成
 
@@ -107,8 +106,6 @@ void Rescue_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
     int cone_Num = 0;
     int cone_Avg_Y = 0;
     static int Num = 0;
-
-    JSON_TrackConfigData.Forward = JSON_TrackConfigData.DangerZoneForward;
 
     while(Function_EN_p -> ThreadModelDetection_EN == false);  // 等待模型推理完成
 

@@ -4,8 +4,13 @@
 			"path": ".."
 		},
 		{
-			"path": "../../QUARK"
+			"path": "../../../QUARK"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"cmath": "cpp",
+			"complex": "cpp"
+		}
+	}
 }
