@@ -25,6 +25,7 @@
 #include <sys/time.h>
 #include <cstdlib>
 #include <memory>
+#include <mutex>
 #include <pthread.h>
 #include <thread>
 #include <opencv2/opencv.hpp>

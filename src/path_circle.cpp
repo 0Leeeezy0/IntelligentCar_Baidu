@@ -12,7 +12,7 @@ void CircleTrack_Step_IN_Prepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 
     switch(Data_Path_p -> Track_Kind)
     {
-        case L_CIRCLE_TRACK:
+        case L_CIRCLE_TRACK_OUTSIDE:
         {
             // 准备左入环补线
             // 赛道彩色图像
@@ -22,7 +22,7 @@ void CircleTrack_Step_IN_Prepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
             
             break;
         }
-        case R_CIRCLE_TRACK:
+        case R_CIRCLE_TRACK_OUTSIDE:
         {
             // 准备右入环补线
             // 赛道彩色图像
@@ -43,7 +43,7 @@ void CircleTrack_Step_IN_Prepare_Stright(Img_Store *Img_Store_p,Data_Path *Data_
 
     switch(Data_Path_p -> Previous_Circle_Kind)
     {
-        case L_CIRCLE_TRACK:
+        case L_CIRCLE_TRACK_OUTSIDE:
         {
             // 准备左入环补线
             // 赛道彩色图像
@@ -53,7 +53,7 @@ void CircleTrack_Step_IN_Prepare_Stright(Img_Store *Img_Store_p,Data_Path *Data_
             
             break;
         }
-        case R_CIRCLE_TRACK:
+        case R_CIRCLE_TRACK_OUTSIDE:
         {
             // 准备右入环补线
             // 赛道彩色图像
@@ -73,7 +73,7 @@ void CircleTrack_Step_IN(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
     switch(Data_Path_p -> Previous_Circle_Kind)
     {
-        case L_CIRCLE_TRACK:
+        case L_CIRCLE_TRACK_OUTSIDE:
         {
             // 左入环补线
             // 赛道彩色图像
@@ -83,7 +83,7 @@ void CircleTrack_Step_IN(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
             
             break;
         }
-        case R_CIRCLE_TRACK:
+        case R_CIRCLE_TRACK_OUTSIDE:
         {
             // 右入环补线
             // 赛道彩色图像
@@ -104,7 +104,7 @@ void CircleTrack_Step_OUT(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 
     switch(Data_Path_p -> Previous_Circle_Kind)
     {
-        case L_CIRCLE_TRACK:
+        case L_CIRCLE_TRACK_OUTSIDE:
         {
             // 准备左出环补线
             // 赛道彩色图像
@@ -114,7 +114,7 @@ void CircleTrack_Step_OUT(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
             
             break;
         }
-        case R_CIRCLE_TRACK:
+        case R_CIRCLE_TRACK_OUTSIDE:
         {
             // 准备右出环补线
             // 赛道彩色图像
@@ -135,7 +135,7 @@ void Circle2CommonTrack(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 
     switch(Data_Path_p -> Previous_Circle_Kind)
     {
-        case L_CIRCLE_TRACK:
+        case L_CIRCLE_TRACK_OUTSIDE:
         {
             // 准备左出环后直线环补线
             // 赛道彩色图像
@@ -145,7 +145,7 @@ void Circle2CommonTrack(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
             
             break;
         }
-        case R_CIRCLE_TRACK:
+        case R_CIRCLE_TRACK_OUTSIDE:
         {
             // 准备右出环后直线补线
             // 赛道彩色图像

@@ -55,10 +55,12 @@ typedef enum TrackKind
 {
     STRIGHT_TRACK = 0,   // 直赛道
     BEND_TRACK = 1,   // 弯赛道
-    R_CIRCLE_TRACK = 2,   // 右圆环赛道
-    L_CIRCLE_TRACK = 3,   // 左圆环赛道
-    ACROSS_TRACK = 4,   // 十字赛道
-    MODEL_TRACK = 5,    // 模型赛道
+    R_CIRCLE_TRACK_OUTSIDE = 2,   // 右圆环赛道外
+    R_CIRCLE_TRACK_INSIDE = 3,   // 右圆环赛道内
+    L_CIRCLE_TRACK_OUTSIDE = 4,   // 左圆环赛道外
+    L_CIRCLE_TRACK_INSIDE = 5,   // 左圆环赛道内
+    ACROSS_TRACK = 7,   // 十字赛道
+    MODEL_TRACK = 8,    // 模型赛道
 }TrackKind;
 
 
@@ -152,6 +154,7 @@ typedef struct JSON_FunctionConfigData
     bool AcrossIdentify_EN;    // 十字特征点识别使能
     bool CircleIdentify_EN;    // 圆环特征点识别使能
     bool ModelDetection_EN;     // 模型推理使能
+    bool DangerZone_Cone_Detection_EN;  // 危险区域锥桶推理使能
 }JSON_FunctionConfigData;
 
 /*
@@ -167,17 +170,18 @@ typedef struct JSON_TrackConfigData
     int Side_Search_End; // 寻边线结束点
     int TrackWidth = 0; // 赛道宽度
     int CircleOutWidth = 0; // 圆环出环补线终点与中线距离
+    int BendPointNum = 0;   // 弯点数量
     int InflectionPointIdentifyAngle[2] = {0};    // 元素拐点识别角度
     int InflectionPointVectorDistance = 0;   // 边线元素拐点向量距离
     int BendPointIdentifyAngle[2] = {0};    // 边线弯点识别角度
     int BendPointVectorDistance = 0;   // 边线弯点向量距离
-    int CommonMotorSpeed[5] = {0};    // 电机速度：0.直道 1.小角度弯道 2.大角度弯道 3.十字赛道 4.圆环赛道
+    int CommonMotorSpeed[6] = {0};    // 电机速度：0.直道 1.小角度弯道 2.大角度弯道 3.十字赛道 4.圆环赛道 5.圆环赛道出环
     int DilateErode_Factor[2] = {0};    // 图形学膨胀腐蚀系数
     int BridgeZoneMotorSpeed = 0;   // 桥梁区域电机速度
     int DangerZoneMotorSpeed = 0;   // 危险区域电机速度
     int RescueZoneMotorSpeed = 0;   // 救援区域电机速度
     int CrosswalkZoneMotorSpeed = 0;    // 斑马线区域电机准备停车速度
-    int Circle_IN_PREPARE_Time = 0;    // 准备入环限定时间
+    int Circle_In_Prepare_Time = 0;    // 准备入环限定时间
     int DangerTime = 0; // 进入危险区域的时间
     int BridgeTime = 0; // 进入桥梁区域的时间
     int RescueTime = 0; // 救援区进入车库前准备时间上限
@@ -199,7 +203,7 @@ typedef struct JSON_TrackConfigData
 */
 typedef struct Img_Store
 {
-    cv::Mat Img_Capture;    // 使用
+    std::queue<cv::Mat> Img_Capture;    // 摄像头图像
     cv::Mat Img_Color;  // 使用
     cv::Mat Img_Color_Unpivot;
     cv::Mat Img_Gray;     // 使用
@@ -315,12 +319,6 @@ typedef struct UartReceiveProtocol
     unsigned char Data_1;
     unsigned char Data_2;
     unsigned char Data_3;
-    unsigned char Data_4;
-    unsigned char Data_5;
-    unsigned char Data_6;
-    unsigned char Data_7;
-    unsigned char Data_8;
-    unsigned char Data_9;
 
     //串口帧尾
     unsigned char CRC16;    // 0XA2

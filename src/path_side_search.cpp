@@ -214,7 +214,7 @@ void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
             NumSearch[0]++;
             Data_Path_p -> NumSearch[0] = NumSearch[0]-1;
 
-            if(NumSearch[0] >= 1000)
+            if(NumSearch[0] >= 500)
             {
                 break;
             }
@@ -274,7 +274,7 @@ void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
             NumSearch[1]++;
             Data_Path_p -> NumSearch[1] = NumSearch[1]-1;
 
-            if(NumSearch[1] >= 1000)
+            if(NumSearch[1] >= 500)
             {
                 break;
             }

@@ -37,7 +37,7 @@ int main()
     VideoCapture Camera; // 定义相机
     CameraInit(Camera,JSON_FunctionConfigData.Camera_EN,120);
     // 开启摄像头图像获取线程
-    thread CameraImgCapture (CameraImgGetThread,ref(Camera),ref(Img_Store_p -> Img_Capture));
+    thread CameraImgCapture (CameraImgGetThread,ref(Camera),ref(Img_Store_p));
     CameraImgCapture.detach();
 
     // 模型初始化
@@ -68,7 +68,8 @@ int main()
                     // 前瞻点初始化
                     Data_Path_p -> JSON_TrackConfigData_v[0].Forward = Data_Path_p -> JSON_TrackConfigData_v[0].Default_Forward;
 
-                    Img_Store_p -> Img_Color = (Img_Store_p -> Img_Capture).clone();
+                    CameraImgGet(Img_Store_p);
+                    // (Img_Store_p -> Img_Color) = (Img_Store_p -> Img_Capture).clone();
                     ImgProcess.ImgCompress(Img_Store_p -> Img_Color,JSON_FunctionConfigData.ImgCompress_EN);
                     ImgProcess.ImgPrepare(Img_Store_p,Data_Path_p,Function_EN_p); // 图像预处理
 

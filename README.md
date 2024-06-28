@@ -79,7 +79,7 @@
 	"RESCUE_ZONE_MOTOR_SPEED" : 危险区域电机速度
 	"CROSSWALK_ZONE_MOTOR_SPEED_START" : 斑马线区域出发电机速度
 	"CROSSWALK_ZONE_MOTOR_SPEED_STOP_PREPARE" : 斑马线区域准备停车电机速度
-	"CIRCLE_IN_PREPARE_TIME" : 圆环准备入环误判后自动进入占位时间间隔
+	"Circle_In_Prepare_Time" : 圆环准备入环误判后自动进入占位时间间隔
 
 	"DILATE_FACTOR" : 形态学膨胀系数
 	"ERODE_FACTOR" : 形态学腐蚀系数

@@ -4,6 +4,8 @@
 using namespace std;
 using namespace cv;
 
+mutex CameraCapture_Mutex;  // 摄像头采集资源互斥锁
+
 /*
 	CameraInit说明
 	摄像头初始化
@@ -39,13 +41,35 @@ void CameraInit(VideoCapture& Camera,CameraKind Camera_EN,int FPS)
 /*
 	摄像头获取图像线程
 */
-void CameraImgGetThread(VideoCapture& Camera,Mat& Img)
+void CameraImgGetThread(VideoCapture& Camera,Img_Store *Img_Store_p)
 {
+	Mat Img;
 	while(1)
 	{
 		Camera >> Img;   // 将视频流转为图像流
+		CameraCapture_Mutex.lock();
+		if(!Img_Store_p -> Img_Capture.empty())
+		{
+			(Img_Store_p -> Img_Capture).pop();
+		}
+		(Img_Store_p -> Img_Capture).push(Img);
+		CameraCapture_Mutex.unlock();
 	}
 }
+
+
+/*
+	获取图像
+*/
+void CameraImgGet(Img_Store *Img_Store_p)
+{
+	while(Img_Store_p -> Img_Capture.empty());
+	CameraCapture_Mutex.lock();
+	(Img_Store_p -> Img_Color) = (Img_Store_p -> Img_Capture).front().clone();
+	(Img_Store_p -> Img_Capture).pop();
+	CameraCapture_Mutex.unlock();
+}
+
 
 
 /*
@@ -248,7 +272,7 @@ void ImgProcess::ImgText(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Function_
 	int ImgWidth = (Img_Store_p -> Img_Color).cols;	// 宽度
 	(Img_Store_p -> Img_Text) = Mat(200,ImgWidth,CV_8UC3,Scalar(0,0,0));	// 显示文字画布
 
-	string TextTrackKind[6] = {"STRIGHT_TRACK","BEND_TRACK","R_CIRCLE_TRACK","L_CIRCLE_TRACK","ACROSS_TRACK","MODEL_TRACK"};
+	string TextTrackKind[8] = {"STRIGHT_TRACK","BEND_TRACK","R_CIRCLE_TRACK_OUTSIDE","R_CIRCLE_TRACK_INSIDE","L_CIRCLE_TRACK_OUTSIDE","L_CIRCLE_TRACK_INSIDE","ACROSS_TRACK","MODEL_TRACK"};
 	string TextCircleTrackStep[5] = {"IN_PREPARE","IN","OUT_PREPARE","OUT","INIT"};
 	string TextGyroscope[2] = {"FALSE","TRUE"};
 	string TextModelTrackKind[5] = {"BRIDGE_ZONE","CROSSWALK_ZONE","DANGER_ZONE","RESCUE_ZONE","CHASE_ZONE"};

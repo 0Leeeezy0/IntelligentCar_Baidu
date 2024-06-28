@@ -27,6 +27,7 @@ void Danger_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
 {
     Judge Judge;
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
+    JSON_FunctionConfigData JSON_FunctionConfigData = Function_EN_p -> JSON_FunctionConfigData_v[0];
     Data_Path_p -> JSON_TrackConfigData_v[0].Forward = JSON_TrackConfigData.DangerZoneForward;
 
     while(Function_EN_p -> ThreadModelDetection_EN == false);  // 等待模型推理完成
@@ -36,7 +37,7 @@ void Danger_Zone(PPNCDetection& PPNCDetection,Img_Store *Img_Store_p,Data_Path *
     for(int i=0;i<PPNCDetection.results.size();i++)
     {
         PredictResult result = PPNCDetection.results[i];
-        if(result.label == "cone")
+        if(result.label == "cone" && JSON_FunctionConfigData.DangerZone_Cone_Detection_EN == true)
         {
             // 锥桶避障补线
             circle((Img_Store_p -> Img_OTSU),Point(result.x+int(result.width/2),result.y+int(result.height/2)),JSON_TrackConfigData.DangerZone_Cone_Radius,Scalar(255),3);	

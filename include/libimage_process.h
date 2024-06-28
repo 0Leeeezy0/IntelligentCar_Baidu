@@ -21,7 +21,15 @@ void CameraInit(cv::VideoCapture& Camera,CameraKind Camera_EN,int FPS);
     Camera 传入VideoCapture类
     Img_Store_p 图像存储结构体指针
 */
-void CameraImgGetThread(cv::VideoCapture& Camera,cv::Mat& Img);
+void CameraImgGetThread(cv::VideoCapture& Camera,Img_Store *Img_Store_p);
+
+
+/*
+	获取图像
+    @参数说明
+    Img_Store_p 图像存储结构体指针
+*/
+void CameraImgGet(Img_Store *Img_Store_p);
 
 
 class ImgProcess
