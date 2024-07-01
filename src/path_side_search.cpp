@@ -13,24 +13,28 @@ using namespace cv;
 void ImgPathSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
-    //变量设置
+    // 变量设置
     //————————————————————————————————————————————————————————————————————————————————————//
-    //边线坐标
+    // 边线坐标
     int X[2] = {0};
     int Y = 0;
 
     // 设置路径起始坐标
-    Data_Path_p -> TrackCoordinate[0][0] = ((Data_Path_p -> SideCoordinate_Eight[JSON_TrackConfigData.Path_Search_Start][0])+(Data_Path_p -> SideCoordinate_Eight[JSON_TrackConfigData.Path_Search_Start][2]))/2;
+    Data_Path_p -> TrackCoordinate[0][0] = ((Data_Path_p -> SideCoordinate_Eight[JSON_TrackConfigData.Path_Search_Start-JSON_TrackConfigData.Side_Search_Start+1][0])+(Data_Path_p -> SideCoordinate_Eight[JSON_TrackConfigData.Path_Search_Start-JSON_TrackConfigData.Side_Search_Start+1][2]))/2;
     Data_Path_p -> TrackCoordinate[0][1] = 239-(JSON_TrackConfigData.Path_Search_Start);
 
-    int NumSearch = 0;  //坐标数组的行序号
+    int NumSearch = 0;  // 坐标数组的行序号
     //————————————————————————————————————————————————————————————————————————————————————//
 
-    //寻线
+    // 寻线
     //————————————————————————————————————————————————————————————————————————————————————//
+    if(Img_Store_p -> ImgNum <= 5)
+    {
+
+    }
     for(Y = 239-(JSON_TrackConfigData.Path_Search_Start);Y >= 239-(JSON_TrackConfigData.Path_Search_End);Y--)
     {
-        //左边线
+        // 左边线
         for(X[0] = (Data_Path_p -> TrackCoordinate[NumSearch][0]);X[0] >= 0;X[0]--)
         {
             if((Img_Store_p -> Img_OTSU).at<uchar>(Y,X[0]) == 255)
@@ -41,7 +45,7 @@ void ImgPathSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
                 break;
             }
         }
-        //右边线
+        // 右边线
         for(X[1] = (Data_Path_p -> TrackCoordinate[NumSearch][0]);X[1] <= 319;X[1]++)
         {
             if((Img_Store_p -> Img_OTSU).at<uchar>(Y,X[1]) == 255)
@@ -54,13 +58,13 @@ void ImgPathSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
         }
         if(NumSearch != 0)
         {
-            circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> SideCoordinate[NumSearch][0]),(Data_Path_p -> SideCoordinate[NumSearch][1])),1,Scalar(0,0,255),1);	//左边线画点
-            circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> SideCoordinate[NumSearch][2]),(Data_Path_p -> SideCoordinate[NumSearch][3])),1,Scalar(0,0,255),1);	//右边线画点
+            circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> SideCoordinate[NumSearch][0]),(Data_Path_p -> SideCoordinate[NumSearch][1])),1,Scalar(0,0,255),1);	// 左边线画点
+            circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> SideCoordinate[NumSearch][2]),(Data_Path_p -> SideCoordinate[NumSearch][3])),1,Scalar(0,0,255),1);	// 右边线画点
         }
         else
         {
-            circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> SideCoordinate[NumSearch][0]),(Data_Path_p -> SideCoordinate[NumSearch][1])),6,Scalar(0,0,255),2);	//左边线起点画点
-            circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> SideCoordinate[NumSearch][2]),(Data_Path_p -> SideCoordinate[NumSearch][3])),6,Scalar(0,0,255),2);	//右边线起点画点
+            circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> SideCoordinate[NumSearch][0]),(Data_Path_p -> SideCoordinate[NumSearch][1])),6,Scalar(0,0,255),2);	// 左边线起点画点
+            circle((Img_Store_p -> Img_Track),Point((Data_Path_p -> SideCoordinate[NumSearch][2]),(Data_Path_p -> SideCoordinate[NumSearch][3])),6,Scalar(0,0,255),2);	// 右边线起点画点
         }
 
         // 寻边线提前结束条件：1.左右边线间距小于20 2.左右边线位置反了
@@ -90,13 +94,14 @@ void ImgPathSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
 {
     JSON_TrackConfigData JSON_TrackConfigData = Data_Path_p -> JSON_TrackConfigData_v[0];
-    //变量设置
+    // 变量设置
     //————————————————————————————————————————————————————————————————————————————————————//
     // 寻种子变量设置
     // 边线坐标
     int X = 0;
     int Y = 0;
-    // 设置路径起始坐标
+    // 设置种子寻找起始点横坐标
+    static int StartX = 160;
 
     // 八临域寻线变量设置
     int SeedGrow_Dir[16][4] = { {0,1,0,1} , {-1,1,1,1} , {-1,0,1,0} , {-1,-1,1,-1} , {0,-1,0,-1} , {1,-1,-1,-1} , {1,0,-1,0} , {1,1,-1,1} ,
@@ -104,18 +109,25 @@ void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
     int Dir_Num = 0;
     int Dir_Num_Store = 0;
 
-    int NumSearch[2] = {0};  //坐标数组的行序号
+    int NumSearch[2] = {0};  // 坐标数组的行序号
     //————————————————————————————————————————————————————————————————————————————————————//
 
-    //八邻域寻边线
+    // 八邻域寻边线
     //————————————————————————————————————————————————————————————————————————————————————//
+    // 确定种子寻找起始点
+    // 前5帧默认为160开始向左右寻找
+    // 之后所有帧的起始点由上一帧的中点决定
+    if(Img_Store_p -> ImgNum > 5)
+    {
+        StartX = ((Data_Path_p -> SideCoordinate_Eight[0][0])+(Data_Path_p -> SideCoordinate_Eight[0][2]))/2;
+    }
     // 八邻域种子寻找
     if(NumSearch[0] <= 1 && NumSearch[1] <= 1)
     {
         for(Y = 239-(JSON_TrackConfigData.Side_Search_Start);Y >= 238-(JSON_TrackConfigData.Side_Search_Start);Y--)
         {
-            //左边线
-            for(X = 160;X >= 0;X--)
+            // 左边线
+            for(X = StartX;X >= 0;X--)
             {
                 if((Img_Store_p -> Img_OTSU).at<uchar>(Y,X) == 255)
                 {
@@ -126,8 +138,8 @@ void ImgSideSearch(Img_Store *Img_Store_p,Data_Path *Data_Path_p)
                     break;
                 }
             }
-            //右边线
-            for(X = 160;X <= 319;X++)
+            // 右边线
+            for(X = StartX;X <= 319;X++)
             {
                 if((Img_Store_p -> Img_OTSU).at<uchar>(Y,X) == 255)
                 {
