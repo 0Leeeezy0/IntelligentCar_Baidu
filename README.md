@@ -51,54 +51,67 @@
 ```
 # 配置文件config.json参数
 ```json
-	"UART_EN" : 串口使能
-	"IMG_COMPRESS_EN" : 图像压缩使能：开启会导致性能损耗
-	"CAMERA_EN" : 相机使能：0.演示视频 1./dev/video0 2./dev/video1
-	"VIDEO_SHOW_EN" : 图像显示使能：若使用SSH务必关上
-	"DATA_PRINT_EN" : 数据显示使能
-	"ACROSS_IDENTIFY_EN" : 十字判断使能
-	"CIRCLE_IDENTIFY_EN" : 圆环判断使能
-	"MODEL_DETECTION_EN" : 模型推理使能
+"UART_EN" : 串口使能
+"IMG_COMPRESS_EN" : 图像压缩使能
+"CAMERA_EN" : 摄像头使能：0.演示视频 1./dev/video0 2./dev/video1
+"VIDEO_SHOW_EN" : 图像显示使能：使用ssh时务必关掉，否则延迟极大
+"IMAGE_SAVE_EN" : 图像存储使能：比赛时务必关闭否则有轻微延迟
+"DATA_PRINT_EN" : 数据打印使能：比赛时务必关闭否则有轻微延迟
+"ACROSS_IDENTIFY_EN" : 十字赛道识别使能
+"CIRCLE_IDENTIFY_EN" : 圆环赛道识别使能
+"MODEL_DETECTION_EN" : 模型赛道识别使能
+"DANGER_ZONE_CONE_DETECTION_EN" : 危险区域锥桶识别使能：防止比赛时危险区域放置的过于刁钻，关闭则一路将锥桶撞开以完赛
 
-	"POINT_DISTANCE" : 向量法识别拐点弯点上下两点距离
-	"MIN_INFLECTION_POINT_ANGLE" : 最小拐点角度
-	"MAX_INFLECTION_POINT_ANGLE" : 最大拐点角度
-	"MIN_BEND_POINT_ANGLE" : 最小弯点角度
-	"MAX_BEND_POINT_ANGLE" : 最大弯点角度
+"FORWARD" : 前瞻点高度
+"PATH_SEARCH_START" : 路径巡线起始点
+"PATH_SEARCH_END" : 路径巡线结束点
+"SIDE_SEARCH_START" : 边线巡线起始点
+"SIDE_SEARCH_END" : 边线巡线结束点
 
-	"TRACK_WIDTH" : 路径结束线上的赛道宽度
-	"CIRCLE_OUT_WIDTH" : 圆环出环补线终点与中线距离
+"POINT_DISTANCE" : 拐点弯点向量法始终点距离
+"LITTLE_ANGLE_BEND_POINT_NUM" : 小角度弯道弯点阈值
+"BIG_ANGLE_BEND_POINT_NUM" : 大角度弯道弯点阈值
+"MIN_INFLECTION_POINT_ANGLE" : 拐点识别最小角度
+"MAX_INFLECTION_POINT_ANGLE" : 拐点识别最大角度
+"MIN_BEND_POINT_ANGLE" : 弯点识别最小角度
+"MAX_BEND_POINT_ANGLE" : 弯点识别最大角度
 
-	"STRIGHT_TRACK_MOTOR_SPEED" : 直线赛道速度
-	"LITTLE_ANGLE_BEND_TRACK_MOTOR_SPEED" : 小角度弯道电机速度
-	"BIG_ANGLE_BEND_TRACK_MOTOR_SPEED" : 大角度弯道电机速度
-	"ACROSS_TRACK_MOTOR_SPEED" : 十字赛道电机速度
-	"CIRCLE_TRACK_MOTOR_SPEED" : 圆环赛道电机速度
-	"BRIDGE_ZONE_MOTOR_SPEED" : 桥区域电机速度
-	"DANGER_ZONE_MOTOR_SPEED" : 危险区域电机速度
-	"RESCUE_ZONE_MOTOR_SPEED" : 危险区域电机速度
-	"CROSSWALK_ZONE_MOTOR_SPEED_START" : 斑马线区域出发电机速度
-	"CROSSWALK_ZONE_MOTOR_SPEED_STOP_PREPARE" : 斑马线区域准备停车电机速度
-	"Circle_In_Prepare_Time" : 圆环准备入环误判后自动进入占位时间间隔
+"TRACK_WIDTH" : 准备入环补线宽度：与另一侧边线距离
+"CIRCLE_OUT_WIDTH" : 出环补线宽度：与中心线距离
 
-	"DILATE_FACTOR" : 形态学膨胀系数
-	"ERODE_FACTOR" : 形态学腐蚀系数
+"STRIGHT_TRACK_MOTOR_SPEED" : 直赛道电机速度
+"LITTLE_ANGLE_BEND_TRACK_MOTOR_SPEED" :小角度弯道电机速度
+"BIG_ANGLE_BEND_TRACK_MOTOR_SPEED" : 大角度弯道电机速度
+"ACROSS_TRACK_MOTOR_SPEED" : 十字赛道电机速度
+"CIRCLE_TRACK_MOTOR_SPEED_OUTSIDE" : 外圆环电机速度：准备入环
+"CIRCLE_TRACK_MOTOR_SPEED_INSIDE" : 内圆环电机速度：入环、准备出环、出环
+"BRIDGE_ZONE_MOTOR_SPEED" : 桥梁区域电机速度
+"DANGER_ZONE_MOTOR_SPEED" : 危险区域电机速度
+"RESCUE_ZONE_MOTOR_SPEED" : 救援区域电机速度
+"CROSSWALK_ZONE_MOTOR_SPEED_STOP_PREPARE" : 斑马线区域准备停车阶段电机速度
+"CIRCLE_IN_PREPARE_TIME" : 圆环准备入环状态清零时间
 
-	"DANGER_TIME" : 危险区域时间
-	"BRIDGE_TIME" : 桥梁区域时间
-	"RESCUE_TIME" : 救援区域判断入库时机的时间阈值
-	"RESCUE_GARAGE_TIME" : 救援区域从识别到标志到准备判断入库时机间的时间间隔
-	"CROSSWALK_STOP_TIME" : 斑马线区域停车时间
-	"CROSSWALK_IDENTIFY_Y" : 斑马线区域识别的纵坐标：在该纵坐标之下才能执行斑马线区域操作
-	"BOMB_IDENTIFY_Y" : 爆炸物区域识别的纵坐标：在该纵坐标之下才能执行危险区域操作
-	"BRIDGE_IDENTIFY_Y" : 桥区域识别的纵坐标：在该纵坐标之下才能执行桥区域操作
-	"RESCUE_IDENTIFY_Y" : 救援区域标识牌识别的纵坐标：在该纵坐标之下才能执行救援区域操作
-	"RESCUE_ZONE_CONE_AVG_Y_MIN" : 救援区域进入车库的锥桶平均高度最小阈值
-	"RESCUE_ZONE_CONE_AVG_Y_MAX" : 救援区域进入车库的锥桶平均高度最大阈值
-	"DANGER_ZONE_CONE_RADIUS" : 危险区域锥桶半径
-	"DANGER_ZONE_BLOCK_RADIUS" : 危险区域路障半径
-	"DANGER_ZONE_FORWARD" : 危险区域前瞻值
-	"BRIDGE_ZONE_FORWARD" : 桥梁区域前瞻值
+"DILATE_FACTOR" : 图形学膨胀系数
+"ERODE_FACTOR" : 图形学腐蚀系数
+"FILTER_FACTOR" : 路径滤波系数：越大滤波效果越弱
+
+"DANGER_TIME" : 危险区域时间
+"BRIDGE_TIME" : 桥梁区域时间
+"RESCUE_TIME" : 救援区域时间：识别到牌子之后到进入车库之间的时间阈值
+"RESCUE_GARAGE_TIME" : 救援区域时间：识别到牌子到开始决策入库时间的时间阈值
+"CROSSWALK_STOP_TIME" : 斑马线区域停车时间：比赛时该时间应极大约300以上
+"CROSSWALK_IDENTIFY_Y" : 斑马线区域标志识别高度：越小越早识别
+"BOMB_IDENTIFY_Y" : 危险区域标志识别高度：越小越早识别
+"BRIDGE_IDENTIFY_Y" : 桥梁区域识别高度：越小越早识别
+"RESCUE_IDENTIFY_Y" : 救援区域标志识别高度:越小越早识别
+"DANGER_ZONE_BARRIER_Y" : 危险区域障碍物高度阈值：当障碍物离车身远的时候舵机打角乘以倍率使得大角更大，当障碍物离车身近的时候舵机打角正常，使得避障的时候能够避开距离较近的障碍物
+"DANGER_ZONE_BARRIER_SERVOR_ANGLE_FACTOR" : 危险区域障碍物舵机打角倍率
+"RESCUE_ZONE_CONE_AVG_Y_MIN" : 救援区域入库时间决策高度最小值
+"RESCUE_ZONE_CONE_AVG_Y_MAX" : 救援区域入库时间决策高度最大值
+"DANGER_ZONE_CONE_RADIUS" : 危险区域锥桶半径
+"DANGER_ZONE_BLOCK_RADIUS" : 危险区域方块半径
+"DANGER_ZONE_FORWARD" : 危险区域前瞻点高度
+"BRIDGE_ZONE_FORWARD" : 桥梁区域前瞻点高度
 ```
 # 工程编写逻辑详解
 ## 多线程

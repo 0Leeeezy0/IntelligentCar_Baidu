@@ -59,8 +59,8 @@ typedef enum TrackKind
     R_CIRCLE_TRACK_INSIDE = 3,   // 右圆环赛道内
     L_CIRCLE_TRACK_OUTSIDE = 4,   // 左圆环赛道外
     L_CIRCLE_TRACK_INSIDE = 5,   // 左圆环赛道内
-    ACROSS_TRACK = 7,   // 十字赛道
-    MODEL_TRACK = 8,    // 模型赛道
+    ACROSS_TRACK = 6,   // 十字赛道
+    MODEL_TRACK = 7,    // 模型赛道
 }TrackKind;
 
 
@@ -154,6 +154,7 @@ typedef struct JSON_FunctionConfigData
     bool AcrossIdentify_EN;    // 十字特征点识别使能
     bool CircleIdentify_EN;    // 圆环特征点识别使能
     bool ModelDetection_EN;     // 模型推理使能
+    bool RescueZone_Lable_Detection_EN;  // 救援区域标志推理使能
     bool DangerZone_Cone_Detection_EN;  // 危险区域锥桶推理使能
 }JSON_FunctionConfigData;
 
@@ -170,13 +171,14 @@ typedef struct JSON_TrackConfigData
     int Side_Search_End; // 寻边线结束点
     int TrackWidth = 0; // 赛道宽度
     int CircleOutWidth = 0; // 圆环出环补线终点与中线距离
-    int BendPointNum = 0;   // 弯点数量
+    int BendPointNum[2] = {0};   // 弯点数量
     int InflectionPointIdentifyAngle[2] = {0};    // 元素拐点识别角度
     int InflectionPointVectorDistance = 0;   // 边线元素拐点向量距离
     int BendPointIdentifyAngle[2] = {0};    // 边线弯点识别角度
     int BendPointVectorDistance = 0;   // 边线弯点向量距离
-    int CommonMotorSpeed[6] = {0};    // 电机速度：0.直道 1.小角度弯道 2.大角度弯道 3.十字赛道 4.圆环赛道 5.圆环赛道出环
+    int CommonMotorSpeed[6] = {0};    // 电机速度：0.直道 1.小角度弯道 2.大角度弯道 3.十字赛道 4.圆环赛道(外) 5.圆环赛道(内)
     int DilateErode_Factor[2] = {0};    // 图形学膨胀腐蚀系数
+    float Filter_Factor = 0;  // 路径线滤波强度系数
     int BridgeZoneMotorSpeed = 0;   // 桥梁区域电机速度
     int DangerZoneMotorSpeed = 0;   // 危险区域电机速度
     int RescueZoneMotorSpeed = 0;   // 救援区域电机速度
@@ -187,11 +189,13 @@ typedef struct JSON_TrackConfigData
     int RescueTime = 0; // 救援区进入车库前准备时间上限
     int CrosswalkStopTime = 0;  // 进入斑马线区域停车的时间
     int RescueGarageTime = 0;   // 获取救援区域过标志后与开始判断进车库时机的时间间隔
-    int RescueZoneConeAvgY[2] = {0};  // 救援区域锥桶平均高度阈值
+    int RescueZoneConeAvgY = 0;  // 救援区域锥桶平均高度阈值
     int Crosswalk_Y = 0;    // 斑马线识别纵坐标阈值
     int Bomb_Y = 0; // 爆炸物识别纵坐标阈值
     int Bridge_Y = 0;   // 桥识别纵坐标阈值
-    int Rescue_Lable_Y = 0;   // 救援区域识别标识牌纵坐标阈值
+    int Rescue_Y = 0;   // 救援区域识别标识牌纵坐标阈值
+    int Danger_Zone_Barrier_Y = 0;  // 危险区域障碍物准备避障纵坐标阈
+    float Danger_Zone_Barrier_Servor_Angle_Factor[2];  // 危险区域障碍物避障舵机角度倍率 
     int DangerZone_Cone_Radius = 0; // 危险区域锥桶避障补线半径
     int DangerZone_Block_Radius = 0; // 危险区域路障避障补线半径
     int DangerZoneForward = 0;  // 危险区域前瞻值
@@ -230,6 +234,7 @@ typedef struct Function_EN
     LoopKind Loop_Kind_EN;  // 循环类型使能：0.图像循环 1.普通赛道循环 2.圆环赛道循环 3.十字赛道循环 4.AI赛道循环 5.串口发送循环
     bool ThreadModelDetection_EN;  // 多线程模型推理使能：当模型推理线程结束后才会使能，若模型推理线程还在进行则不使能
     bool Control_EN = false; // 控制权转移使能
+    bool Garage_EN = true;  // 车库使能
 }Function_EN;
 
 /*
@@ -250,7 +255,7 @@ typedef struct Data_Path
     int InflectionPointNum[2] = {0};    // 元素拐点数量
     int BendPointNum[2] = {0};    // 边线弯点数量
     int BendPointCoordinate[10000][4] = {0};  // 左右边线弯点坐标
-    TrackKind Track_Kind; // 赛道类型：1.普通赛道 2.左圆环赛道 3.右圆环赛道 4.十字赛道
+    TrackKind Track_Kind; // 赛道类型：1.直赛道 2.弯赛道 3.右圆环赛道外 4.右圆环赛道内 5.左圆环赛道外 6.左圆环赛道内 7.十字赛道 8.模型赛道
     CircleTrackStep Circle_Track_Step = INIT;  // 圆环入环步骤：1.准备入环 2.入环 3.出环
     TrackKind Previous_Circle_Kind; // 目前圆环类型
     // 控制参数

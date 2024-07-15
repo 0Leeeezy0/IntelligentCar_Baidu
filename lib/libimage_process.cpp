@@ -66,7 +66,6 @@ void CameraImgGet(Img_Store *Img_Store_p)
 	while(Img_Store_p -> Img_Capture.empty());
 	CameraCapture_Mutex.lock();
 	(Img_Store_p -> Img_Color) = (Img_Store_p -> Img_Capture).front().clone();
-	(Img_Store_p -> Img_Capture).pop();
 	CameraCapture_Mutex.unlock();
 }
 
@@ -87,7 +86,7 @@ void ImgProcess::ImgPrepare(Img_Store *Img_Store_p,Data_Path *Data_Path_p,Functi
 	// blur((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_Gray) , Size(18,18) , Point(-1,-1));	// 均值滤波	
 	threshold((Img_Store_p -> Img_Gray) , (Img_Store_p -> Img_OTSU) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
 	ImgProcess::ImgSobel((Img_Store_p -> Img_OTSU));	//Sobel算子处理
-	threshold((Img_Store_p -> Img_OTSU) , (Img_Store_p -> Img_OTSU) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);   //灰度图像二值化
+	threshold((Img_Store_p -> Img_OTSU) , (Img_Store_p -> Img_OTSU) , 0 , 255 , THRESH_BINARY | THRESH_OTSU);  //灰度图像二值化
 
 	// ImgProcess::ImgSharpen((Img_Store_p -> Img_OTSU),5);
 	for(int i = 0;i <= JSON_TrackConfigData.DilateErode_Factor[0];i++)
