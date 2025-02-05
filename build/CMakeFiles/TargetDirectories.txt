@@ -1,3 +1,0 @@
-/home/edgeboard/Desktop/ULTRA_CAR_MASTER/build/CMakeFiles/INCAR.RUN.dir
-/home/edgeboard/Desktop/ULTRA_CAR_MASTER/build/CMakeFiles/edit_cache.dir
-/home/edgeboard/Desktop/ULTRA_CAR_MASTER/build/CMakeFiles/rebuild_cache.dir

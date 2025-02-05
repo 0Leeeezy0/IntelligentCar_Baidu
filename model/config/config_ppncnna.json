@@ -1,5 +1,0 @@
-{
-    "mode": "professional",
-    "model_dir": "../model",
-    "model_file": "deploy_paddle"
-}

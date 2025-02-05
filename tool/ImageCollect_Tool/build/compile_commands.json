@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/tool/ImageCollect/build",
-  "command": "/usr/bin/g++-12  -isystem /usr/local/include/opencv4 -g -o CMakeFiles/IMAGE_COLLECT.RUN.dir/src/ImageCollect.cpp.o -c /home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/tool/ImageCollect/src/ImageCollect.cpp",
-  "file": "/home/leeeezy/Desktop/VSCODE_PROJECT/INTELLIGENT_CAR/ULTRA_CAR_MASTER/tool/ImageCollect/src/ImageCollect.cpp"
-}
-]
