@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../HQU_SWAN"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"iostream": "cpp",
+			"deque": "cpp",
+			"string": "cpp",
+			"vector": "cpp",
+			"ostream": "cpp"
+		}
+	}
+}

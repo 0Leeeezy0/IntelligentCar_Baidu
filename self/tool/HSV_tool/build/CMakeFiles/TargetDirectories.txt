@@ -1,0 +1,3 @@
+/home/edgeboard/Desktop/SWAN/tool/HSV_tool/build/CMakeFiles/SWAN_HSV_TOOL.RUN.dir
+/home/edgeboard/Desktop/SWAN/tool/HSV_tool/build/CMakeFiles/edit_cache.dir
+/home/edgeboard/Desktop/SWAN/tool/HSV_tool/build/CMakeFiles/rebuild_cache.dir
